@@ -1,9 +1,13 @@
 var config = require('../config');
 
-
 const args = process.argv;
 
-var program_name = process.argv[2];
+var instprocess = process.argv[2];
 
-console.log(program_name);
+// TODO recuperar o context da memória de processamento.
+
+
+console.log(instprocess);
+
+
 
