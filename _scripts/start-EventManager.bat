@@ -1,1 +1,0 @@
-forever start ..\..\Plataforma-EventManager\app.js
