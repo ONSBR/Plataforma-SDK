@@ -1,0 +1,1 @@
+forever start ..\..\..\Plataforma-Executor\js\app.js
