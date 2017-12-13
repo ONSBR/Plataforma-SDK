@@ -17,6 +17,9 @@
   },
   "homepage": "https://github.com/ONSBR/Plataforma-SDK#readme",
   "dependencies": {
-    "node-rest-client": "^3.1.0"
+    "node-rest-client": "^3.1.0",
+    "plataforma-process-memory": "https://github.com/ONSBR/Plataforma-ProcessMemory",
+    "js-yaml": "^3.10.0",
+    "handlebars": "^4.0.11"
   }
 }
