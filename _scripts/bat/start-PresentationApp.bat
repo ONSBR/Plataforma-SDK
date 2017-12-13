@@ -1,1 +1,6 @@
-forever start ..\..\..\Plataforma-PresentationApp\server\app.js
+IF NOT EXIST ..\..\..\logs\presentation.out (
+    mkdir ..\..\..\logs
+    copy nul ..\..\..\logs\presentation.out
+)
+
+forever -o ..\..\..\logs\presentation.out start ..\..\..\Plataforma-PresentationApp\server\app.js
