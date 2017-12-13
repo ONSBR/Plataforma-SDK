@@ -3,4 +3,4 @@ IF NOT EXIST ..\..\..\logs\memory.out (
     copy nul ..\..\..\logs\memory.out
 )
 
-forever -o ..\..\..\logs\memory.out start ..\..\..\Plataforma-ProcessMemory\index.js
+forever -o ..\..\..\logs\memory.out -e ..\..\..\logs\memory.out start ..\..\..\Plataforma-ProcessMemory\index.js

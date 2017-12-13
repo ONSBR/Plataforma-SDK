@@ -3,4 +3,4 @@ IF NOT EXIST ..\..\..\logs\executor.out (
     copy nul ..\..\..\logs\executor.out
 )
 
-forever -o ..\..\..\logs\executor.out start ..\..\..\Plataforma-Executor\js\app.js
+forever -o ..\..\..\logs\executor.out -e ..\..\..\logs\executor.out start ..\..\..\Plataforma-Executor\js\app.js
