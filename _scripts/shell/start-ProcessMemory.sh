@@ -1,4 +1,5 @@
 #!/bin/bash
+
 if [ ! -f "../../../logs/memory.out" ]; then
     mkdir ../../../logs
     touch ../../../logs/memory.out

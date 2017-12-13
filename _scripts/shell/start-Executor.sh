@@ -4,4 +4,4 @@ if [ ! -f "../../../logs/executor.out" ]; then
     touch ../../../logs/executor.out
 fi
 
-forever -o ../../../logs/executor.out -e ../../../logs/executor.out start ../../../Plataforma-Executor/js/app.js
+forever -o ../../../logs/executor.out start ../../../Plataforma-Executor/js/app.js
