@@ -30,6 +30,10 @@ function CoreStorage() {
         return bd.get_by_id(type, id);
     };
 
+    this.list = function(type) {        
+        return bd.find_all(type);
+    };
+
     this.history = function(type, id) {
         return bd.history(type, id).commits().map(c => {
             var obj = c._data._document;
@@ -37,6 +41,7 @@ function CoreStorage() {
             return obj;
         } );
     };
+
 }
 
 module.exports = {CoreStorage}

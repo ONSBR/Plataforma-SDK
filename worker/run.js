@@ -16,7 +16,7 @@ client.get(config.processMemoryUrl + processname + "/" + instprocess + "/head", 
 });
 
 function executaChamada(contexto) {
-    var nomeDoProjeto = "Plataforma-ProcessApp/conta-process-app";
+    var nomeDoProjeto = "Plataforma-ProcessApp";
     var nomeDoArquivoJs = "cadastra-conta.js";
     var metodo = "insereConta";
     var arquivoJs = require("../../" + nomeDoProjeto + "/process/" + nomeDoArquivoJs); 
