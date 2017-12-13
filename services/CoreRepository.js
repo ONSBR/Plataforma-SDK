@@ -8,6 +8,8 @@ var sto = new storage.CoreStorage();
 
 class CoreRepository {
 
+    constructor() {}
+
     addProcessInstance(instanceId, processName, dataRef) {
         var processInstance = new InstanciaDoProcesso(
             instanceId, new Date(), null, StatusExecution.pending, 
@@ -22,16 +24,15 @@ class CoreRepository {
 
     getOperationsByEvent(eventName) {
 
-        var retorno = null;
+        var retorno = [];
         var processos = sto.list(Processo.name);
-        
-        for(var i=0; retorno == null && i < processos.length; i++) {
+
+        for(var i=0; i < processos.length; i++) {
             var proc = processos[i];
             for(var o=0; o < proc.operations.length;o++) {
                 var oper = proc.operations[o];
                 if (oper.eventosDeEntrada.contains(eventName)) {
-                    retorno = oper;
-                    break;
+                    retorno.push(oper);
                 }
             }
         }
@@ -43,4 +44,4 @@ class CoreRepository {
 
 }
 
-module.exports.CoreRepository = CoreRepository;
+module.exports = CoreRepository;
