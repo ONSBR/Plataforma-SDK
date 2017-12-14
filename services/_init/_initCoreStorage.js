@@ -10,9 +10,11 @@ database.clearDatabase("core.db");
 var processName = "CadastraConta";
 
 var operacoes = [];
-operacoes.push(new Operacao("cadastra-conta.js", "insereConta", [EventCatalog.account_put], [], processName));
+operacoes.push(new Operacao(
+    "cadastra-conta.js", "insereConta", [EventCatalog.account_put], [EventCatalog.account_saved], processName
+));
 
-var processo = new Processo(processName, operacoes);
+var processo = new Processo(processName, "Plataforma-ProcessApp/conta-process-app", operacoes);
 processo.dataDoDeploy = new Date();
 
 var sto = new coreStorage.CoreStorage();

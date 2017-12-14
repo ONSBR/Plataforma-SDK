@@ -10,6 +10,10 @@ class CoreRepository {
 
     constructor() {}
 
+    getProcess(processName) {
+        return sto.head(processName, Processo.name);
+    }
+
     addProcessInstance(instanceId, processName, dataRef) {
         var processInstance = new InstanciaDoProcesso(
             instanceId, new Date(), null, StatusExecution.pending, 
@@ -19,7 +23,7 @@ class CoreRepository {
     }
 
     getProcessInstance(instprocess) {
-        return sto.head(instprocess);
+        return sto.head(instprocess, InstanciaDoProcesso.name);
     }
 
     getOperationsByEvent(eventName) {
@@ -29,9 +33,9 @@ class CoreRepository {
 
         for(var i=0; i < processos.length; i++) {
             var proc = processos[i];
-            for(var o=0; o < proc.operations.length;o++) {
-                var oper = proc.operations[o];
-                if (oper.eventosDeEntrada.contains(eventName)) {
+            for(var o=0; o < proc.operacoes.length;o++) {
+                var oper = proc.operacoes[o];
+                if (oper.eventosDeEntrada.indexOf(eventName) > -1) {
                     retorno.push(oper);
                 }
             }

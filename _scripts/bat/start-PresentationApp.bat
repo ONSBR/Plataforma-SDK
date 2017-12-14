@@ -3,4 +3,4 @@ IF NOT EXIST ..\..\..\logs\presentation.out (
     copy nul ..\..\..\logs\presentation.out
 )
 
-forever -o ..\..\..\logs\presentation.out start ..\..\..\Plataforma-PresentationApp\server\app.js
+forever -o ..\..\..\logs\presentation.out -e ..\..\..\logs\presentation.out start ..\..\..\Plataforma-PresentationApp\server\app.js
