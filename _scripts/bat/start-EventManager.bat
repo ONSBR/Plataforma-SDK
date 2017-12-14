@@ -3,4 +3,4 @@ IF NOT EXIST ..\..\..\logs\event.out (
     copy nul ..\..\..\logs\event.out
 )
 
-forever -o ..\..\..\logs\event.out  -e ..\..\..\logs\event.out start ..\..\..\Plataforma-EventManager\app.js
+forever -o ..\..\..\logs\event.out -e ..\..\..\logs\event.out start ..\..\..\Plataforma-EventManager\app.js
