@@ -1,10 +1,10 @@
-var storage = require("./CoreStorage.js");
+var CoreStorage = require("./CoreStorage.js");
 var InstanciaDoProcesso = require("../../Plataforma-core/InstanciaDoProcesso");
 var Processo = require("../../Plataforma-core/Processo");
 var Operacao = require("../../Plataforma-core/Operacao");
 var StatusExecution = require("../../Plataforma-core/StatusExecution");
 
-var sto = new storage.CoreStorage();
+var sto = new CoreStorage();
 
 class CoreRepository {
 

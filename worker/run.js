@@ -15,8 +15,6 @@ var client = new Client();
 var coreRepository = new CoreRepository();
 var instance = coreRepository.getProcessInstance(instprocess);
 
-console.log("INSTACE: " + instance);
-
 // TODO processname do process repositório
 var urlGetProcessMemory = config.processMemoryUrl + instance.processo + "/" + instprocess + "/head";
 
