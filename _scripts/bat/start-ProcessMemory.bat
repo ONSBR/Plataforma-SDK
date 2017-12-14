@@ -1,6 +1,5 @@
-IF NOT EXIST ..\..\..\logs\memory.out (
-    mkdir ..\..\..\logs
-    copy nul ..\..\..\logs\memory.out
+IF NOT EXIST .\logs\memory\ (
+    mkdir .\logs\memory\
 )
 
-forever -o ..\..\..\logs\memory.out -e ..\..\..\logs\memory.out start ..\..\..\Plataforma-ProcessMemory\index.js
+pm2 start ..\..\..\Plataforma-ProcessMemory\index.js --name memory --watch ..\..\..\Plataforma-ProcessMemory\ --log .\logs\memory\memory.log

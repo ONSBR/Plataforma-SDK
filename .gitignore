@@ -1,3 +1,4 @@
 node_modules/
-poc.db
-core.db
+logs/
+./poc.db
+./core.db

@@ -1,6 +1,5 @@
-IF NOT EXIST ..\..\..\logs\executor.out (
-    mkdir ..\..\..\logs
-    copy nul ..\..\..\logs\executor.out
+IF NOT EXIST .\logs\executor\ (
+    mkdir .\logs\executor\
 )
 
-forever -o ..\..\..\logs\executor.out -e ..\..\..\logs\executor.out start ..\..\..\Plataforma-Executor\js\app.js
+pm2 start ..\..\..\Plataforma-Executor\js\app.js --name executor --watch ..\..\..\Plataforma-Executor\js\ --log .\logs\executor\executor.log

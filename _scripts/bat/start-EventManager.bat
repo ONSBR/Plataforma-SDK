@@ -1,6 +1,5 @@
-IF NOT EXIST ..\..\..\logs\event.out (
-    mkdir ..\..\..\logs
-    copy nul ..\..\..\logs\event.out
+IF NOT EXIST .\logs\event\ (
+    mkdir .\logs\event\
 )
 
-forever -o ..\..\..\logs\event.out -e ..\..\..\logs\event.out start ..\..\..\Plataforma-EventManager\app.js
+pm2 start ..\..\..\Plataforma-EventManager\app.js --name event --watch ..\..\..\Plataforma-EventManager\ --log .\logs\event\event.log

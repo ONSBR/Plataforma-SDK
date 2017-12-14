@@ -1,6 +1,5 @@
-IF NOT EXIST ..\..\..\logs\presentation.out (
-    mkdir ..\..\..\logs
-    copy nul ..\..\..\logs\presentation.out
+IF NOT EXIST .\logs\presentation\ (
+    mkdir .\logs\presentation\
 )
 
-forever -o ..\..\..\logs\presentation.out -e ..\..\..\logs\presentation.out start ..\..\..\Plataforma-PresentationApp\server\app.js
+pm2 start ..\..\..\Plataforma-PresentationApp\server\app.js --name presentation --watch ..\..\..\Plataforma-PresentationApp\server\ --log .\logs\presentation\presentation.log
