@@ -57,8 +57,6 @@ function executeOperation(operation, contexto) {
         saveClientDataSet(contexto.dataSet);
     }
 
-
-    console.log("entities = " + contexto.dataSet.entities);
     updateProcessMemory(contexto);
 
     if (operacoes.length > 0) {
@@ -71,7 +69,7 @@ function executeOperation(operation, contexto) {
 }
 
 function saveClientDataSet(dataSet) {
-    let clients = dataSet.entities.get("clients");
+    let clients = dataSet.entities;
 
     clients.forEach(clientName => {
         console.log(getClientJson(clientName));
@@ -81,23 +79,6 @@ function saveClientDataSet(dataSet) {
         };
         var reqExec = client.post(config.domainAppUrl, args, function (data, response) {
             console.log("Cliente persistido na api de dominio com sucesso.");
-        });
-        reqExec.on('error', function (err) {
-            console.log('request error', err);
-        });
-    });
-}
-
-function saveAccountDataSet(dataSet) {
-    let accounts = dataSet.entities.get("accounts");
-
-    accounts.forEach(account => {
-        var args = {
-            data: getAccountJson(clientName),
-            headers: { "Content-Type": "application/json" }
-        };
-        var reqExec = client.post(config.domainAppUrl, args, function (data, response) {
-            console.log("Conta persistida na api de dominio com sucesso.");
         });
         reqExec.on('error', function (err) {
             console.log('request error', err);
