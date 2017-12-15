@@ -13,7 +13,7 @@ var sto = new CoreStorage();
 
 var operacoes = [];
 operacoes.push(new Operacao(
-    "cadastra-conta.js", "insereConta", [EventCatalog.account_put], [EventCatalog.account_saved], processName
+    "cadastra-conta.js", "insereConta", [EventCatalog.account_put], [EventCatalog.account_saved], processName, true
 ));
 
 var processo = new Processo(processName, "Plataforma-ProcessApp/conta-process-app", operacoes);
