@@ -1,0 +1,10 @@
+class {{nomeDaClasse}} {
+    
+    constructor({{#each campos}}{{campo}}{{#unless @last}},{{/unless}}{{/each}}){
+        {{#each campos}}
+        this.{{campo}} = {{campo}};
+        {{else}}
+        {{/each}}
+    }
+    
+}
