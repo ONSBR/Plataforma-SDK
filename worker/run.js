@@ -21,7 +21,6 @@ var urlGetProcessMemory = config.processMemoryUrl + instance.processo + "/" + in
 console.log("urlGetProcessMemory: " + urlGetProcessMemory);
 
 client.get(urlGetProcessMemory, function (data, response) {
-
     executaChamada(data);
 });
 
@@ -58,7 +57,9 @@ function executeOperation(operation, contexto) {
         saveClientDataSet(contexto.dataSet);
     }
 
-    // TODO precisa salvar a memória de processo
+
+    console.log("entities = " + contexto.dataSet.entities);
+    updateProcessMemory(contexto);
 
     if (operacoes.length > 0) {
         EventHelper.sendEvent(contexto.eventoSaida);
@@ -103,6 +104,23 @@ function saveAccountDataSet(dataSet) {
         });
     });
 }
+
+function updateProcessMemory(contexto) {
+    var args = { data: contexto, headers: { "Content-Type": "application/json" } };
+
+    var urlMemoryCreate = config.processMemoryUrl + contexto.evento.processName + "/"+
+        contexto.id + "/commit";
+    console.log("urlMemoryCommit: " +urlMemoryCreate);
+
+    var client = new Client();
+    var reqExec = client.post(urlMemoryCreate, args, function (data, response) {
+        console.log("Contexto atualizado na memória de processo com sucesso." + data.instanceId);
+    });
+    reqExec.on('error', function (err) {
+        console.log('request error', err);
+    });
+}
+
 
 function getClientJson(clientName) {
     return [{ "nome": clientName, "_metadata": { type: "cliente", changeTrack: "create" } }];
