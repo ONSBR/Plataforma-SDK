@@ -1,6 +1,7 @@
 var CoreStorage = require("./CoreStorage.js");
 var InstanciaDoProcesso = require("../../Plataforma-core/InstanciaDoProcesso");
 var Processo = require("../../Plataforma-core/Processo");
+var Presentation = require("../../Plataforma-core/Presentation");
 var Operacao = require("../../Plataforma-core/Operacao");
 var StatusExecution = require("../../Plataforma-core/StatusExecution");
 
@@ -26,7 +27,11 @@ class CoreRepository {
         return sto.head(instprocess, InstanciaDoProcesso.name);
     }
 
-    getOperationsByEvent(eventName) {
+    getPresentation(presentationName) {
+        return sto.head(presentationName, Presentation.name);
+    }
+
+    getOperationsByEvent(eventName, issaida) {
 
         var retorno = [];
         var processos = sto.list(Processo.name);
@@ -35,8 +40,14 @@ class CoreRepository {
             var proc = processos[i];
             for(var o=0; o < proc.operacoes.length;o++) {
                 var oper = proc.operacoes[o];
-                if (oper.eventosDeEntrada.indexOf(eventName) > -1) {
-                    retorno.push(oper);
+                if (issaida) { 
+                    if (oper.eventosDeSaida.indexOf(eventName) > -1) {
+                        retorno.push(oper);
+                    }
+                } else {
+                    if (oper.eventosDeEntrada.indexOf(eventName) > -1) {
+                        retorno.push(oper);
+                    }
                 }
             }
         }
@@ -44,7 +55,21 @@ class CoreRepository {
         return retorno;
     }
 
+    getPresentationsByEvent(eventName) {
+    
+        var retorno = [];
+        var presentations = sto.list(Presentation.name);
 
+        for(var i=0; i < presentations.length; i++) {
+            var present = presentations[i];
+                
+            if (present.eventosDeEntrada.indexOf(eventName) > -1) {
+                retorno.push(present);
+            }
+        }
+
+        return retorno;
+    }
 
 }
 

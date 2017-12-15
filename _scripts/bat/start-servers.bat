@@ -2,10 +2,11 @@ IF NOT EXIST .\core.bd (
     node ..\..\services\_init\_initCoreStorage.js
 )
 
-START /B CMD /C CALL start-Eventmanager.bat
-START /B CMD /C CALL start-PresentationApp.bat
-START /B CMD /C CALL start-Executor.bat
-START /B CMD /C CALL start-ProcessMemory.bat
+CALL start-Eventmanager.bat
+CALL start-PresentationApp.bat
+CALL start-Executor.bat
+CALL start-ProcessMemory.bat
+CALL start-Router.bat
 
 cd ..\..\..\
 cd .\Plataforma-PresentationApp\crud-contas\

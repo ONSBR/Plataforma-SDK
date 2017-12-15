@@ -51,8 +51,14 @@ function executeOperation(operation, contexto) {
     var metodo = operation.metodo;
     var arquivoJs = require("../../" + processo.relativePath + "/process/" + nomeDoArquivoJs); 
     eval("arquivoJs." + metodo + "(contexto)");
+    
+    var operacoes = coreRepository.getOperationsByEvent(contexto.eventoSaida.name, true);
 
-    EventHelper.sendEvent(contexto.eventoSaida);
+    if (operacoes.length > 0) {
+        EventHelper.sendEvent(contexto.eventoSaida);
+    } else {
+        console.log("[ERROR] Evento se saída não configurado para o processo: " + processo.nome + ", evento: " + contexto.eventoSaida.name);    
+    }
 
-    console.log("Operação executada com sucesso: " + arquivoJs + "." + metodo);
+    console.log("Operação executada com sucesso: " + nomeDoArquivoJs + "." + metodo);
 }
