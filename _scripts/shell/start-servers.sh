@@ -12,4 +12,4 @@ fi
 ./start-ProcessMemory.sh &
 
 cd ../../../Plataforma-PresentationApp/crud-contas/
-ng server -o
+ng server

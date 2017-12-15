@@ -21,7 +21,7 @@ var urlGetProcessMemory = config.processMemoryUrl + instance.processo + "/" + in
 console.log("urlGetProcessMemory: " + urlGetProcessMemory);
 
 client.get(urlGetProcessMemory, function (data, response) {
-    
+
     executaChamada(data);
 });
 
@@ -30,9 +30,9 @@ function executaChamada(contexto) {
     contexto.dataSet = new DataSet(contexto.dataSet);
 
     var operations = coreRepository.getOperationsByEvent(contexto.evento.name);
-        
+
     if (operations.length > 0) {
-        for(var i=0; i < operations.length;i++) {
+        for (var i = 0; i < operations.length; i++) {
 
             var operation = operations[i];
 
@@ -44,15 +44,60 @@ function executaChamada(contexto) {
 }
 
 function executeOperation(operation, contexto) {
-    
+
     var processo = coreRepository.getProcess(operation.processo);
-    
+
     var nomeDoArquivoJs = operation.arquivo;
     var metodo = operation.metodo;
-    var arquivoJs = require("../../" + processo.relativePath + "/process/" + nomeDoArquivoJs); 
+    var arquivoJs = require("../../" + processo.relativePath + "/process/" + nomeDoArquivoJs);
     eval("arquivoJs." + metodo + "(contexto)");
+
+    saveClientDataSet(contexto.dataSet);
 
     EventHelper.sendEvent(contexto.eventoSaida);
 
     console.log("Operação executada com sucesso: " + arquivoJs + "." + metodo);
+}
+
+function saveClientDataSet(dataSet) {
+    let clients = dataSet.entities.get("clients");
+
+    clients.forEach(clientName => {
+        console.log(getClientJson(clientName));
+        var args = {
+            data: getClientJson(clientName),
+            headers: { "Content-Type": "application/json" }
+        };
+        var reqExec = client.post(config.domainAppUrl, args, function (data, response) {
+            console.log("Cliente persistido na api de dominio com sucesso.");
+        });
+        reqExec.on('error', function (err) {
+            console.log('request error', err);
+        });
+    });
+}
+
+function saveAccountDataSet(dataSet) {
+    let accounts = dataSet.entities.get("accounts");
+
+    accounts.forEach(account => {
+        var args = {
+            data: getAccountJson(clientName),
+            headers: { "Content-Type": "application/json" }
+        };
+        var reqExec = client.post(config.domainAppUrl, args, function (data, response) {
+            console.log("Conta persistida na api de dominio com sucesso.");
+        });
+        reqExec.on('error', function (err) {
+            console.log('request error', err);
+        });
+    });
+}
+
+function getClientJson(clientName) {
+    return [{ "nome": clientName, "_metadata": { type: "cliente", changeTrack: "create" } }];
+}
+
+function getAccountJson(account) {
+    return [{ "saldo": account, "_metadata": { type: "conta", changeTrack: "create" } }];
 }
