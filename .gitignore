@@ -1,4 +1,5 @@
 node_modules/
 logs/
-./poc.db
-./core.db
+*.db
+run_*.js
+config_*.js
