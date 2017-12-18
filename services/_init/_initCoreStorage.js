@@ -1,8 +1,8 @@
 var Processo = require("../../../Plataforma-core/Processo");
-var Presentation = require("../../../Plataforma-core/Presentation");
-var Operacao = require("../../../Plataforma-core/Operacao");
-var EventCatalog = require("../../../Plataforma-ProcessApp/conta-process-app/metadados/EventCatalog");
-var database = require("../../../Plataforma-ProcessMemory/database.js");
+var Presentation = require("plataforma-core/Presentation");
+var Operacao = require("plataforma-core/Operacao");
+var EventCatalog = require("plataforma-processapp/conta-process-app/metadados/EventCatalog");
+var database = require("plataforma-processmemory/database");
 var CoreStorage = require("../CoreStorage");
 
 database.clearDatabase("core.db");

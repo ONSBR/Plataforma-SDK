@@ -1,9 +1,9 @@
 var CoreStorage = require("./CoreStorage.js");
-var InstanciaDoProcesso = require("../../Plataforma-core/InstanciaDoProcesso");
-var Processo = require("../../Plataforma-core/Processo");
-var Presentation = require("../../Plataforma-core/Presentation");
-var Operacao = require("../../Plataforma-core/Operacao");
-var StatusExecution = require("../../Plataforma-core/StatusExecution");
+var InstanciaDoProcesso = require("plataforma-core/InstanciaDoProcesso");
+var Processo = require("plataforma-core/Processo");
+var Presentation = require("plataforma-core/Presentation");
+var Operacao = require("plataforma-core/Operacao");
+var StatusExecution = require("plataforma-core/StatusExecution");
 
 var sto = new CoreStorage();
 
