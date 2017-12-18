@@ -1,7 +1,6 @@
 #!/bin/bash
-if [ ! -f "../../../logs/presentation.out" ]; then
-    mkdir ../../../logs
-    touch ../../../logs/presentation.out
+if [ ! -d "logs/presentation/" ]; then
+    mkdir logs/presentation
 fi
 
-forever -o ../../../logs/presentation.out start ../../../Plataforma-PresentationApp/server/app.js
+pm2 start ../../../Plataforma-PresentationApp/server/app.js --name presentation --watch ../../../Plataforma-PresentationApp/server/ --log ./logs/presentation/presentation.log

@@ -1,7 +1,6 @@
 #!/bin/bash
-if [ ! -f "../../../logs/executor.out" ]; then
-    mkdir ../../../logs
-    touch ../../../logs/executor.out
+if [ ! -d "logs/executor/" ]; then
+    mkdir logs/executor
 fi
 
-forever -o ../../../logs/executor.out start ../../../Plataforma-Executor/js/app.js
+pm2 start ../../../Plataforma-Executor/js/app.js --name executor --watch ../../../Plataforma-Executor/js/ --log logs/executor/executor.log

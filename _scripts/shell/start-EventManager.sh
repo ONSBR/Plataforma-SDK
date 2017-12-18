@@ -1,6 +1,6 @@
 #!/bin/bash
-if [ ! -f "../../../logs/event.out" ]; then
-    touch ../../../logs/event.out
+if [ ! -d "logs/event/" ]; then
+    mkdir logs/event
 fi
 
-forever -o ../../../logs/event.out -e ../../../logs/event.out start ../../../Plataforma-EventManager/app.js
+pm2 start ../../../Plataforma-EventManager/app.js --name event --watch ../../../Plataforma-EventManager/ --log logs/event/event.log
