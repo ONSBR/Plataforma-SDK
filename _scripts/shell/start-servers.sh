@@ -6,7 +6,7 @@ if [ ! -d "logs" ]; then
 fi
 
 if [[ ! -f "core.bd" ]]; then
-    "echo Init Core Storage"
+    echo "Init Core Storage"
     node ../../services/_init/_initCoreStorage.js
 fi
 
