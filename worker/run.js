@@ -54,7 +54,7 @@ function executeOperation(operation, contexto) {
     var operacoes = coreRepository.getOperationsByEvent(contexto.eventoSaida.name, true);
 
     if (operation.mustcommit) {
-        saveClientDataSet(contexto.dataSet);
+        saveDataSet(contexto.dataSet);
     }
 
     updateProcessMemory(contexto);
@@ -68,13 +68,13 @@ function executeOperation(operation, contexto) {
     console.log("Operação executada com sucesso: " + nomeDoArquivoJs + "." + metodo);
 }
 
-function saveClientDataSet(dataSet) {
-    let clients = dataSet.entities;
+function saveDataSet(dataSet) {
+    let entities = dataSet.entities;
 
-    clients.forEach(clientName => {
-        console.log(getClientJson(clientName));
+    entities.forEach(entity => {
+        console.log("Insert entity: " + entity);
         var args = {
-            data: getClientJson(clientName),
+            data: entity,
             headers: { "Content-Type": "application/json" }
         };
         var reqExec = client.post(config.domainAppUrl, args, function (data, response) {
@@ -98,15 +98,6 @@ function updateProcessMemory(contexto) {
         console.log("Contexto atualizado na memória de processo com sucesso." + data.instanceId);
     });
     reqExec.on('error', function (err) {
-        console.log('request error', err);
+        console.log('Erro ao atualizar memória de processo.', err);
     });
-}
-
-
-function getClientJson(clientName) {
-    return [{ "nome": clientName, "_metadata": { type: "cliente", changeTrack: "create" } }];
-}
-
-function getAccountJson(account) {
-    return [{ "saldo": account, "_metadata": { type: "conta", changeTrack: "create" } }];
 }
