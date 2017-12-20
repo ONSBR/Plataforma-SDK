@@ -76,10 +76,10 @@ function saveDataSet(dataSet) {
             headers: { "Content-Type": "application/json" }
         };
         var reqExec = client.post(config.domainAppUrl, args, function (data, response) {
-            console.log("Cliente persistido na api de dominio com sucesso.");
+            console.log("Entidade persistida na api de dominio com sucesso.");
         });
         reqExec.on('error', function (err) {
-            console.log('request error', err);
+            console.log('Erro ao persistir entidade.', err);
         });
     });
 }
