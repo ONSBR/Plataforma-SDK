@@ -8,7 +8,7 @@ const args = process.argv;
 
 var instprocess = process.argv[2];
 
-console.log(instprocess);
+console.log("instprocess = " + instprocess);
 
 var client = new Client();
 
@@ -41,18 +41,17 @@ function executaChamada(contexto) {
 }
 
 function executeOperation(operation, contexto) {
-
     var processo = coreRepository.getProcess(operation.processo);
-
     var nomeDoArquivoJs = operation.arquivo;
     var metodo = operation.metodo;
     var arquivoJs = require("../../" + processo.relativePath + "/process/" + nomeDoArquivoJs);
+
     eval("arquivoJs." + metodo + "(contexto)");
     
     var operacoes = coreRepository.getOperationsByEvent(contexto.eventoSaida.name, true);
 
     if (operation.mustcommit) {
-        saveDataSet(contexto.dataSet);
+        saveDataSet(contexto.dataSet, processo);
     }
 
     updateProcessMemory(contexto);
@@ -66,7 +65,7 @@ function executeOperation(operation, contexto) {
     console.log("Operação executada com sucesso: " + nomeDoArquivoJs + "." + metodo);
 }
 
-function saveDataSet(dataSet) {
+function saveDataSet(dataSet, processo) {
     let entities = dataSet.entities;
 
     entities.forEach(entity => {
@@ -75,7 +74,7 @@ function saveDataSet(dataSet) {
             data: entity,
             headers: { "Content-Type": "application/json" }
         };
-        var reqExec = client.post(config.domainAppUrl, args, function (data, response) {
+        var reqExec = client.post(config.domainAppUrl + processo.nome + "/persist", args, function (data, response) {
             console.log("Entidade persistida na api de dominio com sucesso.");
         });
         reqExec.on('error', function (err) {

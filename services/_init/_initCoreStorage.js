@@ -7,7 +7,7 @@ var CoreStorage = require("../CoreStorage");
 
 database.clearDatabase("core.db");
 
-var processName = "CadastraConta";
+var processName = "cadastra-conta";
 
 var sto = new CoreStorage();
 
