@@ -32,9 +32,7 @@ function executaChamada(contexto) {
 
     if (operations.length > 0) {
         for (var i = 0; i < operations.length; i++) {
-
             var operation = operations[i];
-
             executeOperation(operation, contexto);
         }
     } else {
