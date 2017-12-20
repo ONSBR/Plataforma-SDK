@@ -17,4 +17,4 @@ fi
 ./start-Router.sh &
 
 cd ../../../Plataforma-PresentationApp/crud-contas/
-ng server -o
+npm start
