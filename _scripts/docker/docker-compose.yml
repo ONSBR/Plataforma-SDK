@@ -1,4 +1,4 @@
-version: "1"
+version: "2"
 services:  
   postgres:
         image: postgres:latest
@@ -10,3 +10,40 @@ services:
         container_name: "adminer"        
         ports:
             - 8080:8080        
+  presentation:
+        build: ../../../Plataforma-PresentationApp/server/
+        image: presentation:latest
+        container_name: "presentation"        
+        ports:
+            - 8083:8083
+  event-manager:
+        build: ../../../Plataforma-EventManager/
+        image: event-manager:latest
+        container_name: "event-manager"        
+        ports:
+            - 8081:8081
+  executor:
+        build: ../../../Plataforma-Executor/js/
+        image: executor:latest
+        container_name: "executor"        
+        ports:
+            - 8085:8085
+  processmemory:
+        build: ../../../Plataforma-ProcessMemory/
+        image: processmemory:latest
+        container_name: "processmemory"        
+        ports:
+            - 9091:9091
+  router:
+        build: ../../../Plataforma-Router/
+        image: router:latest
+        container_name: "router"        
+        ports:
+            - 8086:8086
+  crud:
+        build: ../../../Plataforma-PresentationApp/crud-contas/ 
+        image: crud:latest
+        container_name: "crud"        
+        ports:
+            - 4200:4200    
+               
