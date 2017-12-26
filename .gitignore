@@ -1,5 +1,6 @@
 node_modules/
 logs/
-*.db
 run_*.js
 config_*.js
+_scripts/bat/poc.db
+_scripts/shell/poc.db

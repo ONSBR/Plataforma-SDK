@@ -1,4 +1,4 @@
-var Processo = require("../../../Plataforma-core/Processo");
+var Processo = require("plataforma-core/Processo");
 var Presentation = require("plataforma-core/Presentation");
 var Operacao = require("plataforma-core/Operacao");
 var EventCatalog = require("plataforma-processapp/conta-process-app/metadados/EventCatalog");
@@ -7,26 +7,50 @@ var CoreStorage = require("../CoreStorage");
 
 database.clearDatabase("core.db");
 
-var processName = "cadastra-conta";
 
 var sto = new CoreStorage();
 
-var operacoes = [];
-operacoes.push(new Operacao(
-    "cadastra-conta.js", "insereConta", [EventCatalog.account_put], [EventCatalog.account_saved], processName, true
-));
+var accountProcessName = "cadastra-conta";
 
-var processo = new Processo(processName, "Plataforma-ProcessApp/conta-process-app", operacoes);
-processo.dataDoDeploy = new Date();
+var operacoesConta = [];
+operacoesConta.push(new Operacao(
+    "cadastra-conta.js", "insereConta", [EventCatalog.account_put], [EventCatalog.account_saved], accountProcessName, true
+));    
 
-sto.create(processo, Processo.name, processName);
+var processoAccount = new Processo(accountProcessName, "Plataforma-ProcessApp/conta-process-app", operacoesConta);
+processoAccount.dataDoDeploy = new Date();
 
-var presentation = new Presentation("crudcontas", "http://localhost:4200", [EventCatalog.account_saved], [EventCatalog.account_put]);
+sto.create(processoAccount, Processo.name, accountProcessName);
 
-sto.create(presentation, Presentation.name, presentation.nome);
 
-var processPersisted = sto.head(processName, Processo.name);
+var transferProcessName = "transferencia-conta";
 
-console.log(JSON.stringify(processo));
-console.log(JSON.stringify(processPersisted));    
+var operacoesTransferencia = [];
+operacoesTransferencia.push(new Operacao(
+    "transferencia-conta.js", "transfereConta", [EventCatalog.transfer_request], [EventCatalog.transfer_confirmation], transferProcessName, true
+));    
+
+var processoTransfer = new Processo(transferProcessName, "Plataforma-ProcessApp/transferencia-process-app", operacoesTransferencia);
+processoTransfer.dataDoDeploy = new Date();
+sto.create(processoTransfer, Processo.name, transferProcessName);
+
+
+//URL para o presentation, que será direcionado pelo router.
+var urlbasepresentation = "http://localhost:4200"; 
+
+var presentationaccount = new Presentation(
+    "crudcontas", urlbasepresentation, 
+    [EventCatalog.account_saved, EventCatalog.transfer_confirmation], 
+    [EventCatalog.account_put, EventCatalog.transfer_request]
+);
+sto.create(presentationaccount, Presentation.name, presentationaccount.nome);
+
+/*var presentationtransfer = new Presentation(
+    "transferenciacontas", urlbasepresentation, 
+    [EventCatalog.transfer_confirmation], [EventCatalog.transfer_request]
+);
+
+sto.create(presentationtransfer, Presentation.name, presentationtransfer.nome);*/
+
+
 

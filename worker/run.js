@@ -33,6 +33,7 @@ function executaChamada(contexto) {
     if (operations.length > 0) {
         for (var i = 0; i < operations.length; i++) {
             var operation = operations[i];
+            console.log("Teste!!"); 
             executeOperation(operation, contexto);
         }
     } else {
@@ -42,16 +43,19 @@ function executaChamada(contexto) {
 
 function executeOperation(operation, contexto) {
     var processo = coreRepository.getProcess(operation.processo);
+
+    console.log("Process Found!! " + JSON.stringify(processo) + ", opname: " + operation.processo);
+
     var nomeDoArquivoJs = operation.arquivo;
     var metodo = operation.metodo;
-    var arquivoJs = require("../../" + processo.relativePath + "/process/" + nomeDoArquivoJs);
+    var arquivoJs = require("../../" + processo.relativePath + "/process/" + nomeDoArquivoJs);  
 
     eval("arquivoJs." + metodo + "(contexto)");
     
     var operacoes = coreRepository.getOperationsByEvent(contexto.eventoSaida.name, true);
 
     if (operation.mustcommit) {
-        saveDataSet(contexto.dataSet, processo);
+        //saveDataSet(contexto.dataSet, processo);
     }
 
     updateProcessMemory(contexto);
