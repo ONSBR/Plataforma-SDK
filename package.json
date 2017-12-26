@@ -21,7 +21,6 @@
     "plataforma-processmemory": "file:../Plataforma-ProcessMemory",
     "plataforma-core": "file:../Plataforma-core",
     "plataforma-processapp": "file:../Plataforma-ProcessApp",
-    "plataforma-presentationapp": "file:../Plataforma-PresentationApp",
     "js-yaml": "^3.10.0",
     "handlebars": "^4.0.11"
   }
