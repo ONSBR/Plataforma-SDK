@@ -1,9 +1,10 @@
 var database = require("plataforma-processmemory/database.js");
 var utils = require("plataforma-processmemory/utils.js");
 
-var bd = database.loadDabase("core.db");
+bdFile = process.env.BD_VOLUME || "core.db";
+
+var bd = database.loadDabase(bdFile);
 if (bd == undefined) {
-    bdFile = process.env.BD_VOLUME || "core.db";
     bd = new database.Database(bdFile);
 }
 
