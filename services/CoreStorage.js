@@ -1,5 +1,5 @@
-var database = require("../../plataforma-processmemory/database.js");
-var utils = require("../../plataforma-processmemory/utils.js");
+var database = require("plataforma-processmemory/database.js");
+var utils = require("plataforma-processmemory/utils.js");
 
 var bd = database.loadDabase("core.db");
 if (bd == undefined) {
