@@ -1,8 +1,8 @@
 var config = require('../config');
 var Client = require('node-rest-client').Client;
-var CoreRepository = require("../../Plataforma-SDK/services/CoreRepository");
-var DataSet = require("../../Plataforma-core/DataSet");
-var EventHelper = require("../../Plataforma-SDK/EventHelper");
+var CoreRepository = require("../services/CoreRepository");
+var DataSet = require("plataforma-core/DataSet");
+var EventHelper = require("../EventHelper");
 
 const args = process.argv;
 
