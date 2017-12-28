@@ -1,6 +1,6 @@
 var config = {};
 
-const eventManagerHost = process.env.EVENT_MANAGER_HOST || "localhost333";
+const eventManagerHost = process.env.EVENT_MANAGER_HOST || "localhost";
 
 config.PORT = 8081;
 config.eventManagerUrl = "http://" + eventManagerHost + ":8081/event";
