@@ -16,7 +16,7 @@ services:
         image: presentation:latest
         container_name: "presentation"
         environment:
-            - EVENT_MANAGER_HOST=event-manager        
+            - EVENT_MANAGER_HOST=event-manager
         ports:
             - 8083:8083
         links: 
@@ -27,12 +27,13 @@ services:
         container_name: "event-manager"
         environment:
             - EXECUTOR_HOST=executor         
+            - BD_VOLUME=/core-db/core.db
         ports:
             - 8081:8081
         links: 
             - executor:executor
-        volumes: 
-            - /home
+        volumes:
+            - ./core.db:/core-db/core.db
   executor:
         build: ../../../Plataforma-Executor/js/
         image: executor:latest
@@ -41,8 +42,11 @@ services:
             - 8085:8085
         environment:
             - PROCESS_MEMORY_HOST=processmemory
+            - DOMAIN_APP_HOST=domain
+            - WORKER_PATH=node_modules/plataforma-sdk/worker/run.js
         links: 
             - processmemory:processmemory
+            - domain:domain
   processmemory:
         build: ../../../Plataforma-ProcessMemory/
         image: processmemory:latest
@@ -60,5 +64,11 @@ services:
         image: crud:latest
         container_name: "crud"        
         ports:
-            - 4200:4200    
+            - 4200:4200
+  domain:
+        build: ../../../Plataforma-Domain/Platform.App/bundle
+        image: domain:latest
+        container_name: "domain"          
+        ports:
+            - 9090:9090
                
