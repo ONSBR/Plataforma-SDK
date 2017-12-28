@@ -3,7 +3,8 @@ var utils = require("plataforma-processmemory/utils.js");
 
 var bd = database.loadDabase("core.db");
 if (bd == undefined) {
-    bd = new database.Database("core.db");
+    bdFile = process.env.BD_VOLUME || "core.db";
+    bd = new database.Database(bdFile);
 }
 
 class CoreStorage {
