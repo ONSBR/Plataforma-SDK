@@ -13,9 +13,13 @@ services:
   presentation:
         build: ../../../Plataforma-PresentationApp/server/
         image: presentation:latest
-        container_name: "presentation"        
+        container_name: "presentation"
+        environment:
+            - EVENT_MANAGER_HOST=event-manager        
         ports:
             - 8083:8083
+        links: 
+            - event-manager:event-manager
   event-manager:
         build: ../../../Plataforma-EventManager/
         image: event-manager:latest
