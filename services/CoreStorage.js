@@ -5,7 +5,10 @@ bdFile = process.env.BD_VOLUME || "core.db";
 
 var bd = database.loadDabase(bdFile);
 if (bd == undefined) {
+    console.log("Base do core será criada:" + bdFile);
     bd = new database.Database(bdFile);
+} else {
+    console.log("Base do core já existia:" + bdFile);
 }
 
 class CoreStorage {
