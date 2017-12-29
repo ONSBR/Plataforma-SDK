@@ -45,7 +45,6 @@ services:
             - DOMAIN_APP_HOST=domain
             - WORKER_PATH=node_modules/plataforma-sdk/worker/run.js
             - BD_VOLUME=/usr/src/app/core.db
-            - PROCESS_APP_EXECUTION_PATH=node_modules/
         links: 
             - processmemory:processmemory
             - domain:domain
