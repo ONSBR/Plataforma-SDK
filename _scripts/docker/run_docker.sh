@@ -6,4 +6,7 @@ echo "Domain app Cli"
 cd ../../../Plataforma-Domain/Platform.Cli/
 npm install 
 node atom.js
+echo "Domain app criada"
+echo "docker-compose up"
+cd ../../Plataforma-SDK/_scripts/docker/
 sudo docker-compose up
