@@ -43,11 +43,13 @@ services:
         environment:
             - PROCESS_MEMORY_HOST=processmemory
             - DOMAIN_APP_HOST=domain
+            - EVENT_MANAGER_HOST=event-manager
             - WORKER_PATH=node_modules/plataforma-sdk/worker/run.js
             - BD_VOLUME=/usr/src/app/core.db
         links: 
             - processmemory:processmemory
             - domain:domain
+            - event-manager:event-manager
         volumes:
             - ./core.db:/usr/src/app/core.db
   processmemory:
