@@ -45,7 +45,7 @@ function executeOperation(operation, contexto) {
 
     var nomeDoArquivoJs = operation.arquivo;
     var metodo = operation.metodo;
-    var arquivoJs = require(config.processAppExecutionPath 
+    var arquivoJs = require(config.processAppExecutionRelativePath 
         + processo.relativePath + "/process/" + nomeDoArquivoJs);  
 
     eval("arquivoJs." + metodo + "(contexto)");

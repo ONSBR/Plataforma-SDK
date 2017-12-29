@@ -16,7 +16,7 @@ operacoesConta.push(new Operacao(
     "cadastra-conta.js", "insereConta", [EventCatalog.account_put], [EventCatalog.account_saved], accountProcessName, true
 ));    
 
-var processoAccount = new Processo(accountProcessName, "Plataforma-ProcessApp/conta-process-app", operacoesConta);
+var processoAccount = new Processo(accountProcessName, "plataforma-processapp/conta-process-app", operacoesConta);
 processoAccount.dataDoDeploy = new Date();
 
 sto.create(processoAccount, Processo.name, accountProcessName);
