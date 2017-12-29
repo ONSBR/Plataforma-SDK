@@ -19,19 +19,24 @@ services:
             - EVENT_MANAGER_HOST=event-manager
         ports:
             - 8083:8083
-        links: 
-            - event-manager:event-manager
+        networks:
+            main:
+                aliases:
+                    - presentation            
   event-manager:
         build: ../../../Plataforma-EventManager/
         image: event-manager:latest
         container_name: "event-manager"
         environment:
-            - EXECUTOR_HOST=executor         
+            - EXECUTOR_HOST=executor       
+            - ROUTER_HOST=router  
             - BD_VOLUME=/usr/src/app/core.db
         ports:
             - 8081:8081
-        links: 
-            - executor:executor
+        networks:
+            main:
+                aliases:
+                    - event-manager
         volumes:
             - ./core.db:/usr/src/app/core.db
   executor:
@@ -46,10 +51,10 @@ services:
             - EVENT_MANAGER_HOST=event-manager
             - WORKER_PATH=node_modules/plataforma-sdk/worker/run.js
             - BD_VOLUME=/usr/src/app/core.db
-        links: 
-            - processmemory:processmemory
-            - domain:domain
-            - event-manager:event-manager
+        networks:
+            main:
+                aliases:
+                    - executor            
         volumes:
             - ./core.db:/usr/src/app/core.db
   processmemory:
@@ -58,6 +63,10 @@ services:
         container_name: "processmemory"        
         ports:
             - 9091:9091
+        networks:
+            main:
+                aliases:
+                    - processmemory            
   router:
         build: ../../../Plataforma-Router/
         image: router:latest
@@ -67,17 +76,30 @@ services:
         environment:
             - BD_VOLUME=/usr/src/app/core.db
         volumes:
-            - ./core.db:/usr/src/app/core.db            
+            - ./core.db:/usr/src/app/core.db
+        networks:
+            main:
+                aliases:
+                    - router                    
   crud:
         build: ../../../Plataforma-PresentationApp/crud-contas/ 
         image: crud:latest
         container_name: "crud"        
         ports:
             - 4200:4200
+        networks:
+            main:
+                aliases:
+                    - crud
   domain:
         build: ../../../Plataforma-Domain/Platform.App/bundle
         image: domain:latest
         container_name: "domain"          
         ports:
             - 9090:9090
-               
+        networks:
+            main:
+                aliases:
+                    - domain
+networks:
+  main:               

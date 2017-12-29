@@ -29,7 +29,7 @@ operacoesTransferencia.push(new Operacao(
     "transferencia-conta.js", "transfereConta", [EventCatalog.transfer_request], [EventCatalog.transfer_confirmation], transferProcessName, true
 ));    
 
-var processoTransfer = new Processo(transferProcessName, "Plataforma-ProcessApp/transferencia-process-app", operacoesTransferencia);
+var processoTransfer = new Processo(transferProcessName, "plataforma-processapp/transferencia-process-app", operacoesTransferencia);
 processoTransfer.dataDoDeploy = new Date();
 sto.create(processoTransfer, Processo.name, transferProcessName);
 
