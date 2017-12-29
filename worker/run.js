@@ -4,8 +4,6 @@ var CoreRepository = require("../services/CoreRepository");
 var DataSet = require("plataforma-core/DataSet");
 var EventHelper = require("../EventHelper");
 
-const args = process.argv;
-
 var instprocess = process.argv[2];
 
 console.log("instprocess = " + instprocess);
@@ -33,7 +31,6 @@ function executaChamada(contexto) {
     if (operations.length > 0) {
         for (var i = 0; i < operations.length; i++) {
             var operation = operations[i];
-            console.log("Teste!!"); 
             executeOperation(operation, contexto);
         }
     } else {
