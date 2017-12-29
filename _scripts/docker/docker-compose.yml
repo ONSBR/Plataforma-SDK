@@ -27,13 +27,13 @@ services:
         container_name: "event-manager"
         environment:
             - EXECUTOR_HOST=executor         
-            - BD_VOLUME=/core-db/core.db
+            - BD_VOLUME=/usr/src/app/core.db
         ports:
             - 8081:8081
         links: 
             - executor:executor
         volumes:
-            - ./core.db:/core-db/core.db
+            - ./core.db:/usr/src/app/core.db
   executor:
         build: ../../../Plataforma-Executor/js/
         image: executor:latest
@@ -44,9 +44,13 @@ services:
             - PROCESS_MEMORY_HOST=processmemory
             - DOMAIN_APP_HOST=domain
             - WORKER_PATH=node_modules/plataforma-sdk/worker/run.js
+            - BD_VOLUME=/usr/src/app/core.db
+            - PROCESS_APP_EXECUTION_PATH=node_modules/plataforma-processapp/
         links: 
             - processmemory:processmemory
             - domain:domain
+        volumes:
+            - ./core.db:/usr/src/app/core.db
   processmemory:
         build: ../../../Plataforma-ProcessMemory/
         image: processmemory:latest
@@ -59,6 +63,10 @@ services:
         container_name: "router"        
         ports:
             - 8086:8086
+        environment:
+            - BD_VOLUME=/usr/src/app/core.db
+        volumes:
+            - ./core.db:/usr/src/app/core.db            
   crud:
         build: ../../../Plataforma-PresentationApp/crud-contas/ 
         image: crud:latest

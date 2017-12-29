@@ -9,4 +9,6 @@ config.eventManagerUrl = "http://" + eventManagerHost + ":8081/event";
 config.processMemoryUrl = "http://" + processMemoryHost + ":9091/";
 config.domainAppUrl = "http://" + domainAppHost + ":9090/";
 
+config.processAppExecutionPath = process.env.PROCESS_APP_EXECUTION_PATH || "../../"
+
 module.exports = config;
