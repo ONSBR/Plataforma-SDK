@@ -4,3 +4,4 @@ run_*.js
 config_*.js
 _scripts/bat/poc.db
 _scripts/shell/poc.db
+_scripts/docker/core.db

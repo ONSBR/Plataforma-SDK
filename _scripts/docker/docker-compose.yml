@@ -5,7 +5,11 @@ services:
         image: postgres:latest
         container_name: "postgres"        
         ports:
-            - 5432:5432        
+            - 5432:5432
+        networks:
+            main:
+                aliases:
+                    - postgres            
   adminer:
         image: adminer:latest
         container_name: "adminer"        
@@ -95,6 +99,8 @@ services:
         build: ../../../Plataforma-Domain/Platform.App/bundle
         image: domain:latest
         container_name: "domain"          
+        environment:
+            - POSTGRES_HOST=postgres
         ports:
             - 9090:9090
         networks:
