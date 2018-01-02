@@ -53,7 +53,7 @@ function executeOperation(operation, contexto) {
     var operacoes = coreRepository.getOperationsByEvent(contexto.eventoSaida.name, true);
 
     if (operation.mustcommit) {
-        //saveDataSet(contexto.dataSet, processo);
+        saveDataSet(contexto.dataSet, processo);
     }
 
     updateProcessMemory(contexto);
