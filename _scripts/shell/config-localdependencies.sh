@@ -44,3 +44,7 @@ cd ../Plataforma-SDK/
 npm link plataforma-processmemory
 npm link plataforma-core
 npm link plataforma-processapp
+
+echo import links to sdk
+cd ../Plataforma-ProcessApp/
+npm link plataforma-core
