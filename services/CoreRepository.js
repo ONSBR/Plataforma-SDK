@@ -2,6 +2,7 @@ var CoreStorage = require("./CoreStorage.js");
 var InstanciaDoProcesso = require("plataforma-core/InstanciaDoProcesso");
 var Processo = require("plataforma-core/Processo");
 var Presentation = require("plataforma-core/Presentation");
+var Reproducao = require("plataforma-core/Reproducao");
 var Operacao = require("plataforma-core/Operacao");
 var StatusExecution = require("plataforma-core/StatusExecution");
 
@@ -15,16 +16,20 @@ class CoreRepository {
         return sto.head(processName, Processo.name);
     }
 
-    addProcessInstance(instanceId, processName, dataRef) {
+    addProcessInstance(instanceId, processName, dataRef, responsavel) {
         var processInstance = new InstanciaDoProcesso(
             instanceId, new Date(), null, StatusExecution.pending, 
-            null, processName, dataRef
+            responsavel, processName, dataRef
         );
         return sto.create(processInstance, InstanciaDoProcesso.name, instanceId);
     }
 
     getProcessInstance(instprocess) {
         return sto.head(instprocess, InstanciaDoProcesso.name);
+    }
+
+    addReproduction(reproduction) {
+        return sto.create(reproduction, Reproducao.name, reproduction.id);
     }
 
     getPresentation(presentationName) {

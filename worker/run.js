@@ -50,18 +50,28 @@ function executeOperation(operation, contexto) {
 
     eval("arquivoJs." + metodo + "(contexto)");
     
-    var operacoes = coreRepository.getOperationsByEvent(contexto.eventoSaida.name, true);
-
-    if (operation.mustcommit) {
+    if (operation.mustcommit && !contexto.evento.reproducao) {
         saveDataSet(contexto.dataSet, processo);
     }
 
+    // TODO: o evento só pode ser enviado depois da resposta da atualização do processmemory
     updateProcessMemory(contexto);
 
-    if (operacoes.length > 0) {
-        EventHelper.sendEvent(contexto.eventoSaida);
-    } else {
-        console.log("[ERROR] Evento se saída não configurado para o processo: " + processo.nome + ", evento: " + contexto.eventoSaida.name);    
+    if (contexto.eventoSaida) {
+
+        contexto.eventoSaida.reproducao = contexto.evento.reproducao;
+        contexto.eventoSaida.dataRef = contexto.evento.dataRef;
+        contexto.eventoSaida.origem = contexto.evento.origem;
+        contexto.eventoSaida.instancia = contexto.evento.instancia;
+        contexto.eventoSaida.responsavel = contexto.evento.responsavel;
+        contexto.eventoSaida.processName = contexto.evento.processName;
+
+        var operacoes = coreRepository.getOperationsByEvent(contexto.eventoSaida.name, true);
+        if (operacoes.length > 0) {
+            EventHelper.sendEvent(contexto.eventoSaida);
+        } else {
+            console.log("[ERROR] Evento se saída não configurado para o processo: " + processo.nome + ", evento: " + contexto.eventoSaida.name);    
+        }
     }
 
     console.log("Operação executada com sucesso: " + nomeDoArquivoJs + "." + metodo);
