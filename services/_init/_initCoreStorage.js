@@ -62,8 +62,8 @@ var urlbasepresentation = "http://localhost:4200";
 
 var presentationaccount = new Presentation(
     "crudcontas", urlbasepresentation, 
-    [EventCatalog.account_saved, EventCatalog.transfer_confirmation], 
-    [EventCatalog.account_put, EventCatalog.transfer_request]
+    [EventCatalog.account_saved, EventCatalog.transfer_confirmation, ClientEventCatalog.client_saved], 
+    [EventCatalog.account_put, EventCatalog.transfer_request, ClientEventCatalog.account_put]
 );
 sto.create(presentationaccount, Presentation.name, presentationaccount.nome);
 

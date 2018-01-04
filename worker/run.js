@@ -58,7 +58,6 @@ function executeOperation(operation, contexto) {
     updateProcessMemory(contexto);
 
     if (contexto.eventoSaida) {
-
         contexto.eventoSaida.reproducao = contexto.evento.reproducao;
         contexto.eventoSaida.dataRef = contexto.evento.dataRef;
         contexto.eventoSaida.origem = contexto.evento.origem;
@@ -70,7 +69,7 @@ function executeOperation(operation, contexto) {
         if (operacoes.length > 0) {
             EventHelper.sendEvent(contexto.eventoSaida);
         } else {
-            console.log("[ERROR] Evento se saída não configurado para o processo: " + processo.nome + ", evento: " + contexto.eventoSaida.name);    
+            console.log("[ERROR] Evento de saída não configurado para o processo: " + processo.nome + ", evento: " + contexto.eventoSaida.name);    
         }
     }
 
