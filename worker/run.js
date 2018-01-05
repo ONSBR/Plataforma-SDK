@@ -84,7 +84,7 @@ function saveDataSet(dataSet, processo) {
         var args = {
             data: entity,
             headers: { "Content-Type": "application/json", 
-                       "Instance-Id":"fe93a9a8-84d9-41ec-a056-e4606a72fbdd" }
+                       "Instance-Id": instprocess }
         };
         var reqExec = client.post(config.domainAppUrl + processo.nome + "/persist", args, function (data, response) {
             console.log("Entidade persistida na api de dominio com sucesso.");
