@@ -80,9 +80,9 @@ function saveDataSet(dataSet, processo) {
     let entities = dataSet.entities;
 
     entities.forEach(entity => {
-        console.log("Insert entity: " + entity);
+        console.log("Insert entity: " + entity.toJSON());
         var args = {
-            data: entity,
+            data: entity.toJSON(),
             headers: { "Content-Type": "application/json", 
                        "Instance-Id": instprocess }
         };
