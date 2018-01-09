@@ -16,10 +16,10 @@ class CoreRepository {
         return sto.head(processName, Processo.name);
     }
 
-    addProcessInstance(instanceId, processName, dataRef, responsavel) {
+    addProcessInstance(instanceId, processName, dataRef, responsavel, reproducao) {
         var processInstance = new InstanciaDoProcesso(
             instanceId, new Date(), null, StatusExecution.pending, 
-            responsavel, processName, dataRef
+            responsavel, processName, dataRef, reproducao
         );
         return sto.create(processInstance, InstanciaDoProcesso.name, instanceId);
     }
