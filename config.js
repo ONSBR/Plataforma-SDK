@@ -9,6 +9,6 @@ config.eventManagerUrl = "http://" + eventManagerHost + ":8081/event";
 config.processMemoryUrl = "http://" + processMemoryHost + ":9091/";
 config.domainAppUrl = "http://" + domainAppHost + ":9090/";
 
-config.processAppExecutionRelativePath = "../../"
+config.processAppExecutionRelativePath = "../node_modules/"
 
 module.exports = config;

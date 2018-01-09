@@ -8,7 +8,7 @@ function sendEvent(evento) {
     var args = { data: evento, headers: { "Content-Type": "application/json" } };
 
     var reqExec = client.post(config.eventManagerUrl, args, function (data, response) {
-        console.log("Evento enviado para o Gerenciador!");
+        console.log("Evento " + evento.name + " enviado para o event-manager!");
     });
     reqExec.on('error', function (err) {
         console.log('request error', err);

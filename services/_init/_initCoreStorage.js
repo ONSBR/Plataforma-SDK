@@ -2,6 +2,7 @@ var Processo = require("plataforma-core/Processo");
 var Presentation = require("plataforma-core/Presentation");
 var Operacao = require("plataforma-core/Operacao");
 var EventCatalog = require("plataforma-processapp/conta-process-app/metadados/EventCatalog");
+var ClientEventCatalog = require("plataforma-processapp/cliente-process-app/metadados/EventCatalog");
 var database = require("plataforma-processmemory/database");
 var CoreStorage = require("../CoreStorage");
 
@@ -9,29 +10,51 @@ database.clearDatabase("core.db");
 
 var sto = new CoreStorage();
 
-var accountProcessName = "cadastra-conta";
+saveAccountProcess(sto);
+saveTransferProcess(sto);
+saveClientProcess(sto);
 
-var operacoesConta = [];
-operacoesConta.push(new Operacao(
-    "cadastra-conta.js", "insereConta", [EventCatalog.account_put], [EventCatalog.account_saved], accountProcessName, true
-));    
+function saveAccountProcess(sto) {
+    var accountProcessName = "cadastra-conta";
+    
+    var operacoesConta = [];
+    operacoesConta.push(new Operacao(
+        "cadastra-conta.js", "insereConta", [EventCatalog.account_put], [EventCatalog.account_saved], accountProcessName, true
+    ));    
+    
+    var processoAccount = new Processo(accountProcessName, "plataforma-processapp/conta-process-app", operacoesConta);
+    processoAccount.dataDoDeploy = new Date();
+    
+    sto.create(processoAccount, Processo.name, accountProcessName);
+}
 
-var processoAccount = new Processo(accountProcessName, "plataforma-processapp/conta-process-app", operacoesConta);
-processoAccount.dataDoDeploy = new Date();
+function saveTransferProcess(sto) {
+    var transferProcessName = "transferencia-conta";
+    
+    var operacoesTransferencia = [];
+    operacoesTransferencia.push(new Operacao(
+        "transferencia-conta.js", "transfereConta", [EventCatalog.transfer_request], [EventCatalog.transfer_confirmation], transferProcessName, true
+    ));
 
-sto.create(processoAccount, Processo.name, accountProcessName);
+    var processoTransfer = new Processo(transferProcessName, "plataforma-processapp/transferencia-process-app", operacoesTransferencia);
+    processoTransfer.dataDoDeploy = new Date();
+    sto.create(processoTransfer, Processo.name, transferProcessName);
+}
 
+function saveClientProcess(sto) {
+    var clientProcessName = "cadastra-cliente";
+    
+    var operacoesCliente = [];
+    operacoesCliente.push(new Operacao(
+        "cadastra-cliente.js", "insereCliente", [ClientEventCatalog.client_put], 
+            [ClientEventCatalog.client_saved], clientProcessName, true
+    ));
 
-var transferProcessName = "transferencia-conta";
-
-var operacoesTransferencia = [];
-operacoesTransferencia.push(new Operacao(
-    "transferencia-conta.js", "transfereConta", [EventCatalog.transfer_request], [EventCatalog.transfer_confirmation], transferProcessName, true
-));    
-
-var processoTransfer = new Processo(transferProcessName, "plataforma-processapp/transferencia-process-app", operacoesTransferencia);
-processoTransfer.dataDoDeploy = new Date();
-sto.create(processoTransfer, Processo.name, transferProcessName);
+    var processoCliente = new Processo(clientProcessName, 
+        "plataforma-processapp/cliente-process-app", operacoesCliente);
+    processoCliente.dataDoDeploy = new Date();
+    sto.create(processoCliente, Processo.name, clientProcessName);
+}
 
 
 //URL para o presentation, que será direcionado pelo router.
@@ -39,8 +62,8 @@ var urlbasepresentation = "http://localhost:4200";
 
 var presentationaccount = new Presentation(
     "crudcontas", urlbasepresentation, 
-    [EventCatalog.account_saved, EventCatalog.transfer_confirmation], 
-    [EventCatalog.account_put, EventCatalog.transfer_request]
+    [EventCatalog.account_saved, EventCatalog.transfer_confirmation, ClientEventCatalog.client_saved], 
+    [EventCatalog.account_put, EventCatalog.transfer_request, ClientEventCatalog.account_put]
 );
 sto.create(presentationaccount, Presentation.name, presentationaccount.nome);
 
