@@ -79,19 +79,17 @@ function executeOperation(operation, contexto) {
 function saveDataSet(dataSet, processo) {
     let entities = dataSet.entities;
 
-    entities.forEach(entity => {
-        console.log("Insert entity: " + entity.toJSON());
-        var args = {
-            data: entity.toJSON(),
-            headers: { "Content-Type": "application/json", 
-                       "Instance-Id": instprocess }
-        };
-        var reqExec = client.post(config.domainAppUrl + processo.nome + "/persist", args, function (data, response) {
-            console.log("Entidade persistida na api de dominio com sucesso.");
-        });
-        reqExec.on('error', function (err) {
-            console.log('Erro ao persistir entidade.', err);
-        });
+    console.log("Insert entities: " + JSON.stringify(entities));
+    var args = {
+        data: JSON.stringify(entities),
+        headers: { "Content-Type": "application/json", 
+                   "Instance-Id": instprocess }
+    };
+    var reqExec = client.post(config.domainAppUrl + processo.nome + "/persist", args, function (data, response) {
+        console.log("Entidade persistida na api de dominio com sucesso.");
+    });
+    reqExec.on('error', function (err) {
+        console.log('Erro ao persistir entidade.', err);
     });
 }
 
