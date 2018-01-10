@@ -34,13 +34,13 @@ npm link plataforma-core
 npm link plataforma-sdk
 
 echo import links to presentation
-cd ../../Plataforma-PresentationApp/
+cd ../../Plataforma-PresentationApp/server
 npm link plataforma-sdk
 npm link plataforma-core
 npm link plataforma-processapp
 
 echo import links to sdk
-cd ../Plataforma-SDK/
+cd ../../Plataforma-SDK/
 npm link plataforma-processmemory
 npm link plataforma-core
 npm link plataforma-processapp
