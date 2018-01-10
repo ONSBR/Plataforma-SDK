@@ -22,7 +22,7 @@ module.exports = class System {
          fieldName : field,
          fieldValue : value } */
     find(criteria) {
-        return this.finder('system', criteria);
+        return this.finder.find('system', criteria);
     }
 
 
