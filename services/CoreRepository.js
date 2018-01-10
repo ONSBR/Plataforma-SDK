@@ -28,6 +28,10 @@ class CoreRepository {
         return sto.head(instprocess, InstanciaDoProcesso.name);
     }
 
+    getReproduction(reproductionId) {
+        return sto.head(reproductionId, Reproducao.name);
+    }
+
     addReproduction(reproduction) {
         return sto.create(reproduction, Reproducao.name, reproduction.id);
     }
