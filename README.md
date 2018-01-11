@@ -50,3 +50,8 @@ Ao executar esse comando o docker irá subir um container com servidor da aprese
 
 ### Para instalar ou atualizar as dependências é necessário executar o comando:
 npm install
+
+### Alternar para contêineres do Windows
+Após a instalação, o Docker para Windows passa a executar contêineres do Linux por padrão. Alterne para os contêineres do Windows usando o menu de bandeja do Docker ou executando o seguinte comando em um prompt do PowerShell 
+
+C:\Program Files\Docker\Docker> .\DockerCli.exe -SwitchDemon
