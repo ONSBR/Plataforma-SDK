@@ -10,6 +10,23 @@ module.exports = class BaseEntity {
         this.entity = entity;
     }
 
+    destroy(obj){
+        if (Array.isArray(obj)){
+            var items = obj.map(o => {
+                o._metadata = {
+                    type: this.entity,
+                    changeTrack:"destroy"
+                };
+            })
+            return this.creator.create(items);
+        }else{
+            map._metadata = {
+                type:this.entity,
+                changeTrack:"destroy"
+            };
+            return this.creator.create([map]);
+        }
+    }
     create(map){
         if (Array.isArray(map)){
             var items = map.map(m => {
