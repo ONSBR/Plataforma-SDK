@@ -23,7 +23,6 @@ module.exports = class Creator {
         this.conf = configuration;
     }
 
-
     /** Inserts a entity into the database
      *
      * @param {*} data
