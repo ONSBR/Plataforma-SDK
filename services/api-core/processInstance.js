@@ -1,26 +1,31 @@
 
 var Creator = require("./creator");
+var Finder = require("./finder");
 
 module.exports = class ProcessInstance {
+
+    /** Creates a 'ProcessInstance' object
+     * 
+     * @param {*} configuration is a JSON with this structure:
+     * @code
+        {
+            scheme: scheme, 
+            host:host, 
+            port:port
+        }
+     *
+     * @example
+        {
+            scheme: 'http', 
+            host: 'localhost', 
+            port: '9100'
+        } 
+     */  
     constructor(configuration){
         this.creator = new Creator(configuration);
+        this.finder = new Finder(configuration);
     }
 
-/*
-[
-    {
-        "processId": "995d5970-1c56-483f-bf3c-90fdcbc428b7",
-        "startExecution": "2018-01-08 12:00:01",
-        "endExecution": "2018-01-08 12:00:02",
-        "referenceDate": "2018-01-08 12:00:03",
-        "status":"pending",
-        "_metadata": {
-            "type": "processInstance",
-            "changeTrack":"create"
-        }
-    }
-]
-*/
 
     create(processInstance){
 
@@ -31,10 +36,49 @@ module.exports = class ProcessInstance {
         return this.creator.create([processInstance]);
     }
 
-    findById(id){}
+ /**
+     * 
+     * @param {*} id is the identifier of the operation
+     * 
+     * @example
+ 
+     */
+    findById(id){
+        var criteria = {
+            filterName : "byId",
+            parameters:
+            [
+                {
+                    fieldName : "id",
+                    fieldValue : id
+                }
+            ]
+        }    
 
-    findByName(){
-        return this.finder.byName('processInstance');
-    }    
+        return this.finder.find('processInstance', criteria, 1);
+    }
+
+    /**
+     * 
+     * @param {*} processId is the identifier of the process that owns the opetations
+     * 
+     * @example
+
+
+     */
+    findByProcessId(processId){
+        var criteria = {
+            filterName : "byProcessId",
+            parameters:
+            [
+                {            
+                    fieldName : "processId",
+                    fieldValue : processId
+                }
+            ]
+        }    
+
+        return this.finder.find('processInstance', criteria);
+    }       
 
 }
