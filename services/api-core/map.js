@@ -18,10 +18,15 @@ module.exports = class Map {
     }
 
     findByName(name) {
-        var criteria = {
+        var criteria = {            
             filterName : "byName",
-            fieldName : "name",
-            fieldValue : name
+            parameters:
+            [
+                {
+                    fieldName : "name",
+                    fieldValue : name
+                }
+            ]
         }
         return this.finder.find('map', criteria);
     }
@@ -29,8 +34,13 @@ module.exports = class Map {
     findBySystemId(id) {
         var criteria = {
             filterName : "bySystemId",
-            fieldName : "id",
-            fieldValue : id
+            parameters:
+            [
+                {
+                    fieldName : "id",
+                    fieldValue : id
+                }
+            ]
         }
         return this.finder.find('map', criteria);
     }
@@ -38,8 +48,13 @@ module.exports = class Map {
     findByProcessId(id) {
         var criteria = {
             filterName : "byProcessId",
-            fieldName : "id",
-            fieldValue : id
+            parameters:
+            [
+                {
+                    fieldName : "id",
+                    fieldValue : id
+                }
+            ]
         }
         return this.finder.find('map', criteria);
     }
@@ -47,10 +62,16 @@ module.exports = class Map {
     findById(id) {
         var criteria = {
             filterName : "byId",
-            fieldName : "id",
-            fieldValue : id
+            parameters:
+            [
+                {
+                    fieldName : "id",
+                    fieldValue : id
+                }
+            ]
         }
         return this.finder.find('map', criteria, 1)
     }
 
+    
 }
