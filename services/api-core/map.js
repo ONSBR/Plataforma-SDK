@@ -2,8 +2,8 @@ const Creator = require("./creator");
 const Finder = require("./finder");
 const BaseEntity = require("./baseEntity");
 
-module.exports = class Event extends BaseEntity {
+module.exports = class Map extends BaseEntity {
     constructor(configuration){
-        super(configuration,"event");
+        super(configuration,"map");
     }
 }

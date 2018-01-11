@@ -1,9 +1,10 @@
-
 var Creator = require("./creator");
+var Finder = require("./finder");
 
 module.exports = class OperationInstance {
     constructor(configuration){
         this.creator = new Creator(configuration);
+        this.finder = new Finder(configuration);
     }
 
 /*
@@ -30,10 +31,46 @@ module.exports = class OperationInstance {
         return this.creator.create([operationInstance]);
     }
 
-    findById(id){}
+    findById(id){
+        var criteria = {
+            filterName : "byId",
+            parameters:
+            [
+                {
+                    fieldName : "id",
+                    fieldValue : id
+                }
+            ]
+        }        
+        return this.finder.find('operationInstance', criteria, 1);
+    }
 
-    findByName(){
-        return this.finder.byName('operationInstance');
-    }       
+    findByProcessInstanceId(processInstanceId){
+        var criteria = {
+            filterName : "byProcessInstanceId",
+            parameters :
+            [
+                {
+                    fieldName : "processInstanceId",
+                    fieldValue : processInstanceId
+                }
+            ]            
+        }         
+        return this.finder.find('operationInstance', criteria);
+    }     
+    
+    findByOperationId(operationId){
+        var criteria = {
+            filterName : "byOperationId",
+            parameters :
+            [
+                {
+                    fieldName : "operationId",
+                    fieldValue : operationId
+                }
+            ]            
+        }         
+        return this.finder.find('operationInstance', criteria);
+    }     
 
 }

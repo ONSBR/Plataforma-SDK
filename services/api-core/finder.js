@@ -65,15 +65,25 @@ module.exports = class Finder {
      * @code
         {
             filterName : filter-name,
-            fieldName : field-name,
-            fieldValue : field-value
+            parameters:
+                [
+                    {
+                        fieldName : field-name,
+                        fieldValue : field-value
+                    }
+                ]
         }    
      * @example
      * 
         var criteria = {
             filterName : "byId",
-            fieldName : "id",
-            fieldValue : id
+            parameters:
+                [
+                    {
+                        fieldName : "id",
+                        fieldValue : id
+                    }
+                ]
         }    
      *
      * @param {*} only_one defines if one wants all the objects, when it should be 
@@ -86,11 +96,14 @@ module.exports = class Finder {
             var url = this.conf.scheme + "://" 
             + this.conf.host + ":" 
             + this.conf.port + "/core/" + entityName + 
-            "?filter=" + criteria.filterName + "&" + 
-            criteria.fieldName + "=" + criteria.fieldValue;            
-
+            "?filter=" + criteria.filterName;
             
-
+            var i = 0;
+            for (i in criteria.parameters) {
+                url += "&" + criteria.parameters[i].fieldName + "=" 
+                + criteria.parameters[i].fieldValue;
+            }
+            //console.log("url = ", url);
             var req = unirest("GET", url);
 
             //console.log("req = ", req);
