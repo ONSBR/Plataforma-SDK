@@ -48,3 +48,9 @@ npm link plataforma-processapp
 echo import links to sdk
 cd ../Plataforma-ProcessApp/
 npm link plataforma-core
+npm link plataforma-sdk
+
+echo import links to sdk
+cd ../Plataforma-ProcessApp/conta-process-app
+npm link plataforma-core
+npm link plataforma-sdk

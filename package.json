@@ -22,6 +22,7 @@
     "handlebars": "^4.0.11",
     "plataforma-processmemory": "git+https://github.com/ONSBR/Plataforma-ProcessMemory",
     "plataforma-core": "git+https://github.com/ONSBR/Plataforma-core",
-    "plataforma-processapp": "git+https://github.com/ONSBR/Plataforma-ProcessApp"
+    "plataforma-processapp": "git+https://github.com/ONSBR/Plataforma-ProcessApp",
+    "node-command-line": "^1.0.2"
   }
 }
