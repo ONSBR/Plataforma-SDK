@@ -1,8 +1,8 @@
 var CoreRepository = require("../services/CoreRepository");
 var ProcessMemoryHelper = require("../ProcessMemoryHelper");
 var DataSetHelper = require("../DataSetHelper");
-var EventHelper = require("../EventHelper");
 var config = require("../config");
+var EventHelper = require("../EventHelper");
 var DataSet = require("plataforma-core/DataSet");
 
 class ProcessApp {
