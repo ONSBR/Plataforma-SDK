@@ -67,7 +67,7 @@ module.exports = class BaseEntity {
             parameters:
             [
                 {
-                    fieldName : "id",
+                    fieldName : "systemId",
                     fieldValue : id
                 }
             ]
@@ -81,7 +81,7 @@ module.exports = class BaseEntity {
             parameters:
             [
                 {
-                    fieldName : "id",
+                    fieldName : "processId",
                     fieldValue : id
                 }
             ]
