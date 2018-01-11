@@ -23,11 +23,22 @@ module.exports = class Creator {
         this.conf = configuration;
     }
 
+    /** Creates or updates an entity */
+    save(data) {
+        if (data.id === undefined) {
+            return create(data)
+        }
+
+        return update(data)
+
+    }
+
     /** Inserts a entity into the database
      * 
      * @param {*} data 
      */
     create(data){
+        data._metadata.changeTrack = "create";
 
         var promise = new Promise((resolve,reject) => {
             var url = this.conf.scheme + "://" + 
@@ -57,5 +68,7 @@ module.exports = class Creator {
         });
         return promise;
     }
+
+    update(data) {}
 
 }
