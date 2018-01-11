@@ -17,6 +17,7 @@ module.exports = class BaseEntity {
                     type: this.entity,
                     changeTrack:"destroy"
                 };
+                return o;
             })
             return this.creator.create(items);
         }else{
