@@ -17,14 +17,15 @@ module.exports = class BaseEntity {
                     type: this.entity,
                     changeTrack:"destroy"
                 };
+                return o;
             })
             return this.creator.create(items);
         }else{
-            map._metadata = {
+            obj._metadata = {
                 type:this.entity,
                 changeTrack:"destroy"
             };
-            return this.creator.create([map]);
+            return this.creator.create([obj]);
         }
     }
     create(map){
