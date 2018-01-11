@@ -94,8 +94,13 @@ module.exports = class System {
     findByName(name) {
         var criteria = {
             filterName : "byName",
-            fieldName : "name",
-            fieldValue : name
+            parameters : 
+            [
+                {
+                    fieldName : "name",
+                    fieldValue : name
+                }
+            ]
         }
         return this.finder.find('system', criteria);
     }
@@ -125,12 +130,39 @@ module.exports = class System {
     findById(id) {
         var criteria = {
             filterName : "byId",
-            fieldName : "id",
-            fieldValue : id
+            parameters :
+            [
+                {
+                    fieldName : "id",
+                    fieldValue : id
+                }
+            ]
         }
         
         return this.finder.find('system', criteria, 1)
 
     }    
+
+    findByNameOrId(name, id) {
+        var criteria = {
+            filterName : "byNameOrId",
+            parameters :
+            [
+                {
+                    fieldName : "name",
+                    fieldValue : name
+                }
+                ,
+                {
+                    fieldName : "id",
+                    fieldValue : id
+                }
+              
+            ]
+        }
+        
+        return this.finder.find('system', criteria, 1)
+
+    }   
 
 }

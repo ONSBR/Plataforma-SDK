@@ -110,8 +110,13 @@ module.exports = class Operation {
     findById(id){
         var criteria = {
             filterName : "byId",
-            fieldName : "id",
-            fieldValue : id
+            parameters:
+            [
+                {          
+                    fieldName : "id",
+                    fieldValue : id
+                }
+            ]
         }    
 
         return this.finder.find('operation', criteria, 1);
@@ -138,8 +143,13 @@ module.exports = class Operation {
     findByProcessId(processId){
         var criteria = {
             filterName : "byProcessId",
-            fieldName : "processId",
-            fieldValue : processId
+            parameters:
+            [
+                {
+                    fieldName : "processId",
+                    fieldValue : processId
+                }
+            ]
         }    
 
         return this.finder.find('operation', criteria);

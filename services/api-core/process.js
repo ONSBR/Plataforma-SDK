@@ -87,8 +87,13 @@ module.exports = class Process {
     findBySytemId(systemId){
         var criteria = {
             filterName : "bySystemId",
-            fieldName : "systemId",
-            fieldValue : systemId
+            parameters :
+            [
+                {
+                    fieldName : "systemId",
+                    fieldValue : systemId
+                }
+            ]            
         }        
         return this.finder.find('process', criteria);
 
@@ -101,8 +106,13 @@ module.exports = class Process {
     findById(id){
         var criteria = {
             filterName : "byId",
-            fieldName : "id",
-            fieldValue : id
+            parameters:
+            [
+                {
+                    fieldName : "id",
+                    fieldValue : id
+                }
+            ]
         }        
         return this.finder.find('process', criteria, 1);
     }    
