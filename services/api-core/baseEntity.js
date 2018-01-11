@@ -11,11 +11,23 @@ module.exports = class BaseEntity {
     }
 
     create(map){
-        map._metadata = {
-            type:this.entity,
-            changeTrack:"create"
-        };
-        return this.creator.create([map]);
+        if (Array.isArray(map)){
+            var items = map.map(m => {
+                m._metadata = {
+                    type:this.entity,
+                    changeTrack:"create"
+                };
+                return m;
+            });
+            return this.creator.create(items);
+        }else{
+            map._metadata = {
+                type:this.entity,
+                changeTrack:"create"
+            };
+            return this.creator.create([map]);
+        }
+
     }
 
     findByName(name) {
