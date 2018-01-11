@@ -13,7 +13,6 @@ class ProcessApp {
     }
 
     startProcess() {
-        //TODO Passar para template method
         console.log("Process Instance Id= " + this.processInstanceId);
         console.log("Operation= " + this.operation);
         let coreRepository = new CoreRepository();
@@ -36,10 +35,10 @@ class ProcessApp {
         lookupTable[operation](contexto);
         DataSetHelper.save(operation, contexto);
         ProcessMemoryHelper.updateProcessMemory(contexto);
-        this._sendOutputEvents(contexto);
+        this.sendOutputEvents(contexto);
     }
     
-    _sendOutputEvents(contexto) {
+    sendOutputEvents(contexto) {
         if (contexto.eventoSaida) {
             contexto.eventoSaida.reproducao = contexto.evento.reproducao;
             contexto.eventoSaida.dataRef = contexto.evento.dataRef;
