@@ -1,28 +1,42 @@
 var unirest = require("unirest");
 
-module.exports = class Create {
+module.exports = class Creator {
+
+    /** Creates a 'Creator' object
+     * 
+     * @param {*} configuration is a JSON with this structure:
+     * @code
+        {
+            scheme: scheme, 
+            host:host, 
+            port:port
+        }
+     *
+     * @example
+        {
+            scheme: 'http', 
+            host: 'localhost', 
+            port: '9100'
+        } 
+     */    
     constructor(configuration){
         this.conf = configuration;
     }
 
-/*
-[
-    {
-        "processId": "995d5970-1c56-483f-bf3c-90fdcbc428b7",
-        "method": "realizeTransferencia",
-        "file":"index.js",
-        "_metadata": {
-            "type": "operation",
-            "changeTrack":"create"
-        }
-    }
-]
-*/
-
+    /** Inserts a entity into the database
+     * 
+     * @param {*} data 
+     */
     create(data){
 
         var promise = new Promise((resolve,reject) => {
-            var req = unirest("POST", "http://" + this.conf.ip + ":" + this.conf.port + "/core/persist");
+            var url = this.conf.scheme + "://" + 
+            this.conf.host + ":" + 
+            this.conf.port + "/core/persist";
+
+
+            var req = unirest("POST", url);
+            
             req.headers({
                 "Content-Type": "application/json",
                 "Instance-Id": "62141389-2ef2-4715-8675-a670ad7a00cc"

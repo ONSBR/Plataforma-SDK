@@ -1,26 +1,74 @@
 
 var Creator = require("./creator");
+var Finder = require("./finder");
 
 module.exports = class Process {
+
+
+    /** Creates a 'Process' object
+     * 
+     * @param {*} configuration is a JSON with this structure:
+     * @code
+        {
+            scheme: scheme, 
+            host:host, 
+            port:port
+        }
+     *
+     * @example
+        {
+            scheme: 'http', 
+            host: 'localhost', 
+            port: '9100'
+        } 
+     */
     constructor(configuration){
         this.creator = new Creator(configuration);
+        this.finder = new Finder(configuration);
     }
 
-/*
-[
-    {
-        "systemId": "995d5970-1c56-483f-bf3c-90fdcbc428b7",
-        "name": "Transferência",
-        "relativePath":"./",
-        "deployDate":"2018-01-08 14:24:36",
-        "_metadata": {
-            "type": "process",
-            "changeTrack":"create"
+    /** Inserts a 'process' object into the database
+     * 
+     * @param {*} system is a JSON with this structure:
+     * @code
+        {
+            "systemId": system-id-of-this-process,
+            "name": process-name,
+            "relativePath": process-relative-path
+            "deployDate": process-deplu-date,    
         }
-    }
-]
-*/
+     * @example
+     *
+        var scheme = "http"
+        var host = "localhost";
+        var port = "9100";
 
+
+        const Process = require("../api-core/process")
+        const System = require("../api-core/system")
+
+        var sysService = new System({scheme: scheme, host:host, port:port});
+        var procService = new Process({scheme: scheme, host:host, port:port});
+
+        var systemData = {
+            "name": "bank",
+            "description": "A Testing Bank App",
+            "version":"0.0.23",
+        }
+
+        sysService.create(systemData).then((systemId) => { 
+            console.log("system id = ", systemId);
+            var procData = {
+                "systemId": systemId,
+                "name": "Transferência",
+                "relativePath":"./",
+                "deployDate": new Date(),    
+            }
+            
+            procService.create(procData).then(processId => console.log("processId = ", processId));
+        });  
+     *
+     */
     create(process){
 
         process._metadata = {
@@ -30,12 +78,33 @@ module.exports = class Process {
         return this.creator.create([process]);
     }
 
-    
 
-    findById(id){}
 
-    findByName(){
-        return this.finder.byName('process');
+    /** Returns a 'Promise' with a list with the processes of a certain system
+     * 
+     * @param {*} systemId is the system identifier
+     */
+    findBySytemId(systemId){
+        var criteria = {
+            filterName : "bySystemId",
+            fieldName : "systemId",
+            fieldValue : systemId
+        }        
+        return this.finder.find('process', criteria);
+
+    }
+
+    /** Returns a 'Promisse' with an object with a certain id
+     * 
+     * @param {*} id is the process identifier
+     */
+    findById(id){
+        var criteria = {
+            filterName : "byId",
+            fieldName : "id",
+            fieldValue : id
+        }        
+        return this.finder.find('process', criteria, 1);
     }    
 
 }
