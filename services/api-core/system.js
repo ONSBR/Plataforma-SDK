@@ -59,11 +59,10 @@ module.exports = class System {
         });   
      *
      */
-    create(system){
+    save(system){
 
         system._metadata = {
             type:"system",
-            changeTrack:"create"
         };
         
         return this.creator.create([system]);
