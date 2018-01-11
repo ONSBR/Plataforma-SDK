@@ -31,6 +31,13 @@ module.exports = class System {
      * 
      * @param {*} system is a JSON with this structure:
      * 
+     * @code
+        {
+            "name": system-name,
+            "description": system-description,
+            "version": system-version
+        }    
+     * 
      * @example
      *
         var scheme = "http";

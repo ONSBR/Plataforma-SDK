@@ -81,12 +81,15 @@ module.exports = class Finder {
      * 
      */
     find(entityName, criteria, only_one = 0) {
+        
         var promise = new Promise((resolve,reject) => {
             var url = this.conf.scheme + "://" 
             + this.conf.host + ":" 
             + this.conf.port + "/core/" + entityName + 
             "?filter=" + criteria.filterName + "&" + 
             criteria.fieldName + "=" + criteria.fieldValue;            
+
+            
 
             var req = unirest("GET", url);
 
