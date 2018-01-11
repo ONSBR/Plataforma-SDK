@@ -50,7 +50,7 @@ module.exports = class Creator {
                     reject(res.Error);
                 }
                 else {
-                    resolve(res.body[0].id)
+                    resolve(res.body)
                 }
             });
         });
