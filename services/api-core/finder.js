@@ -107,9 +107,17 @@ module.exports = class Finder {
             var req = unirest("GET", url);
 
             //console.log("req = ", req);
-            req.headers({
-                "Instance-Id": "62141389-2ef2-4715-8675-a670ad7a00cc"
-            });
+            if (this.conf.referenceData == undefined) {
+                req.headers({
+                    "Instance-Id": "62141389-2ef2-4715-8675-a670ad7a00cc"
+                });
+            }
+            else {
+                req.headers({
+                    "Instance-Id": "62141389-2ef2-4715-8675-a670ad7a00cc",
+                    "Reference-Date": this.conf.referenceData
+                });
+            }
             
             req.end(function (res) {
                 if (res.error) {

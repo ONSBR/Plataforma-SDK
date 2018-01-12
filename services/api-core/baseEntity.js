@@ -19,16 +19,17 @@ module.exports = class BaseEntity {
                 };
                 return o;
             })
-            return this.creator.create(items);
+            return this.creator.save(items, "destroy");
         }else{
             obj._metadata = {
                 type:this.entity,
                 changeTrack:"destroy"
             };
-            return this.creator.create([obj]);
+            return this.creator.save([obj], "destroy");
         }
     }
-    create(map){
+
+/*     create(map){
         if (Array.isArray(map)){
             var items = map.map(m => {
                 m._metadata = {
@@ -45,7 +46,41 @@ module.exports = class BaseEntity {
             };
             return this.creator.create([map]);
         }
+    } */
 
+    save(map) {
+        if (Array.isArray(map)){
+            var items = map.map(m => {
+                if (m.id == undefined) {
+                    m._metadata = {
+                        type:this.entity,
+                        changeTrack : "create"
+                    };
+                }
+                else {
+                    m._metadata = {
+                        type:this.entity,
+                        changeTrack : "update"
+                    };                  
+                }
+                return m;
+            });
+            return this.creator.save(items);
+        }else{
+            if (map.id == undefined) {
+                map._metadata = {
+                    type:this.entity,
+                    changeTrack : "create"
+                };
+            }
+            else {
+                map._metadata = {
+                    type:this.entity,
+                    changeTrack : "update"
+                };                  
+            }            
+            return this.creator.save([map]);
+        }
     }
 
     findByName(name) {

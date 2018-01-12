@@ -23,17 +23,12 @@ module.exports = class Creator {
         this.conf = configuration;
     }
 
-    /** Inserts a entity into the database
-     *
-     * @param {*} data
-     */
-    create(data){
-        
+    save(data){
+     
         var promise = new Promise((resolve,reject) => {
             var url = this.conf.scheme + "://" +
             this.conf.host + ":" +
             this.conf.port + "/core/persist";
-
 
             var req = unirest("POST", url);
 
@@ -57,13 +52,17 @@ module.exports = class Creator {
         return promise;
     }
 
-    save(data){
+/*     save(data){
         if (data.id){
-            data._metadata.changeTrack = "update";
-        }else{
-            data._metadata.changeTrack = "create";
+            var ctu = "update";
+            return this.metodoA(data,ct);
         }
-        return create(data);
-    }
+        var ctc = "create";
+        return this.metodoA(data, ctc);
+    } */
+
+   
+
+
 
 }
