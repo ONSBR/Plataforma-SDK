@@ -91,7 +91,7 @@ module.exports = class Finder {
      * 
      */
     find(entityName, criteria, only_one = 0) {
-        
+    
         var promise = new Promise((resolve,reject) => {
             var url = this.conf.scheme + "://" 
             + this.conf.host + ":" 
@@ -118,6 +118,8 @@ module.exports = class Finder {
                     "Reference-Date": this.conf.referenceData
                 });
             }
+
+            console.log("headers = ", req.headers);
             
             req.end(function (res) {
                 if (res.error) {

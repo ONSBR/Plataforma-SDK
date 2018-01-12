@@ -318,20 +318,171 @@ module.exports = class ApiCoreFacade{
     // ************************************************************************
     //                                PROCESS INSTANCE
     // ************************************************************************
+
+    /** Creates or updates a 'ProcessInstance' entity
+     * 
+     * @param {*} id 
+     * 
+     * @return a Promisse object containing an array with the 'ProcessInstance' object created or updated
+     * 
+     * @example for Create
+     * 
+        const ApiCoreFacade = require("../api-core/apiCoreFacade")
+
+        var Configuration = {
+            scheme: "http", 
+            host: "localhost", 
+            port: "9110"
+        }
+
+        var api = new ApiCoreFacade(Configuration);
+
+
+        var systemData = {
+            "name": "bank",
+            "description": "A Testing Bank App",
+            "version":"0.0.6",
+        }
+
+        api.systemSave(systemData).then((system) => { 
+            console.log("system id = ", system);
+            var procData = {
+                "systemId": system[0].id,
+                "name": "Transferência",
+                "relativePath":"./",
+                "deployDate": new Date(),    
+            }
+            
+            api.processSave(procData).then(process => {
+                console.log("process = ", process);
+
+                var procInstData = {
+                    "processId": process[0].id,
+                    "startExecution": new Date(),
+                    "endExecution": new Date(),
+                    "referenceDate": new Date(),
+                    "status":"pending",            
+                }
+
+                api.processInstanceSave(procInstData).then(processInst => {
+                    console.log("processInst = ", processInst);
+                });
+            });
+        });
+     *
+     * @example for update
+     * 
+     *
+        const ApiCoreFacade = require("../api-core/apiCoreFacade")
+
+        var Configuration = {
+            scheme: "http", 
+            host: "localhost", 
+            port: "9110"
+        }
+
+        var api = new ApiCoreFacade(Configuration);
+
+
+        var procData = {
+            "id" : "b27e9ba9-2850-4f50-87e3-332be84d6763",
+            "name": "Transferidor",
+        }
+
+        api.processSave(procData).then(processId => console.log("processId = ", processId));
+     *
+     * @param {*} processInstance 
+     */
     processInstanceSave(processInstance) {
         return this.processInstance.save(processInstance);
     }
 
+    /** Destroys a 'ProcessInstance' entity
+     * 
+     * @param {*} id 
+     * 
+     * @return a Promisse object containing an array with the 'ProcessInstance' object destroyed
+     * 
+     * Destroy means to set the end of validity
+     * 
+     * @example
+     * 
+        const ApiCoreFacade = require("../api-core/apiCoreFacade")
+
+        var Configuration = {
+            scheme: "http", 
+            host: "localhost", 
+            port: "9110"
+        }
+
+        var api = new ApiCoreFacade(Configuration);
+
+        var data = {
+            "id" : "f5630f21-51ad-4130-baec-d505c7086f14",
+        }
+
+        api.processInstanceDestroy(data).then((id) => { 
+            console.log(id);
+        });
+     */    
     processInstanceDestroy(id) {
         return this.processInstance.destroy(id);
     }
 
+    /** Finds a 'ProcessInstance' entity based on its id
+     * 
+     * @param {*} id 
+     * 
+     * @return a Promisse object containing an array with the 'ProcessInstance' found
+     * 
+     * @example
+     * 
+        const ApiCoreFacade = require("../api-core/apiCoreFacade")
+
+        var Configuration = {
+            scheme: "http", 
+            host: "localhost", 
+            port: "9110"
+        }
+
+        var api = new ApiCoreFacade(Configuration);
+
+        api.processInstanceFindById("468da502-7975-4b51-adf1-ea7a732b2281").then((system) => { 
+            console.log('system = ', system);
+        });
+     */    
     processInstanceFindById(id) {
         return this.processInstance.findById(id);
     }
 
+    /** Finds a 'ProcessInstance' entity based on the 'Process' that it is related to
+     * 
+     * @param {*} id 
+     * 
+     * @return a Promisse object containing an array with the 'ProcessInstance' found
+     * 
+     * @example
+     * 
+        const ApiCoreFacade = require("../api-core/apiCoreFacade")
+
+        var Configuration = {
+            scheme: "http", 
+            host: "localhost", 
+            port: "9110"
+        }
+
+        var api = new ApiCoreFacade(Configuration);
+
+        api.processInstanceFindByProcessId("f83c952a-5308-458a-a8db-61129d990464").then((system) => { 
+            console.log('system = ', system);
+        });
+     */
     processInstanceFindByProcessId(processId) {
         return this.processInstance.findByProcessId(processId);
+    }
+
+    processInstanceFindByReferenceDate(date) {
+        return this.processInstance.findByReferenceDate(date);
     }
     
     // ************************************************************************

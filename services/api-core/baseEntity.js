@@ -136,7 +136,7 @@ module.exports = class BaseEntity {
                 }
             ]
         }
-        return this.finder.find(this.entity, criteria, 1)
+        return this.finder.find(this.entity, criteria)
     }
 
 
