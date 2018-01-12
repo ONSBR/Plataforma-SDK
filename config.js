@@ -5,7 +5,7 @@ const processMemoryHost = process.env.PROCESS_MEMORY_HOST || "localhost";
 const domainAppHost = process.env.DOMAIN_APP_HOST || "localhost";
 
 config.PORT = 8081;
-config.eventManagerUrl = "http://" + eventManagerHost + ":8081/event";
+config.eventManagerUrl = "http://" + eventManagerHost + ":8081/sendevent";
 config.processMemoryUrl = "http://" + processMemoryHost + ":9091/";
 config.domainAppUrl = "http://" + domainAppHost + ":9090/";
 
