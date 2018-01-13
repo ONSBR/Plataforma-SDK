@@ -117,9 +117,7 @@ module.exports = class Finder {
                     "Instance-Id": "62141389-2ef2-4715-8675-a670ad7a00cc",
                     "Reference-Date": this.conf.referenceData
                 });
-            }
-
-            console.log("headers = ", req.headers);
+            } 
             
             req.end(function (res) {
                 if (res.error) {
