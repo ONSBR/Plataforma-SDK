@@ -126,7 +126,7 @@ module.exports = class Finder {
                     reject(res.Error);
                 }
                 else {
-                    if (only_one == 1)
+                    if (only_one == 1 && res.body.length > 0)
                         resolve(res.body[0])
                     else 
                         resolve(res.body)
