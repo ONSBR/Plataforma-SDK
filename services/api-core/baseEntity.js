@@ -29,7 +29,7 @@ module.exports = class BaseEntity {
         }
     }
 
-/*     create(map){
+     create(map){
         if (Array.isArray(map)){
             var items = map.map(m => {
                 m._metadata = {
@@ -46,7 +46,7 @@ module.exports = class BaseEntity {
             };
             return this.creator.create([map]);
         }
-    } */
+    }
 
     save(map) {
         if (Array.isArray(map)){
