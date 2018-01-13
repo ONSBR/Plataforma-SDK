@@ -44,7 +44,7 @@ module.exports = class BaseEntity {
                 type:this.entity,
                 changeTrack:"create"
             };
-            return this.creator.create([map]);
+            return this.creator.save([map]);
         }
     }
 
