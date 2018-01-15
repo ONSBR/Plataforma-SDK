@@ -27,7 +27,7 @@ module.exports = class ApiCoreFacade{
 
     /** Creates or updates a 'System' entity
      * 
-     * @param {*} id 
+     * @param {*} system 
      * 
      * @return a Promisse object containing an array with 'System' object created or updated
      * 
@@ -170,7 +170,7 @@ module.exports = class ApiCoreFacade{
 
     /** Creates or updates a 'Process' entity
      * 
-     * @param {*} id 
+     * @param {*} process 
      * 
      * @return a Promisse object containing an array with the 'Process' object created or updated
      * 
@@ -321,7 +321,7 @@ module.exports = class ApiCoreFacade{
 
     /** Creates or updates a 'ProcessInstance' entity
      * 
-     * @param {*} id 
+     * @param {*} processInstance 
      * 
      * @return a Promisse object containing an array with the 'ProcessInstance' object created or updated
      * 
@@ -391,7 +391,6 @@ module.exports = class ApiCoreFacade{
 
         api.processSave(procData).then(processId => console.log("processId = ", processId));
      *
-     * @param {*} processInstance 
      */
     processInstanceSave(processInstance) {
         return this.processInstance.save(processInstance);
@@ -487,7 +486,7 @@ module.exports = class ApiCoreFacade{
 
     /** Creates or updates an 'Operation' entity
      * 
-     * @param {*} id 
+     * @param {*} operation 
      * 
      * @return a Promisse object containing an array with the 'Operation' object created or updated
      * 
@@ -557,7 +556,6 @@ module.exports = class ApiCoreFacade{
 
         api.operationSave(opData).then(op => console.log("operation = ", op));
      *
-     * @param {*} processInstance 
      */    
     operationSave(operation) {
         return this.operation.save(operation);
@@ -662,6 +660,109 @@ module.exports = class ApiCoreFacade{
     // ************************************************************************
     //                                OPERATION INSTANCE
     // ************************************************************************
+    
+  /** Creates or updates an 'OperationInstance' entity
+     * 
+     * @param {*} operationInstance
+     * 
+     * @return a Promisse object containing an array with the 'OperationInstance' object created or updated
+     * 
+     * @example for Create
+     * 
+        const ApiCoreFacade = require("../api-core/apiCoreFacade")
+
+        var Configuration = {
+            scheme: "http", 
+            host: "localhost", 
+            port: "9110"
+        }
+
+        var api = new ApiCoreFacade(Configuration);
+
+
+        var systemData = {
+            "name": "bank",
+            "description": "A Testing Bank App",
+            "version":"0.0.9",
+        }
+
+        api.systemSave(systemData).then((system) => { 
+            console.log("system = ", system);
+            var procData = {
+                "systemId": system[0].id,
+                "name": "Transferência",
+                "relativePath":"./",
+                "deployDate": new Date(),    
+            }
+            
+            api.processSave(procData).then(process => {
+                console.log("process = ", process);
+
+                // process instance
+                var procInstData = {
+                    "processId": process[0].id,
+                    "startExecution": new Date(),
+                    "endExecution": new Date(),
+                    "referenceDate": new Date(),
+                    "status":"pending",            
+                }
+                var promisseProcInst =  api.processInstanceSave(procInstData);
+
+                // operation
+                var operData = {
+                    "processId": process[0].id,
+                    "method": "realizeTransferencia",
+                    "file":"index.js",           
+                }
+                var promisseOper = api.operationSave(operData);
+
+                Promise.all([promisseProcInst, promisseOper]).then(ids => {
+
+                    console.log("processInstance = ", ids[0]);
+                    console.log("processInstanceId = ", ids[0][0].id);
+
+                    console.log("operation = ", ids[1]);
+                    console.log("operationId = ", ids[1][0].id);
+
+                    // operation instance            
+                    var operInstData = {
+                        "processInstanceId": ids[0][0].id,
+                        "operationId": ids[1][0].id,
+                        "mustCommit": true,
+                        "status":"pending",                    
+                    }
+                    api.operationInstanceSave(operInstData).then(operInst => {
+                        console.log("operInst = ", operInst);
+                    }); 
+                });        
+            });
+        });
+
+   
+     *
+     * @example for update
+     * 
+     *
+        const ApiCoreFacade = require("../api-core/apiCoreFacade")
+
+        var Configuration = {
+            scheme: "http", 
+            host: "localhost", 
+            port: "9110"
+        }
+
+        var api = new ApiCoreFacade(Configuration);
+
+
+        var opInstData = {
+            "id" : "e55178a9-fff5-4f74-826e-3abc49a65a8b",
+            "must_commit": false,
+        }
+
+        api.operationInstanceSave(opInstData).then(opInst => console.log("operation instance = ", opInst));
+     *
+     */     
+
     operationInstanceSave(operationInstance) {
         return this.operationInstance.save(operationInstance);
     }
@@ -670,16 +771,83 @@ module.exports = class ApiCoreFacade{
         return this.operationInstance.destroy(id);
     }
 
+
+     /** Finds a 'OperationInstance' entity based on its id
+     * 
+     * @param {*} id 
+     * 
+     * @return a Promisse object containing an array with the 'OperationInstance' found
+     * 
+     * @example
+     * 
+        const ApiCoreFacade = require("../api-core/apiCoreFacade")
+
+        var Configuration = {
+            scheme: "http", 
+            host: "localhost", 
+            port: "9110"
+        }
+
+        var api = new ApiCoreFacade(Configuration);
+
+        api.operationFindById("22f7933c-e88c-4182-ba7f-45c747840175").then((op) => { 
+            console.log('operation = ', op);
+        });
+     */    
     operationInstanceFindById(id) {
         return this.operationInstance.findById(id);
     }
 
+     /** Finds a 'OperationInstance' entity based on the process instance it is related ti
+     * 
+     * @param {*} processInstanceId 
+     * 
+     * @return a Promisse object containing an array with the 'OperationInstance' found
+     * 
+     * @example
+     * 
+        const ApiCoreFacade = require("../api-core/apiCoreFacade")
+
+        var Configuration = {
+            scheme: "http", 
+            host: "localhost", 
+            port: "9110"
+        }
+
+        var api = new ApiCoreFacade(Configuration);
+
+        api.operationInstanceFindByProcessInstanceId("f3beea6a-5a52-4f62-bcb4-bd03151f59fb").then((opInst) => { 
+            console.log('operation instance = ', opInst);
+        });
+     */   
     operationInstanceFindByProcessInstanceId(processInstanceId) {
         return this.operationInstance.findByProcessInstanceId(processInstanceId);
     }
 
+     /** Finds a 'OperationInstance' entity based on the operation it is related ti
+     * 
+     * @param {*} processInstanceId 
+     * 
+     * @return a Promisse object containing an array with the 'OperationInstance' found
+     * 
+     * @example
+     * 
+        const ApiCoreFacade = require("../api-core/apiCoreFacade")
+
+        var Configuration = {
+            scheme: "http", 
+            host: "localhost", 
+            port: "9110"
+        }
+
+        var api = new ApiCoreFacade(Configuration);
+
+        api.operationInstanceFindByOperationId("94ef1d10-cc77-4ac8-afbf-589dc63380ee").then((opInst) => { 
+            console.log('operation instance = ', opInst);
+        });
+     */       
     operationInstanceFindByOperationId(operationId) {
-        return this.operationInstance.findByOperationId(processInstanceId);
+        return this.operationInstance.findByOperationId(operationId);
     }
 
 
