@@ -521,15 +521,14 @@ module.exports = class ApiCoreFacade{
             api.processSave(procData).then(process => {
                 console.log("process = ", process);
 
-                var procInstData = {
+                var opData = {
                     "processId": process[0].id,
-                    "startExecution": new Date(),
-                    "endExecution": new Date(),
-                    "referenceDate": new Date(),
-                    "status":"pending",            
+                    "systemId" : system[0].id,
+                    "method" : "Plus",
+                    "file" : "Plus.js"
                 }
 
-                api.operationSave(procInstData).then(operation => {
+                api.operationSave(opData).then(operation => {
                     console.log("operation = ", operation);
                 });
             });
@@ -551,7 +550,8 @@ module.exports = class ApiCoreFacade{
 
         var opData = {
             "id" : "22f7933c-e88c-4182-ba7f-45c747840175",
-            "method": "Plus",
+            "method": "PlusMore",
+            "file" : "PluseMore.js"
         }
 
         api.operationSave(opData).then(op => console.log("operation = ", op));
@@ -661,7 +661,7 @@ module.exports = class ApiCoreFacade{
     //                                OPERATION INSTANCE
     // ************************************************************************
     
-  /** Creates or updates an 'OperationInstance' entity
+    /** Creates or updates an 'OperationInstance' entity
      * 
      * @param {*} operationInstance
      * 
@@ -767,12 +767,40 @@ module.exports = class ApiCoreFacade{
         return this.operationInstance.save(operationInstance);
     }
 
+  /** Destroys a 'Operation' entity
+     * 
+     * @param {*} id 
+     * 
+     * @return a Promisse object containing an array with the 'Operation' object destroyed
+     * 
+     * Destroy means to set the end of validity
+     * 
+     * @example
+     * 
+        const ApiCoreFacade = require("../api-core/apiCoreFacade")
+
+        var Configuration = {
+            scheme: "http", 
+            host: "localhost", 
+            port: "9110"
+        }
+
+        var api = new ApiCoreFacade(Configuration);
+
+        var opData = {
+            "id" : "9c8f4ee2-7e80-466e-8427-b8138a41fac3",
+        }
+
+        api.operationInstanceDestroy(opData).then((op) => { 
+            console.log(op);
+        });
+     */     
     operationInstanceDestroy(id) {
         return this.operationInstance.destroy(id);
     }
 
 
-     /** Finds a 'OperationInstance' entity based on its id
+    /** Finds a 'OperationInstance' entity based on its id
      * 
      * @param {*} id 
      * 
@@ -798,7 +826,7 @@ module.exports = class ApiCoreFacade{
         return this.operationInstance.findById(id);
     }
 
-     /** Finds a 'OperationInstance' entity based on the process instance it is related ti
+    /** Finds a 'OperationInstance' entity based on the process instance it is related ti
      * 
      * @param {*} processInstanceId 
      * 
@@ -824,7 +852,7 @@ module.exports = class ApiCoreFacade{
         return this.operationInstance.findByProcessInstanceId(processInstanceId);
     }
 
-     /** Finds a 'OperationInstance' entity based on the operation it is related ti
+    /** Finds a 'OperationInstance' entity based on the operation it is related ti
      * 
      * @param {*} processInstanceId 
      * 
@@ -854,29 +882,233 @@ module.exports = class ApiCoreFacade{
     // ************************************************************************
     //                                EVENT
     // ************************************************************************
+
+    /** Creates or updates an 'Event' entity
+     * 
+     * @param {*} event
+     * 
+     * @return a Promisse object containing an array with the 'Event' object created or updated
+     * 
+     * @example for Create
+     * 
+        const ApiCoreFacade = require("../api-core/apiCoreFacade")
+
+        var Configuration = {
+            scheme: "http", 
+            host: "localhost", 
+            port: "9110"
+        }
+
+        var api = new ApiCoreFacade(Configuration);
+
+
+        var systemData = {
+            "name": "bank",
+            "description": "A Testing Bank App",
+            "version":"0.0.6",
+        }
+
+        api.systemSave(systemData).then((system) => { 
+            console.log("system id = ", system);
+            var procData = {
+                "systemId": system[0].id,
+                "name": "Transferência",
+                "relativePath":"./",
+                "deployDate": new Date(),    
+            }
+            
+            api.processSave(procData).then(process => {
+                console.log("process = ", process);
+
+                var opData = {
+                    "processId": process[0].id,
+                    "systemId" : system[0].id,
+                    "method" : "Plus",
+                    "file" : "Plus.js"
+                }
+
+                api.operationSave(opData).then(operation => {
+                    console.log("operation = ", operation);
+
+                    var eventData = { 
+                        "name" : "eventA",
+                        "direction" : "in",
+                        "operation_id" : operation[0].id,
+                        "processId": process[0].id,
+                        "systemId" : system[0].id    
+                    }
+
+                    api.eventSave(eventData).then(event => {
+                        console.log("event = ", event);
+                    });
+                });
+            });
+        });
+     * 
+     * @example for Update
+     * 
+        const ApiCoreFacade = require("../api-core/apiCoreFacade")
+
+        var Configuration = {
+            scheme: "http", 
+            host: "localhost", 
+            port: "9110"
+        }
+
+        var api = new ApiCoreFacade(Configuration);
+
+
+        var eventData = {
+            "id" : "dd3724d9-0ea1-4823-ba4d-e6f757a7b338",
+            "direction": "out",
+        }
+
+        api.eventSave(eventData).then(event => console.log("event = ", event));
+     */    
     eventSave(event) {
         return this.event.save(event);
     }
 
+    /** Destroys a 'Event' entity
+     * 
+     * @param {*} id 
+     * 
+     * @return a Promisse object containing an array with the 'Event' object destroyed
+     * 
+     * Destroy means to set the end of validity
+     * 
+     * @example
+     * 
+        const ApiCoreFacade = require("../api-core/apiCoreFacade")
+
+        var Configuration = {
+            scheme: "http", 
+            host: "localhost", 
+            port: "9110"
+        }
+
+        var api = new ApiCoreFacade(Configuration);
+
+        var evData = {
+            "id" : "0d609684-af9e-4764-b75c-8c135ed6401e",
+        }
+
+        api.eventDestroy(evData).then((ev) => { 
+            console.log(ev);
+        });
+     */        
+    
     eventDestroy(id) {
-        return this.event.destroy(event);
+        return this.event.destroy(id);
     }
 
-    eventFindBySystemId(systemId) {
-        return this.event.findBySystemId(systemId);
-    }
+    /** Finds an 'Event' entity based on its id
+     * 
+     * @param {*} id 
+     * 
+     * @return a Promisse object containing an array with the 'Event' found
+     * 
+     * @example
+     * 
+        const ApiCoreFacade = require("../api-core/apiCoreFacade")
 
+        var Configuration = {
+            scheme: "http", 
+            host: "localhost", 
+            port: "9110"
+        }
+
+        var api = new ApiCoreFacade(Configuration);
+
+        api.eventFindById("dd3724d9-0ea1-4823-ba4d-e6f757a7b338").then((ev) => { 
+            console.log('event = ', ev);
+        });
+     */    
     eventFindById(id) {
         return this.event.findById(id);
     }
 
+    /** Finds an 'Event' entity based on the process it is associated to
+     * 
+     * @param {*} id 
+     * 
+     * @return a Promisse object containing an array with the 'Event' found
+     * 
+     * @example
+     * 
+        const ApiCoreFacade = require("../api-core/apiCoreFacade")
+
+        var Configuration = {
+            scheme: "http", 
+            host: "localhost", 
+            port: "9110"
+        }
+
+        var api = new ApiCoreFacade(Configuration);
+
+        api.eventFindByProcessId("b1810e64-fbf7-4877-88b5-ddb41b9679ed").then((ev) => { 
+            console.log('event = ', ev);
+        });
+     */    
     eventFindByProcessId(processId) {
         return this.event.findByProcessId(processId);
     }
 
+
+    /** Finds an 'Event' entity based on its name
+     * 
+     * @param {*} id 
+     * 
+     * @return a Promisse object containing an array with the 'Event' found
+     * 
+     * @example
+     * 
+        const ApiCoreFacade = require("../api-core/apiCoreFacade")
+
+        var Configuration = {
+            scheme: "http", 
+            host: "localhost", 
+            port: "9110"
+        }
+
+        var api = new ApiCoreFacade(Configuration);
+
+        api.eventFindByName("eventA").then((ev) => { 
+            console.log('event = ', ev);
+        });
+     */       
     eventFindByName(name) {
         return this.event.findByName(name);
     }
+
+
+    /** Finds an 'Event' entity based on its name
+     * 
+     * @param {*} id 
+     * 
+     * @return a Promisse object containing an array with the 'Event' found
+     * 
+     * @example
+     * 
+        const ApiCoreFacade = require("../api-core/apiCoreFacade")
+
+        var Configuration = {
+            scheme: "http", 
+            host: "localhost", 
+            port: "9110"
+        }
+
+        var api = new ApiCoreFacade(Configuration);
+
+        api.eventFindBySystemId("da95ebfd-2b0e-40e0-bd99-2245f3fe7dd8").then((ev) => { 
+            console.log('event = ', ev);
+        });
+     */           
+    eventFindBySystemId(systemId) {
+        return this.event.findBySystemId(systemId);
+    }
+
+    
 
     // ************************************************************************
     //                                MAP
@@ -905,6 +1137,8 @@ module.exports = class ApiCoreFacade{
         return this.map.findByName(name);
     }
 
-
+    // ************************************************************************
+    //                                INSTALLED APP
+    // ************************************************************************
 
 }
