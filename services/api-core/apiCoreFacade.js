@@ -480,26 +480,181 @@ module.exports = class ApiCoreFacade{
     processInstanceFindByProcessId(processId) {
         return this.processInstance.findByProcessId(processId);
     }
-
-    processInstanceFindByReferenceDate(date) {
-        return this.processInstance.findByReferenceDate(date);
-    }
-    
+  
     // ************************************************************************
     //                                OPERATION
     // ************************************************************************
+
+    /** Creates or updates an 'Operation' entity
+     * 
+     * @param {*} id 
+     * 
+     * @return a Promisse object containing an array with the 'Operation' object created or updated
+     * 
+     * @example for Create
+     * 
+        const ApiCoreFacade = require("../api-core/apiCoreFacade")
+
+        var Configuration = {
+            scheme: "http", 
+            host: "localhost", 
+            port: "9110"
+        }
+
+        var api = new ApiCoreFacade(Configuration);
+
+
+        var systemData = {
+            "name": "bank",
+            "description": "A Testing Bank App",
+            "version":"0.0.6",
+        }
+
+        api.systemSave(systemData).then((system) => { 
+            console.log("system id = ", system);
+            var procData = {
+                "systemId": system[0].id,
+                "name": "Transferência",
+                "relativePath":"./",
+                "deployDate": new Date(),    
+            }
+            
+            api.processSave(procData).then(process => {
+                console.log("process = ", process);
+
+                var procInstData = {
+                    "processId": process[0].id,
+                    "startExecution": new Date(),
+                    "endExecution": new Date(),
+                    "referenceDate": new Date(),
+                    "status":"pending",            
+                }
+
+                api.operationSave(procInstData).then(operation => {
+                    console.log("operation = ", operation);
+                });
+            });
+        });
+     *
+     * @example for update
+     * 
+     *
+        const ApiCoreFacade = require("../api-core/apiCoreFacade")
+
+        var Configuration = {
+            scheme: "http", 
+            host: "localhost", 
+            port: "9110"
+        }
+
+        var api = new ApiCoreFacade(Configuration);
+
+
+        var opData = {
+            "id" : "22f7933c-e88c-4182-ba7f-45c747840175",
+            "method": "Plus",
+        }
+
+        api.operationSave(opData).then(op => console.log("operation = ", op));
+     *
+     * @param {*} processInstance 
+     */    
     operationSave(operation) {
         return this.operation.save(operation);
     }
 
+    /** Destroys a 'Operation' entity
+     * 
+     * @param {*} id 
+     * 
+     * @return a Promisse object containing an array with the 'Operation' object destroyed
+     * 
+     * Destroy means to set the end of validity
+     * 
+     * @example
+     * 
+        const ApiCoreFacade = require("../api-core/apiCoreFacade")
+
+        var Configuration = {
+            scheme: "http", 
+            host: "localhost", 
+            port: "9110"
+        }
+
+        var api = new ApiCoreFacade(Configuration);
+
+        var opData = {
+            "id" : "22f7933c-e88c-4182-ba7f-45c747840175",
+        }
+
+        api.operationDestroy(opData).then((op) => { 
+            console.log(op);
+        });
+     */        
     operationDestroy(id) {
         return this.operation.destroy(id);
     }
 
+    /** Finds a 'Operation' entity based on its id
+     * 
+     * @param {*} id 
+     * 
+     * @return a Promisse object containing an array with the 'Operation' found
+     * 
+     * @example
+     * 
+        const ApiCoreFacade = require("../api-core/apiCoreFacade")
+
+        var Configuration = {
+            scheme: "http", 
+            host: "localhost", 
+            port: "9110"
+        }
+
+        var api = new ApiCoreFacade(Configuration);
+
+        api.operationFindById("22f7933c-e88c-4182-ba7f-45c747840175").then((op) => { 
+            console.log('operation = ', op);
+        });
+     */
     operationFindById(id) {
         return this.operation.findById(id);
     }
 
+    /** Finds a 'Operation' entity based on the 'Process' that it is related to
+     * 
+     * @param {*} id 
+     * 
+     * @return a Promisse object containing an array with the 'Operation' found
+     * 
+     * @example
+     * 
+        const ApiCoreFacade = require("../api-core/apiCoreFacade")
+
+        var Configuration = {
+            scheme: "http", 
+            host: "localhost", 
+            port: "9110"
+        }
+
+        var api = new ApiCoreFacade(Configuration);
+
+        api.operationFindByProcessId("411e552b-d047-4aa3-9d90-e77940fd0866").then((op) => { 
+            console.log('operation = ', op);
+        });const ApiCoreFacade = require("../api-core/apiCoreFacade")
+
+        var Configuration = {
+            scheme: "http", 
+            host: "localhost", 
+            port: "9110"
+        }
+
+        var api = new ApiCoreFacade(Configuration);
+
+        api.operationFindByProcessId("411e552b-d047-4aa3-9d90-e77940fd0866").then((op) => { 
+            console.log('operation = ', op);
+        });
+     */    
     operationFindByProcessId(processId) {
         return this.operation.findByProcessId(processId);
     }
