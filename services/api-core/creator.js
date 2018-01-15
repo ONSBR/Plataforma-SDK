@@ -22,7 +22,11 @@ module.exports = class Creator {
     constructor(configuration){
         this.conf = configuration;
     }
-
+    
+    
+    
+    create(data) => save(data);
+    
     save(data){
      
         var promise = new Promise((resolve,reject) => {
