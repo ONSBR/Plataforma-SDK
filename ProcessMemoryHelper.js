@@ -1,7 +1,12 @@
 var config = require('./config');
+var Client = require('node-rest-client').Client;
 
 class ProcessMemoryHelper {
     
+    constructor(){
+        this.client = new Client();
+    }
+
     static getProcessMemory(processInstance, processInstanceId, callback) {
         var urlGetProcessMemory = config.processMemoryUrl + processInstance.processo + "/" + 
             processInstanceId + "/head";

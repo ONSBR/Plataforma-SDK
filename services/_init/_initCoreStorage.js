@@ -19,7 +19,7 @@ function saveAccountProcess(sto) {
     
     var operacoesConta = [];
     operacoesConta.push(new Operacao(
-        "cadastra-conta.js", "insereConta", [EventCatalog.account_put], [EventCatalog.account_saved], accountProcessName, true
+        "conta-process-app", "insereConta", [EventCatalog.account_put], [EventCatalog.account_saved], accountProcessName, true
     ));    
     
     var processoAccount = new Processo(accountProcessName, "plataforma-processapp/conta-process-app", operacoesConta);
