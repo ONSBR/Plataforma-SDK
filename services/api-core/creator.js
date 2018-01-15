@@ -25,9 +25,7 @@ module.exports = class Creator {
     
     
     
-    create(data){
-        return save(data);
-    }
+    
     
     save(data){
      
@@ -56,6 +54,10 @@ module.exports = class Creator {
             });
         });
         return promise;
+    }
+    
+    create(data){
+        return save(data);
     }
 
 /*     save(data){
