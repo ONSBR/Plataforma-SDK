@@ -107,18 +107,21 @@ module.exports = class Finder {
             var req = unirest("GET", url);
 
             //console.log("req = ", req);
-            if (this.conf.referenceData == undefined) {
+            if (this.conf.referenceDate == undefined) {
                 req.headers({
                     "Instance-Id": "62141389-2ef2-4715-8675-a670ad7a00cc"
                 });
+                //console.log("headers with OUT referencedate ")
             }
             else {
+
                 req.headers({
                     "Instance-Id": "62141389-2ef2-4715-8675-a670ad7a00cc",
                     "Reference-Date": this.conf.referenceData
                 });
+                //console.log("headers with referencedate ")
             } 
-            
+          
             req.end(function (res) {
                 if (res.error) {
                     reject(res.Error);

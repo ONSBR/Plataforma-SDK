@@ -8,8 +8,33 @@ const ProcessInstance = require("./processInstance");
 const OperationInstance = require("./operationInstance");
 const Event = require("./event");
 const Map = require("./map");
+const InstalledApp = require("./installedApp");
+
 
 module.exports = class ApiCoreFacade{
+
+    /** constructor
+     * 
+     * Configuration is a structure defining the scheme, the host and the port 
+     * of Api.Core service.
+     * 
+     * 
+     @example
+     {
+        scheme: "http", 
+        host: "localhost", 
+        port: "9110"         
+     }
+
+    * It may define the date of validity, as a timestamp to be used
+    {
+        scheme: "http", 
+        host: "localhost", 
+        port: "9110"         
+        referenceDate : 1516037065000
+     }
+     * 
+     */   
     constructor(configuration){
         this.conf = configuration;
         this.system = new System(configuration);
@@ -18,7 +43,8 @@ module.exports = class ApiCoreFacade{
         this.operation = new Operation(configuration);
         this.operationInstance = new OperationInstance(configuration);
         this.event = new Event(configuration);
-        this.map = new Map(configuration);      
+        this.map = new Map(configuration);  
+        this.installedApp = new InstalledApp(configuration);
     }
 
     // ************************************************************************
@@ -1140,5 +1166,71 @@ module.exports = class ApiCoreFacade{
     // ************************************************************************
     //                                INSTALLED APP
     // ************************************************************************
+
+ /** Creates or updates an 'InstalledApp' entity
+     * 
+     * @param {*} installedApp
+     * 
+     * @return a Promisse object containing an array with the 'Event' object created or updated
+     * 
+     * @example for Create
+     * 
+        const ApiCoreFacade = require("../api-core/apiCoreFacade")
+
+        var Configuration = {
+            scheme: "http", 
+            host: "localhost", 
+            port: "9110"
+        }
+
+        var api = new ApiCoreFacade(Configuration);
+
+
+        var systemData = {
+            "name": "bank",
+            "description": "A Testing Bank App",
+            "version":"0.0.6",
+        }
+
+        api.systemSave(systemData).then((system) => { 
+            console.log("system id = ", system);
+            var instAppData = {
+                "systemId": system[0].id,
+                "host": "172.19.0.1",
+                "port" : "90456",
+                "name":"any name",
+                "type" : "any type"
+            }
+            
+            api.installedAppSave(instAppData).then(installedApp => {
+                console.log("installedApp = ", installedApp);
+            });
+        });
+     */
+    installedAppSave(installedApp) {
+        return this.installedApp.save(installedAppmap);
+    }
+
+    installedAppDestroy(id) {
+        return this.installedApp.destroy(id);
+    }
+
+    mapFindBySystemId(systemId) {
+        return this.installedApp.findBySystemId(systemId);
+    }
+
+    mapFindById(id) {
+        return this.installedApp.findById(id);
+    }
+
+    mapFindBySystemIdAndType(systemId, type) {
+        return this.installedApp.findByProcessId(processId);
+    }
+
+    mapFindByName(name) {
+        return this.installedApp.findByName(name);
+    }
+
+
 
 }
