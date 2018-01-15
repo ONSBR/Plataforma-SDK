@@ -3,6 +3,8 @@ var Client = require('node-rest-client').Client;
 var CoreRepository = require("../services/CoreRepository");
 var DataSet = require("plataforma-core/DataSet");
 var EventHelper = require("../EventHelper");
+var cmd = require('node-command-line');
+var Promise = require('bluebird');
 
 var instprocess = process.argv[2];
 
@@ -42,69 +44,26 @@ function executeOperation(operation, contexto) {
     var processo = coreRepository.getProcess(operation.processo);
 
     console.log("Process Found!! " + JSON.stringify(processo) + ", opname: " + operation.processo);
+    let imageName = operation.arquivo;
+    let metodo = operation.metodo;
+    executeContainer(imageName, metodo, instprocess);
 
-    var nomeDoArquivoJs = operation.arquivo;
-    var metodo = operation.metodo;
-    var arquivoJs = require(config.processAppExecutionRelativePath 
-        + processo.relativePath + "/process/" + nomeDoArquivoJs);  
+    console.log("Operação executada com sucesso: Image " + imageName + " process " + metodo);
+}
 
-    eval("arquivoJs." + metodo + "(contexto)");
-    
-    if (operation.mustcommit && !contexto.evento.reproducao) {
-        saveDataSet(contexto.dataSet, processo);
-    }
-
-    // TODO: o evento só pode ser enviado depois da resposta da atualização do processmemory
-    updateProcessMemory(contexto);
-
-    if (contexto.eventoSaida) {
-        contexto.eventoSaida.reproducao = contexto.evento.reproducao;
-        contexto.eventoSaida.dataRef = contexto.evento.dataRef;
-        contexto.eventoSaida.origem = contexto.evento.origem;
-        contexto.eventoSaida.instancia = contexto.evento.instancia;
-        contexto.eventoSaida.responsavel = contexto.evento.responsavel;
-        contexto.eventoSaida.processName = contexto.evento.processName;
-
-        var operacoes = coreRepository.getOperationsByEvent(contexto.eventoSaida.name, true);
-        if (operacoes.length > 0) {
-            EventHelper.sendEvent(contexto.eventoSaida);
+function executeContainer(imageName, metodo, instprocess) {
+    Promise.coroutine(function* () {
+        console.log('sudo docker run --net="host" '
+        + '-v /home/hugomenezes/ONS/src/Plataforma-SDK/_scripts/shell/core.db:/usr/src/app/core.db' 
+        + imageName + ' node app.js ' + instprocess + ' ' + metodo);
+        
+        var response = yield cmd.run('sudo docker run --net="host" '
+        + '-v /home/hugomenezes/ONS/src/Plataforma-SDK/_scripts/shell/core.db:/usr/src/app/core.db ' 
+        + imageName + ' node app.js ' + instprocess + ' ' + metodo);
+        if (response.success) {
+            console.log("Docker sucess: " + response.message);
         } else {
-            console.log("[ERROR] Evento de saída não configurado para o processo: " + processo.nome + ", evento: " + contexto.eventoSaida.name);    
+            console.log("Docker error: " + response.error);
         }
-    }
-
-    console.log("Operação executada com sucesso: " + nomeDoArquivoJs + "." + metodo);
-}
-
-function saveDataSet(dataSet, processo) {
-    let entities = dataSet.entities;
-
-    console.log("Insert entities: " + JSON.stringify(entities));
-    var args = {
-        data: JSON.stringify(entities),
-        headers: { "Content-Type": "application/json", 
-                   "Instance-Id": instprocess }
-    };
-    var reqExec = client.post(config.domainAppUrl + processo.nome + "/persist", args, function (data, response) {
-        console.log("Entidade persistida na api de dominio com sucesso.");
-    });
-    reqExec.on('error', function (err) {
-        console.log('Erro ao persistir entidade.', err);
-    });
-}
-
-function updateProcessMemory(contexto) {
-    var args = { data: contexto, headers: { "Content-Type": "application/json" } };
-
-    var urlMemoryCreate = config.processMemoryUrl + contexto.evento.processName + "/"+
-        contexto.id + "/commit";
-    console.log("urlMemoryCommit: " +urlMemoryCreate);
-
-    var client = new Client();
-    var reqExec = client.post(urlMemoryCreate, args, function (data, response) {
-        console.log("Contexto atualizado na memória de processo com sucesso." + data.instanceId);
-    });
-    reqExec.on('error', function (err) {
-        console.log('Erro ao atualizar memória de processo.', err);
-    });
+    })();
 }
