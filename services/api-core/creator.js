@@ -25,7 +25,7 @@ module.exports = class Creator {
     
     
     
-    create(data) => save(data);
+    create = (data) => save(data);
     
     save(data){
      
