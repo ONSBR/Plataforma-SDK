@@ -551,7 +551,7 @@ const PresentationInstance = require("./presentationInstance");
     // ************************************************************************
     //                                PRESENTATION INSTANCE
     // ************************************************************************    
-    presentationInstanceAppSave(presInst) {
+    presentationInstanceSave(presInst) {
         return this.presentationInstance.save(presInst);
     }
 
