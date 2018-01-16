@@ -6,18 +6,21 @@ module.exports = class PresentationInstance extends BaseEntity {
     constructor(configuration){
         super(configuration,"presentationInstance");
     }    
-}
 
-findBySystemIdType(presentationId){
-    var criteria = {
-        filterName : "byPresentationId",
-        parameters :
-        [
-            {
-                fieldName : "presentationId",
-                fieldValue : presentationId
-            }
-        ]
+
+
+    findBySystemIdType(presentationId) {
+        var criteria = {
+            filterName : "byPresentationId",
+            parameters :
+            [
+                {
+                    fieldName : "presentationId",
+                    fieldValue : presentationId
+                }
+            ]
+        }
+        return this.finder.find('presentationInstance', criteria);
     }
-    return this.finder.find('presentationInstance', criteria);
+        
 }
