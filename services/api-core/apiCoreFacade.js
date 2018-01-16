@@ -647,25 +647,13 @@ module.exports = class ApiCoreFacade{
 
     /** Finds a 'Operation' entity based on the 'Process' that it is related to
      * 
-     * @param {*} id 
+     * @param {*} processId 
      * 
      * @return a Promisse object containing an array with the 'Operation' found
      * 
      * @example
      * 
         const ApiCoreFacade = require("../api-core/apiCoreFacade")
-
-        var Configuration = {
-            scheme: "http", 
-            host: "localhost", 
-            port: "9110"
-        }
-
-        var api = new ApiCoreFacade(Configuration);
-
-        api.operationFindByProcessId("411e552b-d047-4aa3-9d90-e77940fd0866").then((op) => { 
-            console.log('operation = ', op);
-        });const ApiCoreFacade = require("../api-core/apiCoreFacade")
 
         var Configuration = {
             scheme: "http", 
@@ -793,7 +781,7 @@ module.exports = class ApiCoreFacade{
         return this.operationInstance.save(operationInstance);
     }
 
-  /** Destroys a 'Operation' entity
+    /** Destroys a 'Operation' entity
      * 
      * @param {*} id 
      * 
@@ -1022,8 +1010,7 @@ module.exports = class ApiCoreFacade{
         api.eventDestroy(evData).then((ev) => { 
             console.log(ev);
         });
-     */        
-    
+     */            
     eventDestroy(id) {
         return this.event.destroy(id);
     }
@@ -1139,26 +1126,211 @@ module.exports = class ApiCoreFacade{
     // ************************************************************************
     //                                MAP
     // ************************************************************************
+
+    /** Creates or updates an 'Map' entity
+     * 
+     * @param {*} map
+     * 
+     * @return a Promisse object containing an array with the 'Map' object created or updated
+     * 
+     * @example for Create
+     * 
+        const ApiCoreFacade = require("../api-core/apiCoreFacade")
+
+        var Configuration = {
+            scheme: "http", 
+            host: "localhost", 
+            port: "9110"
+        }
+
+        var api = new ApiCoreFacade(Configuration);
+
+
+        var systemData = {
+            "name": "bank",
+            "description": "A Testing Bank App",
+            "version":"0.0.6",
+        }
+
+        api.systemSave(systemData).then((system) => { 
+            console.log("system id = ", system);
+            var procData = {
+                "systemId": system[0].id,
+                "name": "Transferência",
+                "relativePath":"./",
+                "deployDate": new Date(),    
+            }
+            
+            api.processSave(procData).then(process => {
+                console.log("process = ", process);
+
+                var mapData = {
+                    "processId": process[0].id,
+                    "systemId" : system[0].id,
+                    "name" : "map 1",
+                    "content" : "content X"
+                }
+
+                api.mapSave(mapData).then(map => {
+                    console.log("map = ", map);
+                });
+            });
+        });
+     *
+     * @example for update
+     * 
+     *
+        const ApiCoreFacade = require("../api-core/apiCoreFacade")
+
+        var Configuration = {
+            scheme: "http", 
+            host: "localhost", 
+            port: "9110"
+        }
+
+        var api = new ApiCoreFacade(Configuration);
+
+
+        var mapData = {
+            "id" : "3c09761a-dc71-493d-ace1-8b3dbd96e906",
+            "content" : "content Z"
+        }
+
+        api.mapSave(mapData).then(op => console.log("operation = ", op));
+     *
+     */    
     mapSave(map) {
         return this.map.save(map);
     }
 
+    /** Destroys a 'Map' entity
+     * 
+     * @param {*} id 
+     * 
+     * @return a Promisse object containing an array with the 'Map' object destroyed
+     * 
+     * Destroy means to set the end of validity
+     * 
+     * @example
+     * 
+        const ApiCoreFacade = require("../api-core/apiCoreFacade")
+
+        var Configuration = {
+            scheme: "http", 
+            host: "localhost", 
+            port: "9110"
+        }
+
+        var api = new ApiCoreFacade(Configuration);
+
+        api.mapDestroy("3c09761a-dc71-493d-ace1-8b3dbd96e906").then((map) => { 
+            console.log('map = ', map);
+        });
+     */       
     mapDestroy(id) {
-        return this.map.destroy(map);
+        return this.map.destroy(id);
     }
 
+    /** Finds a 'Map' entity based on a 'System' id
+     * 
+     * @param {*} systemId 
+     * 
+     * @return a Promisse object containing an array with the 'Map' found
+     * 
+     * @example
+     * 
+        const ApiCoreFacade = require("../api-core/apiCoreFacade")
+
+        var Configuration = {
+            scheme: "http", 
+            host: "localhost", 
+            port: "9110"
+        }
+
+        var api = new ApiCoreFacade(Configuration);
+
+        api.mapFindBySystemId("95c14320-b750-4e59-8954-466dfac019a0").then((map) => { 
+            console.log('map = ', map);
+        });
+     */       
     mapFindBySystemId(systemId) {
         return this.map.findBySystemId(systemId);
     }
 
+    /** Finds a 'Map' entity based on its id
+     * 
+     * @param {*} id 
+     * 
+     * @return a Promisse object containing an array with the 'Map' found
+     * 
+     * @example
+     * 
+        const ApiCoreFacade = require("../api-core/apiCoreFacade")
+
+        var Configuration = {
+            scheme: "http", 
+            host: "localhost", 
+            port: "9110"
+        }
+
+        var api = new ApiCoreFacade(Configuration);
+
+        api.mapFindById("3c09761a-dc71-493d-ace1-8b3dbd96e906").then((map) => { 
+            console.log('map = ', map);
+        });
+     */    
     mapFindById(id) {
         return this.map.findById(id);
     }
 
+    /** Finds a 'Map' entity based on the 'Process' that it is related to
+     * 
+     * @param {*} processId 
+     * 
+     * @return a Promisse object containing an array with the 'Map' found
+     * 
+     * @example
+     * 
+        const ApiCoreFacade = require("../api-core/apiCoreFacade")
+
+        var Configuration = {
+            scheme: "http", 
+            host: "localhost", 
+            port: "9110"
+        }
+
+        var api = new ApiCoreFacade(Configuration);
+
+        api.mapFindByProcessId("e43fdaa7-92a3-4e36-8be5-709342827c5d").then((map) => { 
+            console.log('map = ', map);
+        });
+     */        
     mapFindByProcessId(processId) {
         return this.map.findByProcessId(processId);
     }
 
+    /** Finds a 'Map' entity based on its name
+     * 
+     * @param {*} processId 
+     * 
+     * @return a Promisse object containing an array with the 'Map' found
+     * 
+     * @example
+     * 
+        const ApiCoreFacade = require("../api-core/apiCoreFacade")
+
+        var Configuration = {
+            scheme: "http", 
+            host: "localhost", 
+            port: "9110"
+        }
+
+        var api = new ApiCoreFacade(Configuration);
+
+        api.mapFindByName("map 1").then((map) => { 
+            console.log('map = ', map);
+        });
+     */      
     mapFindByName(name) {
         return this.map.findByName(name);
     }
@@ -1167,7 +1339,7 @@ module.exports = class ApiCoreFacade{
     //                                INSTALLED APP
     // ************************************************************************
 
- /** Creates or updates an 'InstalledApp' entity
+    /** Creates or updates an 'InstalledApp' entity
      * 
      * @param {*} installedApp
      * 
