@@ -15,7 +15,7 @@ findBySystemIdType(presentationId){
         [
             {
                 fieldName : "presentationId",
-                fieldValue : systemId
+                fieldValue : presentationId
             }
         ]
     }
