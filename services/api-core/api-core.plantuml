@@ -1,0 +1,126 @@
+@startuml
+
+hide methods
+hide circle
+
+class System {
+    id : uuid
+    name : string
+    description : string
+    version: string
+}
+
+class Process {
+    id : uuid
+    name : string
+    relative_path : string
+    deployDate : date
+    tag : string      	      
+    image_id : string
+    ..
+    system_id : System.id      
+}
+
+class Operation {
+    id : uuid
+    method : string
+    file : string
+    ..
+    process_id : Process.id
+    system_id : System.id
+}
+
+class Event {
+    id : uuid
+    name : string
+    direction: string
+    ..
+    operation_id : Operation.id
+    process_id : Process.id
+    system_id : System.id
+    presentation_id : Presentation.id
+}
+
+class Presentation {
+    id : uuid
+    name : string
+    url : string
+    ..
+    system_id : System.id
+}
+
+class InstalledApp {
+    host: string
+    port: string
+    name: string
+    type: string
+    ...
+    system_id : System.id
+}
+
+' class StatusExecucao << enum >> {
+'    pending
+'    executing
+'    finished
+' }
+
+class ProcessInstance {
+    id : uuid
+    start_execution : date
+    end_execution : date
+    reference_date : date
+    status : string
+    ..
+    process_id : Process.id
+    system_id : System.id
+}
+
+class OperationInstance {
+    id : uuid
+    status : string
+    must_commit : boolean
+    ..
+    process_instance_id : ProcessInstance.id
+    process_id : Process.id
+    system_id : System.id   
+    operation_id : Operation.Id 
+}
+
+'class SentEvent {
+'    id : uuid
+'    event_date
+'    payload : text
+'    reference_date : date
+'    is_reproduction : boolean
+'    ..
+'    event_id : Event.id
+'    presentation_instance_id : PresentationInstance.id
+'    presentation_id : Presentation.Id    
+'    operation_instance_id : OperationInstance.id
+'    operation_id : Operation.id
+'    process_instance_id : ProcessInstance.id
+'    process_id : Process.Id
+'    system_id : System.id
+'}
+
+class PresentationInstance {
+    id : uuid
+    ..
+    presentation_id : Presentation.Id
+    system_id : System.id
+}
+
+System "1" .. " * defines" Process
+System "1" .. " * defines" Presentation
+Process "1" .. " * defines" Operation
+Operation  "1" .. "*" Event
+Process "1" .. "*" ProcessInstance
+Operation "1" .. "*" OperationInstance
+' Event "1" .. "*" SentEvent
+Presentation "1" .. "*" PresentationInstance 
+ProcessInstance "1" .. "*" OperationInstance
+' PresentationInstance "1" ..  "          * presentationId" SentEvent 
+' OperationInstance  "1" .. " * operationId" SentEvent
+Presentation "1" .. " * defines" Event
+System "1" .. "*" InstalledApp
+@enduml
