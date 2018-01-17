@@ -5,44 +5,44 @@ var unirest = require("unirest");
 module.exports = class Finder {
 
     /** Creates a 'Finder' object
-     * 
+     *
      * @param {*} configuration is a JSON with this structure:
      * @code
         {
-            scheme: scheme, 
-            host:host, 
+            scheme: scheme,
+            host:host,
             port:port
         }
      *
      * @example
         {
-            scheme: 'http', 
-            host: 'localhost', 
+            scheme: 'http',
+            host: 'localhost',
             port: '9100'
-        } 
-     */ 
+        }
+     */
     constructor(configuration){
-        this.conf = configuration;        
+        this.conf = configuration;
     }
 
 
     /** Finds all objects of a certain entity
-     * 
+     *
      * @param {*} entityName is a string with the name of the entity
      */
     all(entityName) {
 
         var promise = new Promise((resolve,reject) => {
-            url = this.conf.scheme + "://" + 
+            url = this.conf.scheme + "://" +
             this.conf.host + ":" +
-            this.conf.port + "/core/" + entityName;       
+            this.conf.port + "/core/" + entityName;
 
             var req = unirest("GET", url);
             //console.log("req = ", req);
             req.headers({
                 "Instance-Id": "62141389-2ef2-4715-8675-a670ad7a00cc"
             });
-            
+
             req.end(function (res) {
                 if (res.error) {
                     reject(res.Error);
@@ -51,16 +51,16 @@ module.exports = class Finder {
                     resolve(res.body)
                 }
               });
-              
+
         });
         return promise;
     }
 
     /** Finds all (or one) objects of a certain entity, that satisfies
      * a criteria
-     * 
+     *
      * @param {*} entityName is the name of the entity
-     * @param {*} criteria defines the search criteria. It is a JSON with this 
+     * @param {*} criteria defines the search criteria. It is a JSON with this
      * structure:
      * @code
         {
@@ -72,9 +72,9 @@ module.exports = class Finder {
                         fieldValue : field-value
                     }
                 ]
-        }    
+        }
      * @example
-     * 
+     *
         var criteria = {
             filterName : "byId",
             parameters:
@@ -84,23 +84,23 @@ module.exports = class Finder {
                         fieldValue : id
                     }
                 ]
-        }    
+        }
      *
-     * @param {*} only_one defines if one wants all the objects, when it should be 
+     * @param {*} only_one defines if one wants all the objects, when it should be
      * set to 0, the default; or just the first, when it should be set to 1
-     * 
+     *
      */
     find(entityName, criteria, only_one = 0) {
-    
+
         var promise = new Promise((resolve,reject) => {
-            var url = this.conf.scheme + "://" 
-            + this.conf.host + ":" 
-            + this.conf.port + "/core/" + entityName + 
+            var url = this.conf.scheme + "://"
+            + this.conf.host + ":"
+            + this.conf.port + "/core/" + entityName +
             "?filter=" + criteria.filterName;
-            
+
             var i = 0;
             for (i in criteria.parameters) {
-                url += "&" + criteria.parameters[i].fieldName + "=" 
+                url += "&" + criteria.parameters[i].fieldName + "="
                 + criteria.parameters[i].fieldValue;
             }
             //console.log("url = ", url);
@@ -120,23 +120,23 @@ module.exports = class Finder {
                     "Reference-Date": this.conf.referenceData
                 });
                 //console.log("headers with referencedate ")
-            } 
-          
+            }
+
             req.end(function (res) {
                 if (res.error) {
-                    reject(res.Error);
+                    reject(res.error);
                 }
                 else {
                     if (only_one == 1 && res.body.length > 0)
                         resolve(res.body[0])
-                    else 
+                    else
                         resolve(res.body)
                 }
               });
-              
+
         });
         return promise;
     }
-}        
+}
 
 

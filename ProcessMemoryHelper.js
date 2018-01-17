@@ -7,23 +7,22 @@ class ProcessMemoryHelper {
         this.client = new Client();
     }
 
-    static getProcessMemory(processInstance, processInstanceId) {
+    getProcessMemory(processId, processInstanceId) {
         return new Promise((resolve,reject)=>{
-            var urlGetProcessMemory = config.processMemoryUrl + processInstance.processo + "/" +
+            var urlGetProcessMemory = config.processMemoryUrl + processId + "/" +
             processInstanceId + "/head";
             console.log("url Get Process Memory: " + urlGetProcessMemory);
-            client.get(urlGetProcessMemory, (data)=>{
+            this.client.get(urlGetProcessMemory, (data)=>{
                 resolve(data);
             });
 
-            client.on("error",(e)=>{
+            this.client.on("error",(e)=>{
                 reject(e);
             })
         });
-
     }
 
-    static updateProcessMemory(contexto) {
+    updateProcessMemory(contexto) {
         return new Promise((resolve,reject)=>{
             // TODO: o evento só pode ser enviado depois da resposta da atualização do processmemory
             var args = { data: contexto, headers: { "Content-Type": "application/json" } };

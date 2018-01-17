@@ -24,6 +24,7 @@
     "plataforma-core": "git+https://github.com/ONSBR/Plataforma-core",
     "plataforma-processapp": "git+https://github.com/ONSBR/Plataforma-ProcessApp",
     "plataforma-processmemory": "git+https://github.com/ONSBR/Plataforma-ProcessMemory",
-    "unirest": "^0.5.1"
+    "unirest": "^0.5.1",
+    "yamljs": "^0.3.0"
   }
 }
