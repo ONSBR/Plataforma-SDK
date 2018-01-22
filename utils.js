@@ -29,7 +29,15 @@ function toQueryString(obj){
     Object.keys(obj).forEach(f =>{
         query.push(`${f}=${obj[f]}`);
     })
-    return `?${query.join("&")}`;
+    var q = `?${query.join("&")}`;
+    if (q === "?"){
+        return "";
+    }
+    return q;
+}
+
+function clone(obj){
+    return JSON.parse(JSON.stringify(obj));
 }
 
 var utils = {};
@@ -37,5 +45,6 @@ utils.getSystemEvent = getSystemEvent;
 utils.parseQuery = parseQuery;
 utils.isSystemEvent = isSystemEvent;
 utils.toQueryString = toQueryString;
+utils.clone = clone;
 module.exports = utils;
 
