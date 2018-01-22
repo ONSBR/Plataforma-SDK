@@ -18,7 +18,8 @@ module.exports = class HttpClient {
             headers = {};
         }
         headers["Accept"] = 'application/json';
-        header["Content-Type"] = 'application/json';
+        headers["Content-Type"] = 'application/json';
+
         return new Promise((resolve, reject) => {
             unirest[method](url)
                 .headers(headers)
@@ -31,6 +32,7 @@ module.exports = class HttpClient {
                         resolve(res.body)
                     }
                 });
-        });
+        }); 
     }
+
 }

@@ -42,6 +42,7 @@ module.exports = class Creator {
             });
 
             req.type("json");
+
             req.send(data);
 
             req.end(function (res) {

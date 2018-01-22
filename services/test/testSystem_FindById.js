@@ -1,14 +1,19 @@
+if (process.argv.length < 3) {
+    console.log("Syntax: node", process.argv[1], "id");
+    return;
+}
+
 const ApiCoreFacade = require("../api-core/apiCoreFacade")
 
 var Configuration = {
     scheme: "http", 
     host: "localhost", 
-    port: "9110"
+    port: "9100"
 }
 
 var api = new ApiCoreFacade(Configuration);
 
-api.systemFindById("92dee4ea-833e-4feb-b5e7-20b5d2132a97").then((system) => { 
+api.systemFindById(process.argv[2]).then((system) => { 
     console.log('system = ', system);
 });
 
