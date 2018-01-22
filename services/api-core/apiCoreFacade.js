@@ -521,7 +521,7 @@ const PresentationInstance = require("./presentationInstance");
     }
 
     installedAppFindBySystemIdAndType(systemId, type) {
-        return this.installedApp.findByProcessId(processId);
+        return this.installedApp.findBySystemIdAndType(processId);
     }
 
     installedAppFindByName(name) {

@@ -28,7 +28,6 @@ module.exports = class Creator {
     
     
     save(data){
-     
         var promise = new Promise((resolve,reject) => {
             var url = this.conf.scheme + "://" +
             this.conf.host + ":" +
