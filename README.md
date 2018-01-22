@@ -63,7 +63,7 @@ Para a execução dos testes unitários é necessária a instalação do istanbu
 ```sh
 $ npm install -g istanbul
 ```
-Execute o seguinte comando para executar os testes:
+Utilize o seguinte comando para executar os testes:
 
 ```sh
 $ npm test
