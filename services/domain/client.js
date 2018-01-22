@@ -2,18 +2,24 @@ const Utils = require("../../utils");
 
 module.exports = class DomainClient{
 
-    constructor(systemId, coreFacade,httpClient){
-        this.systemId = systemId;
+    constructor(appInfo, coreFacade,httpClient){
+        this.systemId = appInfo.systemId;
         this.coreFacade = coreFacade;
         this.http = httpClient;
         this.info = this.coreFacade.installedAppFindBySystemIdAndType(this.systemId,"domain");
     }
     query(obj){
         return new Promise((resolve,reject)=>{
-            var query = Utils.toQueryString(obj);
-            this.info.then(o => {
-                var url = `http://${o.host}:${o.port}/${obj.map}/${obj.entity}${query}`
-                this.http.get(url,{},{})
+            var clone = Utils.clone(obj);
+            delete clone["_entity"];
+            delete clone["_map"];
+            var query = Utils.toQueryString(clone);
+            this.info.then(list => {
+                var o = list[0];
+                var url = `http://${o.host}:${o.port}/${obj._map}/${obj._entity}${query}`
+                this.http.get(url).then(body => {
+                    resolve(body);
+                }).catch(reject);
             })
         });
     }
@@ -23,8 +29,6 @@ module.exports = class DomainClient{
     }
 
     queryMany(list){
-        var promises = list.map(l => Utils.toQueryString(l))
-        .map(q => this.query(q));
-        return Promise.all(promises);
+        return Promise.all(list.map(l => this.query(l)));
     }
 }
