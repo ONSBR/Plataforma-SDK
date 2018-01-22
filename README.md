@@ -55,3 +55,16 @@ npm install
 Após a instalação, o Docker para Windows passa a executar contêineres do Linux por padrão. Alterne para os contêineres do Windows usando o menu de bandeja do Docker ou executando o seguinte comando em um prompt do PowerShell 
 
 C:\Program Files\Docker\Docker> .\DockerCli.exe -SwitchDemon
+
+### Execução dos testes unitários
+
+Para a execução dos testes unitários é necessária a instalação do istanbul: 
+
+```sh
+$ npm install -g istanbul
+```
+Execute o seguinte comando para executar os testes:
+
+```sh
+$ npm test
+```
