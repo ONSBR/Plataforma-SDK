@@ -18,10 +18,24 @@ function parseQuery(queryString) {
     return query;
 }
 
+/**
+ *
+ * @param {Object} filterObject An object in format {filter: string, <key:value>...}
+ * @description Returns a query string format
+ */
+
+function toQueryString(obj){
+    var query = [];
+    Object.keys(obj).forEach(f =>{
+        query.push(`${f}=${obj[f]}`);
+    })
+    return `?${query.join("&")}`;
+}
+
 var utils = {};
 utils.getSystemEvent = getSystemEvent;
 utils.parseQuery = parseQuery;
 utils.isSystemEvent = isSystemEvent;
-
+utils.toQueryString = toQueryString;
 module.exports = utils;
 
