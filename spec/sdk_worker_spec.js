@@ -43,10 +43,14 @@ describe('Should get all filter to be executed based on event payload',()=>{
         event.payload.origem = "A";
         event.payload.destino = "B";
         var filter = {};
+        filter._map = "m";
+        filter._entity = "a";
         filter.name = "transferencia";
         filter.content = filterComplex[filter.name];
         var filterEx = processApp.shouldBeExecuted(event,filter);
         expect(filterEx).toBeDefined();
+        expect(filterEx._map).toBeDefined();
+        expect(filterEx._entity).toBeDefined();
         expect(filterEx.filter).toBe(filter.name);
         expect(filterEx.origem).toBe(event.payload.origem);
         expect(filterEx.destino).toBe(event.payload.destino);

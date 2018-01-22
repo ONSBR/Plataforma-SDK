@@ -1,5 +1,3 @@
-const Creator = require("./creator");
-const Finder = require("./finder");
 const BaseEntity = require("./baseEntity");
 
 module.exports = class OperationInstance extends BaseEntity {
@@ -18,7 +16,8 @@ module.exports = class OperationInstance extends BaseEntity {
                 }
             ]
         }
-        return this.finder.find('operationInstance', criteria);
+       var url = this.assembleFindUrl(criteria);
+       return this.httpClient.get(url);
     }
 
     findByOperationId(operationId){
@@ -32,6 +31,7 @@ module.exports = class OperationInstance extends BaseEntity {
                 }
             ]
         }
-        return this.finder.find('operationInstance', criteria);
+       var url = this.assembleFindUrl(criteria);
+       return this.httpClient.get(url);
     }
 }

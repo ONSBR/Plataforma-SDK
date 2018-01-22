@@ -65,14 +65,10 @@ class ProcessApp {
     populateDataSetBasedOnEvent(event) {
         return new Promise((resolve, reject) => {
             this.getMapByProcessId(this.processId).then(map => {
-                this.loadDataByFilters(map).then((listFilters) => {
-                    var promises = listFilters
-                        .map(filter => this.shouldBeExecuted(event, filter))
-                        .map(f => Utils.toQueryString(f))
-                        .map(f => this.executeDomainQuery(f));
-                    Promise.all(promises).then(result => {
-                        console.log(result);
-                        resolve(map);
+                this.getFiltersOnMap(map).then((listFilters) => {
+                    var filtersToBeQueryOnDomain = listFilters.map(filter => this.shouldBeExecuted(event, filter))
+                    Promise.all(this.domainClient.queryMany(filtersToBeQueryOnDomain)).then(result => {
+                        resolve(result);
                     }).catch(reject);
                 }).catch(reject);
             }).catch(reject);
@@ -97,6 +93,8 @@ class ProcessApp {
         if (shouldExecuteFilter) {
             var result = {};
             result.filter = filter.name;
+            result._entity = filter._entity;
+            result._map = filter._map;
             params.forEach(p => result[p] = event.payload[p])
             return result;
         }
@@ -104,7 +102,7 @@ class ProcessApp {
 
 
 
-    loadDataByFilters(map) {
+    getFiltersOnMap(map) {
         return this.getFiltersMap(map);
     }
 
@@ -133,14 +131,14 @@ class ProcessApp {
         }
     }
 
-    getFiltersMap(map) {
+    getFiltersMap(fullMap) {
+        var map = fullMap.content;
         return new Promise((resolve, reject) => {
             Object.keys(map).forEach(entity => {
                 if (map[entity]["filters"]) {
                     var list = [];
                     Object.keys(map[entity]["filters"]).forEach(filter => {
-                        console.log(filter);
-                        list.push({ name: filter, content: map[entity]["filters"][filter] })
+                        list.push({_map: fullMap.name,_entity:entity, name: filter, content: map[entity]["filters"][filter] })
                     });
                     resolve(list);
                 }
@@ -155,7 +153,8 @@ class ProcessApp {
             this.coreFacade.mapFindByProcessId(processId).then(map => {
                 var YAML = require("yamljs");
                 var nativeObject = YAML.parse(map[0].content);
-                resolve(nativeObject);
+                map[0].content = nativeObject;
+                resolve(map[0]);
             }).catch(reject);
         });
 

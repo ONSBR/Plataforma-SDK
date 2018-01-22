@@ -5,14 +5,14 @@ module.exports = class BaseEntity {
 
     constructor(configuration, entity){
         this.conf = configuration;
-        this.httpClient = new HttpClient;
+        this.httpClient = new HttpClient();
         this.entity = entity;
     }
 
     destroy(obj){
         var url = this.conf.scheme + "://" +
         this.conf.host + ":" +
-        this.conf.port + "/core/persist";  
+        this.conf.port + "/core/persist";
         if (Array.isArray(obj)){
             var items = obj.map(o => {
                 o._metadata = {
@@ -34,7 +34,7 @@ module.exports = class BaseEntity {
      create(map){
         var url = this.conf.scheme + "://" +
         this.conf.host + ":" +
-        this.conf.port + "/core/persist";         
+        this.conf.port + "/core/persist";
         if (Array.isArray(map)){
             var items = map.map(m => {
                 m._metadata = {
@@ -70,7 +70,7 @@ module.exports = class BaseEntity {
                     m._metadata = {
                         type:this.entity,
                         changeTrack : "update"
-                    };                  
+                    };
                 }
                 return m;
             });
@@ -86,8 +86,8 @@ module.exports = class BaseEntity {
                 map._metadata = {
                     type:this.entity,
                     changeTrack : "update"
-                };                  
-            }            
+                };
+            }
             return this.httpClient.post(url, [map]);
         }
     }
@@ -96,14 +96,14 @@ module.exports = class BaseEntity {
         var url = this.conf.scheme + "://"
         + this.conf.host + ":"
         + this.conf.port + "/core/" + this.entity +
-        "?filter=" + criteria.filterName; 
-        
+        "?filter=" + criteria.filterName;
+
         var i = 0;
         for (i in criteria.parameters) {
             url += "&" + criteria.parameters[i].fieldName + "="
             + criteria.parameters[i].fieldValue;
         }
-        
+
         return url;
     }
 
@@ -119,7 +119,7 @@ module.exports = class BaseEntity {
             ]
         }
         var url = this.assembleFindUrl(criteria);
-        return this.httpClient.get(url);      
+        return this.httpClient.get(url);
     }
 
     findBySystemId(id) {

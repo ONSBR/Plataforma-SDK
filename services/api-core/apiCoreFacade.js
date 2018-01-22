@@ -1,6 +1,3 @@
-//import { open } from "inspector";
-
-
 const System = require("./system");
 const Process = require("./process");
 const Operation = require("./operation");
