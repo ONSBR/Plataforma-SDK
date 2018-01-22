@@ -29,6 +29,7 @@ module.exports = class DomainClient{
     }
 
     queryMany(list){
-        return Promise.all(list.map(l => this.query(l)));
+        var list = list.map(l => this.query(l));
+        return Promise.all(list);
     }
 }

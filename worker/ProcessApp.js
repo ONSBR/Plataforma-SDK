@@ -23,7 +23,9 @@ class ProcessApp {
         console.log("Process Instance Id= " + this.processInstanceId);
         new ProcessMemoryHelper().getProcessMemory(this.processId, this.processInstanceId)
             .then(initialCommit => {
-                return this.populateDataSetBasedOnEvent(initialCommit);
+                return this.loadDataFromDomain(initialCommit);
+            }).then((data)=>{
+                return new DataSet(data).create();
             }).then(memory => {
                 return this.executeOperation(memory);
             }).then(() => {
@@ -62,14 +64,13 @@ class ProcessApp {
         }
     }
 
-    populateDataSetBasedOnEvent(event) {
+    loadDataFromDomain(event) {
         return new Promise((resolve, reject) => {
             this.getMapByProcessId(this.processId).then(map => {
                 this.getFiltersOnMap(map).then((listFilters) => {
                     var filtersToBeQueryOnDomain = listFilters.map(filter => this.shouldBeExecuted(event, filter))
-                    Promise.all(this.domainClient.queryMany(filtersToBeQueryOnDomain)).then(result => {
-                        resolve(result);
-                    }).catch(reject);
+                    var promise = this.domainClient.queryMany(filtersToBeQueryOnDomain);
+                    promise.then(r => resolve(r)).catch(reject);
                 }).catch(reject);
             }).catch(reject);
         });
