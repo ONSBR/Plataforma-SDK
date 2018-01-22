@@ -14,6 +14,9 @@ module.exports = class HttpClient {
     }
 
     doRequest(method, url, body, headers) {
+        if (!headers){
+            headers = {};
+        }
         headers["Accept"] = 'application/json';
         header["Content-Type"] = 'application/json';
         return new Promise((resolve, reject) => {

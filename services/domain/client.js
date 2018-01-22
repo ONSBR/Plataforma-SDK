@@ -2,9 +2,10 @@ const Utils = require("../../utils");
 
 module.exports = class DomainClient{
 
-    constructor(systemId, coreFacade){
+    constructor(systemId, coreFacade,httpClient){
         this.systemId = systemId;
         this.coreFacade = coreFacade;
+        this.http = httpClient;
         this.info = this.coreFacade.installedAppFindBySystemIdAndType(this.systemId,"domain");
     }
     query(obj){
@@ -12,6 +13,7 @@ module.exports = class DomainClient{
             var query = Utils.toQueryString(obj);
             this.info.then(o => {
                 var url = `http://${o.host}:${o.port}/${obj.map}/${obj.entity}${query}`
+                this.http.get(url,{},{})
             })
         });
     }
