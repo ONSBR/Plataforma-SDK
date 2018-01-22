@@ -1,5 +1,6 @@
 node_modules/
 logs/
+coverage/
 run_*.js
 config_*.js
 _scripts/bat/poc.db

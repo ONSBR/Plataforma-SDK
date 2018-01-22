@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "plataforma sdk",
   "main": "EventHelper.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ONSBR/Plataforma-SDK.git"
@@ -16,7 +13,7 @@
     "url": "https://github.com/ONSBR/Plataforma-SDK/issues"
   },
   "scripts": {
-    "test":"./node_modules/.bin/jasmine-node spec"
+    "test":"istanbul cover --include-all-sources jasmine-node spec"
   },
   "homepage": "https://github.com/ONSBR/Plataforma-SDK#readme",
   "dependencies": {
