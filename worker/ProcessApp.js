@@ -9,20 +9,14 @@ const Utils = require("../utils")
 const DomainClient = require("../services/domain/client");
 class ProcessApp {
 
-    constructor(entryPoint) {
-        //this.processInstanceId = process.env.INSTANCE_ID;
-        //this.processId = process.env.PROCESS_ID;
-        this.processInstanceId = "8b8dcaff-09f6-40b7-b94e-ca6e519e67c4";
-        this.processId = "61728cac-a576-4643-8e58-82a83b304053";
-        this.systemId = "ec498841-59e5-47fd-8075-136d79155705";
+    constructor(entryPoint,info, coreFacade,domainClient) {
+        this.processInstanceId = info.processInstanceId;
+        this.processId = info.processId;
+        this.systemId = info.systemId;
         this.executeOperation = this.executeOperation.bind(this);
         this.entryPoint = entryPoint;
-        this.coreFacade = new CoreFacade({
-            scheme: "http",
-            host: "localhost",
-            port: "9100"
-        });
-        this.domainClient = new DomainClient(this.systemId,this.coreFacade);
+        this.coreFacade = coreFacade;
+        this.domainClient = domainClient;
     }
 
     startProcess() {

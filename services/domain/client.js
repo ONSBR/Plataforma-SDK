@@ -13,7 +13,9 @@ module.exports = class DomainClient{
             var query = Utils.toQueryString(obj);
             this.info.then(o => {
                 var url = `http://${o.host}:${o.port}/${obj.map}/${obj.entity}${query}`
-                this.http.get(url,{},{})
+                this.http.get(url).then(body => {
+                    resolve(body);
+                }).catch(reject);
             })
         });
     }
