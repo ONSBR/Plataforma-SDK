@@ -7,7 +7,8 @@ module.exports = {
         new ProcessApp(entryPoint,
             lookup["info"],
             lookup["coreFacade"],
-            lookup["domainClient"])
+            lookup["domainClient"],
+            lookup["processMemory"])
             .startProcess();
     }
 }

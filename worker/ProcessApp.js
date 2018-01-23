@@ -10,7 +10,7 @@ const Utils = require("../utils")
 const DomainClient = require("../services/domain/client");
 class ProcessApp {
 
-    constructor(entryPoint,info, coreFacade,domainClient) {
+    constructor(entryPoint, info, coreFacade, domainClient, processMemoryClient) {
         this.processInstanceId = info.processInstanceId;
         this.processId = info.processId;
         this.systemId = info.systemId;
@@ -18,15 +18,22 @@ class ProcessApp {
         this.entryPoint = entryPoint;
         this.coreFacade = coreFacade;
         this.domainClient = domainClient;
+        this.processMemory = processMemoryClient;
     }
 
-    startProcess() {
+    startProcess1() {
+        var context = {};
         console.log("Process Instance Id= " + this.processInstanceId);
         new ProcessMemoryHelper().getProcessMemory(this.processId, this.processInstanceId)
             .then(initialCommit => {
                 return this.loadDataFromDomain(initialCommit);
-            }).then((data)=>{
-                return new DataSetBuilder(data).build();
+            }).then((data) => {
+                return new Promise((resolve) => resolve(new DataSetBuilder(data).build()));
+            }).then((dataset) => {
+                context.dataset = dataset;
+                return new Promise((resolve) => { resolve(context) });
+            }).then((context) => {
+                return this.processMemory.commit(context);
             }).then(memory => {
                 return this.executeOperation(memory);
             }).then(() => {
@@ -37,23 +44,66 @@ class ProcessApp {
 
     }
 
-    executeOperation(contexto) {
+    startProcess() {
         return new Promise((resolve, reject) => {
-            console.log("Execute operation " + this.operation);
-            contexto.dataSet = new DataSet(contexto.dataSet);
+            var context = {};
+            context.processId = this.processId;
+            context.instanceId = this.processInstanceId;
+            this.processMemory.head(context).then(head => {
+                console.log(`get head of process memory`);
+                if(!head.event){
+                    //neste caso o head guarda apenas 1 evento e nao o contexto
+                    context.event = head;
+                }else{
+                    context = head;
+                }
+                return this.buildDataset(context);
+            }).then(dataset => {
+                console.log(`dataset created`);
+                context.dataset = dataset;
+                return this.processMemory.commit(context);
+            }).then(r => {
+                console.log(`context commited`);
+                return this.executeOperation(context);
+            }).then(()=>{
+                console.log(`Process executed with success`);
+                resolve();
+            }).catch(e => {
+                console.log(`Erro during process execution: ${e.toString()}`);
+            })
+        });
+
+    }
+
+    buildDataset(context) {
+        if (context.dataset){
+            return new Promise((resolve)=> {resolve(new DataSet(context.dataset))});
+        }else{
+            return this.loadDataFromDomain(context)
+            .then(data => {
+                return new Promise((resolve) => resolve(new DataSetBuilder(data).build()));
+            })
+        }
+    }
+
+    executeOperation(context) {
+        return new Promise((resolve, reject) => {
+            console.log("Execute operation");
             var operationPromise = new Promise((resolve, reject) => {
-                this.entryPoint(contexto, resolve, reject);
+                this.entryPoint(context, resolve, reject);
             }).then(() => {
-                return DataSetHelper.save(this.operation, contexto);
+                console.log(`sending data to domain`);
+                return this.domainClient.persist(context.dataset.flatList(), context.map);
             }).then(() => {
-                return ProcessMemoryHelper.updateProcessMemory(contexto);
-            }).then(() => {
+                console.log(`commiting data on process memory`);
+                return this.processMemory.commit(context);
+            })/*.then(() => {
                 return this.sendOutputEvents(contexto);
             }).catch(e => {
                 reject(e);
             }).then(() => {
                 resolve();
-            });
+            });*/
         });
 
     }
@@ -65,9 +115,11 @@ class ProcessApp {
         }
     }
 
-    loadDataFromDomain(event) {
+    loadDataFromDomain(context) {
+        var event = context.event;
         return new Promise((resolve, reject) => {
             this.getMapByProcessId(this.processId).then(map => {
+                context.map = map.name;
                 this.getFiltersOnMap(map).then((listFilters) => {
                     var filtersToBeQueryOnDomain = listFilters.map(filter => this.shouldBeExecuted(event, filter))
                     var promise = this.domainClient.queryMany(filtersToBeQueryOnDomain);
@@ -140,7 +192,7 @@ class ProcessApp {
                 if (map[entity]["filters"]) {
                     var list = [];
                     Object.keys(map[entity]["filters"]).forEach(filter => {
-                        list.push({_map: fullMap.name,_entity:entity, name: filter, content: map[entity]["filters"][filter] })
+                        list.push({ _map: fullMap.name, _entity: entity, name: filter, content: map[entity]["filters"][filter] })
                     });
                     resolve(list);
                 }
