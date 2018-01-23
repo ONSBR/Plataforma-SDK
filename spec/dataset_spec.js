@@ -59,8 +59,8 @@ describe('should build a new dataset using datasetbuilder', () => {
             "titular": "lorem"
         }
         dataset.Conta.insert(conta);
-        expect(dataset.entities["Conta"].length).toEqual(3);
-        var saved = dataset.entities["Conta"].filter(f => f.id === "2")[0];
+        expect(dataset.Conta.collection.toArray().length).toEqual(3);
+        var saved = dataset.Conta.collection.toArray().filter(f => f.id === "2")[0];
         expect(saved).toBeDefined();
         expect(saved._metadata.changeTrack).toEqual("update");
     })
@@ -72,8 +72,8 @@ describe('should build a new dataset using datasetbuilder', () => {
             "titular": "lorem"
         }
         dataset.Conta.insert(conta);
-        expect(dataset.entities["Conta"].length).toEqual(3);
-        var saved = dataset.entities["Conta"].filter(f => !f.id)[0];
+        expect(dataset.Conta.collection.toArray().length).toEqual(3);
+        var saved = dataset.Conta.collection.toArray().filter(f => !f.id)[0];
         expect(saved).toBeDefined();
         expect(saved._metadata.changeTrack).toEqual("create");
     })

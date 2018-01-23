@@ -24,8 +24,16 @@ module.exports = class DomainClient{
         });
     }
 
-    persist(list){
-
+    persist(data,map){
+        return new Promise((resolve,reject)=>{
+            this.info.then(list => {
+                var o = list[0];
+                var url = `http://${o.host}:${o.port}/${map}/persist`
+                this.http.post(url,data).then(body => {
+                    resolve(body);
+                }).catch(reject);
+            })
+        });
     }
 
     queryMany(list){

@@ -7,18 +7,24 @@ const CHANGETRACK_DELETE = "destroy";
 
 module.exports = class DataSet {
     constructor(data) {
-        this.index = {};
-        this.entities = data;
-        this.mountInterface();
+        if (data && !data.entities){
+            this.mountInterface(data);
+            this.entities = data;
+        }else if(data && data.entities){
+            this.entities = data.entities;
+            this.mountInterface(data.entities);
+        }else{
+            throw new Error(`Data is required`);
+        }
     }
-    mountInterface(){
-        Object.keys(this.entities).forEach(type => {
+    mountInterface(data){
+        Object.keys(data).forEach(type => {
             this[type] = {
                 insert: this.insert.bind({
-                    collection: this.entities,
+                    collection: data,
                     type: type
                 }),
-                collection: Enumerable.from(this.entities[type]).where((item) => item._metadata.changeTrack != CHANGETRACK_DELETE),
+                collection: Enumerable.from(data[type]).where((item) => item._metadata.changeTrack != CHANGETRACK_DELETE),
                 update: this.update.bind({}),
                 delete: this.delete.bind({})
             };
@@ -41,6 +47,16 @@ module.exports = class DataSet {
         var model = new Model(entity);
         this.collection[this.type].push(model);
         return model;
+    }
+
+    flatList(){
+        var list = [];
+        Object.keys(this.entities).forEach(k =>{
+            this.entities[k].forEach(item => {
+                list.push(item);
+            });
+        });
+        return list
     }
 
     update(entity) {
