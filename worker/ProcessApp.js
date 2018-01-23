@@ -4,7 +4,8 @@ const CoreFacade = require("../services/api-core/apiCoreFacade");
 const DataSetHelper = require("../DataSetHelper");
 const config = require("../config");
 const EventHelper = require("../EventHelper");
-const DataSet = require("plataforma-core/DataSet");
+const DataSet = require("../dataset/dataset");
+const DataSetBuilder = require("../dataset/builder");
 const Utils = require("../utils")
 const DomainClient = require("../services/domain/client");
 class ProcessApp {
@@ -25,7 +26,7 @@ class ProcessApp {
             .then(initialCommit => {
                 return this.loadDataFromDomain(initialCommit);
             }).then((data)=>{
-                return new DataSet(data).create();
+                return new DataSetBuilder(data).build();
             }).then(memory => {
                 return this.executeOperation(memory);
             }).then(() => {
