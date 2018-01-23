@@ -5,7 +5,7 @@ const HttpClientHelper = require("./helpers/httpClient_helper");
 let lookup = new Lookup();
 let httpClient = new HttpClientHelper();
 describe("Should test DomainClient component",()=>{
-    it("should load domain data",()=>{
+    it("should load domain data", (done)=>{
         httpClient.when("get","http://localhost:9114/map/person",()=>{
             return [
                 {
@@ -34,11 +34,12 @@ describe("Should test DomainClient component",()=>{
             expect(e.length).toEqual(2);
         }).catch(e =>{
             expect(e).not.toBeDefined();
-        })
+        });
+        done();
     })
 
 
-    it("should load many domain data",()=>{
+    it("should load many domain data", (done)=>{
         httpClient.when("get","http://localhost:9114/map/person",()=>{
             return [
                 {
@@ -66,12 +67,16 @@ describe("Should test DomainClient component",()=>{
         },{
             _map:"map",
             _entity:"person"
-        }]).then((e)=>{
-            expect(e.length).toEqual(2);
-            e.forEach(i => expect(Array.isArray(i))).toBe(true);
+        }]).then((array)=>{
+            expect(array.length).toEqual(2);
+            for(let i=0; i<array.length; i++){
+                expect(Array.isArray(array[i])).toBe(true);
+            }
         }).catch(e =>{
-            expect(e).not.toBeDefined();
+            console.error("Error:", e);
+            expect(e).toBeUndefined();
         })
+        done();
     })
 });
 

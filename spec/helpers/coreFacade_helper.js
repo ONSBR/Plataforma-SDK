@@ -1,7 +1,7 @@
-module.exports = class CoreFacadeHelper{
+module.exports = class CoreFacadeHelper {
 
-    installedAppFindBySystemIdAndType(){
-        return new Promise((resolve,reject)=>{
+    installedAppFindBySystemIdAndType() {
+        return new Promise((resolve, reject) => {
             resolve([
                 {
                     "systemId": "ec498841-59e5-47fd-8075-136d79155705",
@@ -18,4 +18,18 @@ module.exports = class CoreFacadeHelper{
             ])
         });
     }
+
+
+    mapFindByProcessId(processId) {
+        return new Promise((resolve, reject) => {
+            let values = [
+                {
+                    "content" : "Conta:\r\n  model: conta\r\n  fields:\r\n    saldo:\r\n      column: saldo\r\n" +
+                    "    titular:\r\n      column: titular\r\n  filters:\r\n    transferencia:\r\n      id:\r\n" + 
+                    "        $in:\r\n          - \":origem\"\r\n          - \":destino\""
+                }
+            ];
+            resolve(values);
+        });
+    };
 }

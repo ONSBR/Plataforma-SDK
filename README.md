@@ -66,5 +66,5 @@ $ npm install -g istanbul
 Utilize o seguinte comando para executar os testes:
 
 ```sh
-$ npm test
+$ npm test 
 ```
