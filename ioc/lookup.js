@@ -13,9 +13,9 @@ module.exports = class LookupServices{
             port: "9100"
         });
         this.info = {};
-        this.info.processInstanceId = "instancia_teste";
-        this.info.processId = "61728cac-a576-4643-8e58-82a83b304053";
-        this.info.systemId = "ec498841-59e5-47fd-8075-136d79155705";
+        this.info.processInstanceId = process.env.INSTANCE_ID;
+        this.info.processId = process.env.PROCESS_ID;
+        this.info.systemId = process.env.SYSTEM_ID;
         this.info.processMemory = {
             host:"localhost",
             scheme:"http",
@@ -27,6 +27,7 @@ module.exports = class LookupServices{
             scheme:"http",
             port:"8081"
         }
+        console.log(JSON.stringify(this.info,null,4));
         this.domainClient = new DomainClient(this.info,this.coreFacade,this.http);
         this.processMemory = new ProcessMemory(this.info,this.http);
         this.eventManager = new EventManager(this.info,this.http);
