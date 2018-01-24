@@ -24,7 +24,11 @@ class ProcessApp {
                 context.systemId = this.systemId;
                 context.instanceId = this.processInstanceId;
                 context.eventOut = op[0].event_out;
-
+                if (op[0].commit) {
+                    context.commit = op[0].commit;
+                } else {
+                    context.commit = false;
+                }
                 return this.startProcess(context);
             }
             throw new Error(`Operation not found for process ${this.processId}`);
@@ -78,11 +82,14 @@ class ProcessApp {
             var operationPromise = new Promise((resolve, reject) => {
                 this.entryPoint(context, resolve, reject);
             }).then(() => {
-                console.log(`sending data to domain`);
-                return this.domainClient.persist(context.dataset.flatList(), context.map);
-            }).then(() => {
                 console.log(`commiting data on process memory`);
                 return this.processMemory.commit(context);
+            }).then(() => {
+                if (context.commit) {
+                    console.log(`commiting data to domain`);
+                    return this.domainClient.persist(context.dataset.flatList(), context.map);
+                }
+                return new Promise((r)=>r(context));
             }).then(() => {
                 return this.sendOutputEvents(context);
             }).catch(e => {
@@ -99,11 +106,11 @@ class ProcessApp {
             if (context.eventOut) {
                 this.bus.emit({
                     name: context.eventOut,
-                    payload:{
+                    payload: {
                         instanceId: context.instanceId
                     }
                 }).then(resolve);
-            }else{
+            } else {
                 resolve(context);
             }
         });

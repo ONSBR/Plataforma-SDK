@@ -13,7 +13,6 @@ module.exports = class EventManagerClient{
         }
         var c = this.env.eventManager;
         var url = `${c.scheme}://${c.host}:${c.port}/sendevent`;
-        console.log(url);
         return this.http.put(url,event);
     }
 }
