@@ -1,5 +1,3 @@
-const Creator = require("./creator");
-const Finder = require("./finder");
 const BaseEntity = require("./baseEntity");
 
 module.exports = class InstalledApp extends BaseEntity {
@@ -22,6 +20,7 @@ module.exports = class InstalledApp extends BaseEntity {
                 }
             ]
         }
-        return this.finder.find('installedApp', criteria);
+       var url = this.assembleFindUrl(criteria);
+       return this.httpClient.get(url);
     }
 }

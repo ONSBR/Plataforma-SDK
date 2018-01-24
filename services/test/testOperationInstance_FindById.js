@@ -3,7 +3,7 @@ const ApiCoreFacade = require("../api-core/apiCoreFacade")
 var Configuration = {
     scheme: "http", 
     host: "localhost", 
-    port: "9110",
+    port: "9100",
     referenceDate : 1516029866000
 
 }

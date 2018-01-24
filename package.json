@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "plataforma sdk",
   "main": "EventHelper.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ONSBR/Plataforma-SDK.git"
@@ -15,15 +12,21 @@
   "bugs": {
     "url": "https://github.com/ONSBR/Plataforma-SDK/issues"
   },
+  "scripts": {
+    "test":"istanbul cover --include-all-sources jasmine-node spec"
+  },
   "homepage": "https://github.com/ONSBR/Plataforma-SDK#readme",
   "dependencies": {
     "handlebars": "^4.0.11",
+    "jasmine": "^2.9.0",
+    "jasmine-node": "^1.14.5",
     "js-yaml": "^3.10.0",
     "node-command-line": "^1.0.2",
     "node-rest-client": "^3.1.0",
     "plataforma-core": "git+https://github.com/ONSBR/Plataforma-core",
     "plataforma-processapp": "git+https://github.com/ONSBR/Plataforma-ProcessApp",
     "plataforma-processmemory": "git+https://github.com/ONSBR/Plataforma-ProcessMemory",
-    "unirest": "^0.5.1"
+    "unirest": "^0.5.1",
+    "yamljs": "^0.3.0"
   }
 }

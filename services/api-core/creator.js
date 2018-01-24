@@ -22,11 +22,11 @@ module.exports = class Creator {
     constructor(configuration){
         this.conf = configuration;
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     save(data){
         var promise = new Promise((resolve,reject) => {
             var url = this.conf.scheme + "://" +
@@ -41,11 +41,12 @@ module.exports = class Creator {
             });
 
             req.type("json");
+
             req.send(data);
 
             req.end(function (res) {
                 if (res.error) {
-                    reject(res.Error);
+                    reject(res.error);
                 }
                 else {
                     resolve(res.body)
@@ -54,7 +55,7 @@ module.exports = class Creator {
         });
         return promise;
     }
-    
+
     create(data){
         return this.save(data);
     }
@@ -68,7 +69,7 @@ module.exports = class Creator {
         return this.metodoA(data, ctc);
     } */
 
-   
+
 
 
 

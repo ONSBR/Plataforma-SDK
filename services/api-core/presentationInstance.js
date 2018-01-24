@@ -1,11 +1,9 @@
-const Creator = require("./creator");
-const Finder = require("./finder");
 const BaseEntity = require("./baseEntity");
 
 module.exports = class PresentationInstance extends BaseEntity {
     constructor(configuration){
         super(configuration,"presentationInstance");
-    }    
+    }
 
 
 
@@ -20,7 +18,8 @@ module.exports = class PresentationInstance extends BaseEntity {
                 }
             ]
         }
-        return this.finder.find('presentationInstance', criteria);
+       var url = this.assembleFindUrl(criteria);
+       return this.httpClient.get(url);
     }
-        
+
 }

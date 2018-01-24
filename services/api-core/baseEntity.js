@@ -1,16 +1,18 @@
 
-var Creator = require("./creator");
-var Finder = require("./finder");
+var HttpClient = require("../../http/client");
 
 module.exports = class BaseEntity {
 
     constructor(configuration, entity){
-        this.creator = new Creator(configuration);
-        this.finder = new Finder(configuration);
+        this.conf = configuration;
+        this.httpClient = new HttpClient();
         this.entity = entity;
     }
 
     destroy(obj){
+        var url = this.conf.scheme + "://" +
+        this.conf.host + ":" +
+        this.conf.port + "/core/persist";
         if (Array.isArray(obj)){
             var items = obj.map(o => {
                 o._metadata = {
@@ -19,17 +21,20 @@ module.exports = class BaseEntity {
                 };
                 return o;
             })
-            return this.creator.save(items, "destroy");
+            return this.httpClient.post(url, items);
         }else{
             obj._metadata = {
                 type:this.entity,
                 changeTrack:"destroy"
             };
-            return this.creator.save([obj], "destroy");
+            return this.httpClient.post(url, [obj]);
         }
     }
 
      create(map){
+        var url = this.conf.scheme + "://" +
+        this.conf.host + ":" +
+        this.conf.port + "/core/persist";
         if (Array.isArray(map)){
             var items = map.map(m => {
                 m._metadata = {
@@ -38,17 +43,21 @@ module.exports = class BaseEntity {
                 };
                 return m;
             });
-            return this.creator.create(items);
+            return this.httpClient.post(url, items);
         }else{
             map._metadata = {
                 type:this.entity,
                 changeTrack:"create"
             };
-            return this.creator.save([map]);
+            return this.httpClient.post(url, [map]);
         }
     }
 
     save(map) {
+        var url = this.conf.scheme + "://" +
+        this.conf.host + ":" +
+        this.conf.port + "/core/persist";
+
         if (Array.isArray(map)){
             var items = map.map(m => {
                 if (m.id == undefined) {
@@ -61,11 +70,11 @@ module.exports = class BaseEntity {
                     m._metadata = {
                         type:this.entity,
                         changeTrack : "update"
-                    };                  
+                    };
                 }
                 return m;
             });
-            return this.creator.save(items);
+            return this.httpClient.post(url, items);
         }else{
             if (map.id == undefined) {
                 map._metadata = {
@@ -77,10 +86,25 @@ module.exports = class BaseEntity {
                 map._metadata = {
                     type:this.entity,
                     changeTrack : "update"
-                };                  
-            }            
-            return this.creator.save([map]);
+                };
+            }
+            return this.httpClient.post(url, [map]);
         }
+    }
+
+    assembleFindUrl(criteria) {
+        var url = this.conf.scheme + "://"
+        + this.conf.host + ":"
+        + this.conf.port + "/core/" + this.entity +
+        "?filter=" + criteria.filterName;
+
+        var i = 0;
+        for (i in criteria.parameters) {
+            url += "&" + criteria.parameters[i].fieldName + "="
+            + criteria.parameters[i].fieldValue;
+        }
+
+        return url;
     }
 
     findByName(name) {
@@ -94,7 +118,8 @@ module.exports = class BaseEntity {
                 }
             ]
         }
-        return this.finder.find(this.entity, criteria);
+        var url = this.assembleFindUrl(criteria);
+        return this.httpClient.get(url);
     }
 
     findBySystemId(id) {
@@ -108,7 +133,8 @@ module.exports = class BaseEntity {
                 }
             ]
         }
-        return this.finder.find(this.entity, criteria);
+        var url = this.assembleFindUrl(criteria);
+        return this.httpClient.get(url);
     }
 
     findByProcessId(id) {
@@ -122,7 +148,8 @@ module.exports = class BaseEntity {
                 }
             ]
         }
-        return this.finder.find(this.entity, criteria);
+        var url = this.assembleFindUrl(criteria);
+        return this.httpClient.get(url);
     }
 
     findById(id) {
@@ -136,7 +163,8 @@ module.exports = class BaseEntity {
                 }
             ]
         }
-        return this.finder.find(this.entity, criteria)
+        var url = this.assembleFindUrl(criteria);
+        return this.httpClient.get(url);
     }
 
 
