@@ -8,7 +8,8 @@ module.exports = {
             lookup["info"],
             lookup["coreFacade"],
             lookup["domainClient"],
-            lookup["processMemory"])
-            .startProcess();
+            lookup["processMemory"],
+            lookup["eventManager"])
+            .start();
     }
 }

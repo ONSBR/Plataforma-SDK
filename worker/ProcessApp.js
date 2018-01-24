@@ -1,16 +1,11 @@
-const Client = require('node-rest-client').Client;
-const ProcessMemoryHelper = require("../ProcessMemoryHelper");
 const CoreFacade = require("../services/api-core/apiCoreFacade");
-const DataSetHelper = require("../DataSetHelper");
-const config = require("../config");
-const EventHelper = require("../EventHelper");
 const DataSet = require("../dataset/dataset");
 const DataSetBuilder = require("../dataset/builder");
 const Utils = require("../utils")
 const DomainClient = require("../services/domain/client");
 class ProcessApp {
 
-    constructor(entryPoint, info, coreFacade, domainClient, processMemoryClient) {
+    constructor(entryPoint, info, coreFacade, domainClient, processMemoryClient, eventManager) {
         this.processInstanceId = info.processInstanceId;
         this.processId = info.processId;
         this.systemId = info.systemId;
@@ -19,22 +14,32 @@ class ProcessApp {
         this.coreFacade = coreFacade;
         this.domainClient = domainClient;
         this.processMemory = processMemoryClient;
+        this.bus = eventManager;
     }
-
-    startProcess() {
+    start() {
+        return this.coreFacade.operationFindByProcessId(this.processId).then(op => {
+            if (op[0]) {
+                var context = {};
+                context.processId = this.processId;
+                context.systemId = this.systemId;
+                context.instanceId = this.processInstanceId;
+                context.eventOut = op[0].event_out;
+                return this.startProcess(context);
+            }
+            throw new Error(`Operation not found for process ${this.processId}`);
+        })
+    }
+    startProcess(context) {
         return new Promise((resolve, reject) => {
-            var context = {};
-            context.processId = this.processId;
-            context.systemId = this.systemId;
-            context.instanceId = this.processInstanceId;
+
             this.processMemory.head(context).then(head => {
                 console.log(`get head of process memory`);
-                if(head && !head.event){
+                if (head && !head.event) {
                     //neste caso o head guarda apenas 1 evento e nao o contexto
                     context.event = head;
-                }else if (head){
+                } else if (head) {
                     context = head;
-                }else{
+                } else {
                     reject(new Error(`Process Memory instance was not found`));
                 }
                 return this.buildDataset(context);
@@ -45,7 +50,7 @@ class ProcessApp {
             }).then(r => {
                 console.log(`context commited`);
                 return this.executeOperation(context);
-            }).then(()=>{
+            }).then(() => {
                 console.log(`Process executed with success`);
                 resolve();
             }).catch(e => {
@@ -56,13 +61,13 @@ class ProcessApp {
     }
 
     buildDataset(context) {
-        if (context.dataset){
-            return new Promise((resolve)=> {resolve(new DataSet(context.dataset))});
-        }else{
+        if (context.dataset) {
+            return new Promise((resolve) => { resolve(new DataSet(context.dataset)) });
+        } else {
             return this.loadDataFromDomain(context)
-            .then(data => {
-                return new Promise((resolve) => resolve(new DataSetBuilder(data).build()));
-            })
+                .then(data => {
+                    return new Promise((resolve) => resolve(new DataSetBuilder(data).build()));
+                })
         }
     }
 
@@ -78,7 +83,7 @@ class ProcessApp {
                 console.log(`commiting data on process memory`);
                 return this.processMemory.commit(context);
             }).then(() => {
-                return this.sendOutputEvents(contexto);
+                return this.sendOutputEvents(context);
             }).catch(e => {
                 reject(e);
             }).then(() => {
@@ -88,11 +93,19 @@ class ProcessApp {
 
     }
 
-    sendOutputEvents(contexto) {
-        if (contexto.eventoSaida) {
-            Object.assign(contexto.eventoSaida, contexto.evento);
-            EventHelper.sendEvent(contexto.eventoSaida);
-        }
+    sendOutputEvents(context) {
+        return new Promise((resolve) => {
+            if (context.eventOut) {
+                this.bus.emit({
+                    name: context.eventOut,
+                    payload:{
+                        instanceId: context.instanceId
+                    }
+                }).then(resolve);
+            }else{
+                resolve(context);
+            }
+        });
     }
 
     loadDataFromDomain(context) {

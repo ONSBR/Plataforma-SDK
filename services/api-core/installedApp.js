@@ -5,7 +5,7 @@ module.exports = class InstalledApp extends BaseEntity {
         super(configuration,"installedApp");
     }
 
-    findBySystemIdType(systemId,type){
+    findBySystemIdAndType(systemId,type){
         var criteria = {
             filterName : "bySystemIdAndType",
             parameters :

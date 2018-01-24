@@ -6,19 +6,19 @@ module.exports = class ProcessMemoryClient{
 
     commit(context){
         var d = this.env.processMemory;
-        var url = `${d.scheme}://${d.host}:${d.port}/${context.systemId}/${context.instanceId}/commit`
+        var url = `${d.scheme}://${d.host}:${d.port}/${context.instanceId}/commit`
         return this.http.post(url,context);
     }
 
     head(context){
         var d = this.env.processMemory;
-        var url = `${d.scheme}://${d.host}:${d.port}/${context.systemId}/${context.instanceId}/head`
+        var url = `${d.scheme}://${d.host}:${d.port}/${context.instanceId}/head`
         return this.http.get(url,context);
     }
 
     first(context){
         var d = this.env.processMemory;
-        var url = `${d.scheme}://${d.host}:${d.port}/${context.systemId}/${context.instanceId}/first`
+        var url = `${d.scheme}://${d.host}:${d.port}/${context.instanceId}/first`
         return this.http.get(url,context);
     }
 }
