@@ -87,4 +87,30 @@ describe('Should get object relational mapping based on process id', () => {
     })
 })
 
+describe('Should Get list of filters and entities based on map', () => {
 
+    it('Should Get list of filters and entities based on map', function (done) {
+        let platformMap = {
+            name: 'Conta',
+            content: {
+                Conta: {
+                    model: 'tb_conta',
+                    fields: [{ saldo: { column: 'saldo' }, titular: { column: 'titular' } }],
+                    filters: [{ byName: { id: ':id' } }]
+                }
+            }
+        };
+
+        let filtersOnMapPromise = processApp.getFiltersOnMap(platformMap);
+        expect(filtersOnMapPromise).toBeDefined();
+        filtersOnMapPromise.then(function (filtersByMap) {
+            expect(filtersByMap).toBeDefined();
+            expect(filtersByMap[0]).toBeDefined();
+            expect(filtersByMap[0]._map).toBe('Conta');
+            expect(filtersByMap[0]._entity).toBe('Conta');
+            expect(filtersByMap[0].content.byName).toBeDefined();
+            expect(filtersByMap[0].content.byName.id).toBe(':id');
+            done();
+        });
+    }, 10000)
+})
