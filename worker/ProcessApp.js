@@ -24,6 +24,7 @@ class ProcessApp {
                 context.systemId = this.systemId;
                 context.instanceId = this.processInstanceId;
                 context.eventOut = op[0].event_out;
+
                 return this.startProcess(context);
             }
             throw new Error(`Operation not found for process ${this.processId}`);
