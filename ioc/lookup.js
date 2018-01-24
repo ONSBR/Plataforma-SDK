@@ -8,24 +8,24 @@ module.exports = class LookupServices{
         //crias todas as dependencias stateless
         this.http = new HttpClient();
         this.coreFacade = new CoreFacade({
-            scheme: "http",
-            host: "localhost",
-            port: "9100"
+            scheme: process.env.COREAPI_SCHEME || "http",
+            host: process.env.COREAPI_HOST || "apicore",
+            port: process.env.COREAPI_PORT || "9100"
         });
         this.info = {};
         this.info.processInstanceId = process.env.INSTANCE_ID;
         this.info.processId = process.env.PROCESS_ID;
         this.info.systemId = process.env.SYSTEM_ID;
         this.info.processMemory = {
-            host:"localhost",
-            scheme:"http",
-            port:"9091"
+            host: process.env.PROCESS_MEMORY_HOST || "process_memory",
+            scheme: process.env.PROCESS_MEMORY_SCHEME || "http",
+            port: process.env.PROCESS_MEMORY_PORT || "9091"
         }
 
         this.info.eventManager = {
-            host:"localhost",
-            scheme:"http",
-            port:"8081"
+            host: process.env.EVENT_MANAGER_HOST || "event_manager",
+            scheme: process.env.EVENT_MANAGER_SCHEME || "http",
+            port: process.env.EVENT_MANAGER_PORT || "8081"
         }
         console.log(JSON.stringify(this.info,null,4));
         this.domainClient = new DomainClient(this.info,this.coreFacade,this.http);
