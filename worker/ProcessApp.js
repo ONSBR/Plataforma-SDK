@@ -21,41 +21,21 @@ class ProcessApp {
         this.processMemory = processMemoryClient;
     }
 
-    startProcess1() {
-        var context = {};
-        console.log("Process Instance Id= " + this.processInstanceId);
-        new ProcessMemoryHelper().getProcessMemory(this.processId, this.processInstanceId)
-            .then(initialCommit => {
-                return this.loadDataFromDomain(initialCommit);
-            }).then((data) => {
-                return new Promise((resolve) => resolve(new DataSetBuilder(data).build()));
-            }).then((dataset) => {
-                context.dataset = dataset;
-                return new Promise((resolve) => { resolve(context) });
-            }).then((context) => {
-                return this.processMemory.commit(context);
-            }).then(memory => {
-                return this.executeOperation(memory);
-            }).then(() => {
-                console.log("Operação executada com sucesso: " + this.operation);
-            }).catch(e => {
-                console.log(`Erro ao executar operação ${this.operation}: Erro: ${e.toString()}`);
-            });
-
-    }
-
     startProcess() {
         return new Promise((resolve, reject) => {
             var context = {};
             context.processId = this.processId;
+            context.systemId = this.systemId;
             context.instanceId = this.processInstanceId;
             this.processMemory.head(context).then(head => {
                 console.log(`get head of process memory`);
-                if(!head.event){
+                if(head && !head.event){
                     //neste caso o head guarda apenas 1 evento e nao o contexto
                     context.event = head;
-                }else{
+                }else if (head){
                     context = head;
+                }else{
+                    reject(new Error(`Process Memory instance was not found`));
                 }
                 return this.buildDataset(context);
             }).then(dataset => {
@@ -97,13 +77,13 @@ class ProcessApp {
             }).then(() => {
                 console.log(`commiting data on process memory`);
                 return this.processMemory.commit(context);
-            })/*.then(() => {
+            }).then(() => {
                 return this.sendOutputEvents(contexto);
             }).catch(e => {
                 reject(e);
             }).then(() => {
                 resolve();
-            });*/
+            });
         });
 
     }

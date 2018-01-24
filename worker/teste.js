@@ -1,11 +1,17 @@
 const SDK = require("./sdk")
 
-SDK.run((context,resolve,reject)=>{
-    console.log("Hello World");
-    console.log(context.dataset.Conta.collection.toArray());
-    console.log("*************")
-    var contas = context.dataset.Conta.collection.where(c => 1===1).toArray();
-    //console.log(contas);
-    //console.log(JSON.stringify(context,null,4));
+SDK.run((context, resolve, reject) => {
+    console.log("Realizando Transferencia");
+    var params = context.event.payload;
+
+    var contaOrigem = context.dataset.Conta.collection.first(c => c.id === params.origem);
+    var contaDestino = context.dataset.Conta.collection.first(c => c.id === params.destino);
+
+    contaOrigem.saldo -= params.valor;
+    contaDestino.saldo += params.valor;
+
+    context.dataset.Conta.update(contaOrigem);
+    context.dataset.Conta.update(contaDestino);
+
     resolve();
 })
