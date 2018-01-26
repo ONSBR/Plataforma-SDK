@@ -10,7 +10,7 @@ module.exports = class LookupServices{
         this.coreFacade = new CoreFacade({
             scheme: process.env.COREAPI_SCHEME || "http",
             host: process.env.COREAPI_HOST || "apicore",
-            port: process.env.COREAPI_PORT || "9100"
+            port: process.env.COREAPI_PORT || "9110"
         });
         this.info = {};
         this.info.processInstanceId = process.env.INSTANCE_ID;
