@@ -1,4 +1,4 @@
-const SDK = require("plataforma-sdk/worker/sdk")
+const SDK = require("./sdk");
 
 SDK.run((context, resolve, reject) => {
     console.log("Realizando Transferencia");

@@ -10,6 +10,9 @@ module.exports = {
             lookup["domainClient"],
             lookup["processMemory"],
             lookup["eventManager"])
-            .start();
+            .start().catch(e => {
+                console.log(e);
+            });
+
     }
-}
+};

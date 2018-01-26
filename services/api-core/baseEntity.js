@@ -9,6 +9,27 @@ module.exports = class BaseEntity {
         this.entity = entity;
     }
 
+    reference(date){
+        this.referenceDate = date;
+        return this;
+    }
+
+    post(url,body){
+        if(this.referenceDate){
+            return this.httpClient.post(url,body,{"Reference-Date":this.referenceDate});
+        }else{
+            return this.httpClient.post(url,body);
+        }
+    }
+
+    get(url){
+        if(this.referenceDate){
+            return this.httpClient.get(url,null,{"Reference-Date":this.referenceDate});
+        }else{
+            return this.httpClient.get(url);
+        }
+    }
+
     destroy(obj){
         var url = this.conf.scheme + "://" +
         this.conf.host + ":" +
@@ -21,13 +42,13 @@ module.exports = class BaseEntity {
                 };
                 return o;
             })
-            return this.httpClient.post(url, items);
+            return this.post(url, items);
         }else{
             obj._metadata = {
                 type:this.entity,
                 changeTrack:"destroy"
             };
-            return this.httpClient.post(url, [obj]);
+            return this.post(url, [obj]);
         }
     }
 
@@ -43,13 +64,13 @@ module.exports = class BaseEntity {
                 };
                 return m;
             });
-            return this.httpClient.post(url, items);
+            return this.post(url, items);
         }else{
             map._metadata = {
                 type:this.entity,
                 changeTrack:"create"
             };
-            return this.httpClient.post(url, [map]);
+            return this.post(url, [map]);
         }
     }
 
@@ -88,7 +109,7 @@ module.exports = class BaseEntity {
                     changeTrack : "update"
                 };
             }
-            return this.httpClient.post(url, [map]);
+            return this.post(url, [map]);
         }
     }
 
@@ -119,7 +140,7 @@ module.exports = class BaseEntity {
             ]
         }
         var url = this.assembleFindUrl(criteria);
-        return this.httpClient.get(url);
+        return this.get(url);
     }
 
     findBySystemId(id) {
@@ -134,7 +155,7 @@ module.exports = class BaseEntity {
             ]
         }
         var url = this.assembleFindUrl(criteria);
-        return this.httpClient.get(url);
+        return this.get(url);
     }
 
     findByProcessId(id) {
@@ -149,7 +170,7 @@ module.exports = class BaseEntity {
             ]
         }
         var url = this.assembleFindUrl(criteria);
-        return this.httpClient.get(url);
+        return this.get(url);
     }
 
     findById(id) {
@@ -164,7 +185,7 @@ module.exports = class BaseEntity {
             ]
         }
         var url = this.assembleFindUrl(criteria);
-        return this.httpClient.get(url);
+        return this.get(url);
     }
 
 

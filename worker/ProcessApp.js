@@ -1,7 +1,7 @@
 const CoreFacade = require("../services/api-core/apiCoreFacade");
 const DataSet = require("../dataset/dataset");
 const DataSetBuilder = require("../dataset/builder");
-const Utils = require("../utils")
+const Utils = require("../utils");
 const DomainClient = require("../services/domain/client");
 class ProcessApp {
 
@@ -17,38 +17,43 @@ class ProcessApp {
         this.bus = eventManager;
     }
     start() {
-        return this.coreFacade.operationFindByProcessId(this.processId).then(op => {
-            if (op[0]) {
-                var context = {};
-                context.processId = this.processId;
-                context.systemId = this.systemId;
-                context.instanceId = this.processInstanceId;
-                context.eventOut = op[0].event_out;
-                if (op[0].commit) {
-                    context.commit = op[0].commit;
-                } else {
-                    context.commit = false;
-                }
-                return this.startProcess(context);
+        return this.processMemory.head(this.processInstanceId).then(head => {
+            var context = {};
+            console.log(`get head of process memory`);
+            if (head && !head.event) {
+                //neste caso o head guarda apenas 1 evento e nao o contexto
+                context.event = head;
+                this.referenceDate = head.reference_date;
+            } else if (head) {
+                context = head;
+                this.referenceDate = head.event.reference_date;
+            } else {
+                throw new Error(`Process Memory instance was not found`);
             }
-            throw new Error(`Operation not found for process ${this.processId}`);
-        })
+            if (this.referenceDate){
+                console.log(`Executing process for reference date ${new Date(this.referenceDate)}`);
+            }
+            return this.coreFacade.reference(this.referenceDate).operationFindByProcessId(this.processId).then(op => {
+                if (op[0]) {
+                    context.processId = this.processId;
+                    context.systemId = this.systemId;
+                    context.instanceId = this.processInstanceId;
+                    context.eventOut = op[0].event_out;
+                    if (op[0].commit) {
+                        context.commit = op[0].commit;
+                    } else {
+                        context.commit = false;
+                    }
+                    return this.startProcess(context);
+                }
+                throw new Error(`Operation not found for process ${this.processId}`);
+            });
+        });
+
     }
     startProcess(context) {
         return new Promise((resolve, reject) => {
-
-            this.processMemory.head(context).then(head => {
-                console.log(`get head of process memory`);
-                if (head && !head.event) {
-                    //neste caso o head guarda apenas 1 evento e nao o contexto
-                    context.event = head;
-                } else if (head) {
-                    context = head;
-                } else {
-                    reject(new Error(`Process Memory instance was not found`));
-                }
-                return this.buildDataset(context);
-            }).then(dataset => {
+            this.buildDataset(context).then(dataset => {
                 console.log(`dataset created`);
                 context.dataset = dataset;
                 return this.processMemory.commit(context);
@@ -87,9 +92,9 @@ class ProcessApp {
             }).then(() => {
                 if (context.commit) {
                     console.log(`commiting data to domain`);
-                    return this.domainClient.persist(context.dataset.flatList(), context.map);
+                    return this.domainClient.reference(this.referenceDate).persist(context.dataset.flatList(), context.map);
                 }
-                return new Promise((r)=>r(context));
+                return new Promise((r) => r(context));
             }).then(() => {
                 return this.sendOutputEvents(context);
             }).catch(e => {
@@ -104,12 +109,16 @@ class ProcessApp {
     sendOutputEvents(context) {
         return new Promise((resolve) => {
             if (context.eventOut) {
-                this.bus.emit({
+                var evt = {
                     name: context.eventOut,
                     payload: {
                         instanceId: context.instanceId
                     }
-                }).then(resolve);
+                };
+                if(this.referenceDate){
+                    evt.referenceDate = this.referenceDate;
+                }
+                this.bus.emit(evt).then(resolve);
             } else {
                 resolve(context);
             }
@@ -123,7 +132,7 @@ class ProcessApp {
                 context.map = map.name;
                 this.getFiltersOnMap(map).then((listFilters) => {
                     var filtersToBeQueryOnDomain = listFilters.map(filter => this.shouldBeExecuted(event, filter))
-                    var promise = this.domainClient.queryMany(filtersToBeQueryOnDomain);
+                    var promise = this.domainClient.reference(this.referenceDate).queryMany(filtersToBeQueryOnDomain);
                     promise.then(r => resolve(r)).catch(reject);
                 }).catch(reject);
             }).catch(reject);
@@ -205,7 +214,7 @@ class ProcessApp {
 
     getMapByProcessId(processId) {
         return new Promise((resolve, reject) => {
-            this.coreFacade.mapFindByProcessId(processId).then(map => {
+            this.coreFacade.reference(this.referenceDate).mapFindByProcessId(processId).then(map => {
                 var YAML = require("yamljs");
                 var nativeObject = YAML.parse(map[0].content);
                 map[0].content = nativeObject;

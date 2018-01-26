@@ -26,8 +26,7 @@ module.exports = class LookupServices{
             host: process.env.EVENT_MANAGER_HOST || "event_manager",
             scheme: process.env.EVENT_MANAGER_SCHEME || "http",
             port: process.env.EVENT_MANAGER_PORT || "8081"
-        }
-        console.log(JSON.stringify(this.info,null,4));
+        };
         this.domainClient = new DomainClient(this.info,this.coreFacade,this.http);
         this.processMemory = new ProcessMemory(this.info,this.http);
         this.eventManager = new EventManager(this.info,this.http);

@@ -1,8 +1,0 @@
-
-
-// TODO
-// passar protocolo, host, porta - DONE
-// 'find' específico - DONE
-// data vigência no construtor
-// 'update' + 'create' condensado em 'save', diferenciando pela existência do id - DONE
-// 'delete' -> seta a data de fim de vigência (colocar 'destroy' no changeTrack) - DONE

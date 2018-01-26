@@ -21,6 +21,6 @@ module.exports = class InstalledApp extends BaseEntity {
             ]
         }
        var url = this.assembleFindUrl(criteria);
-       return this.httpClient.get(url);
+       return this.get(url);
     }
 }

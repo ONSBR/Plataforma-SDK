@@ -1,5 +1,10 @@
 module.exports = class CoreFacadeHelper {
 
+    reference(date){
+        this.referenceDate = date;
+        return this;
+    }
+
     installedAppFindBySystemIdAndType() {
         return new Promise((resolve, reject) => {
             resolve([
@@ -25,7 +30,7 @@ module.exports = class CoreFacadeHelper {
             let values = [
                 {
                     "content" : "Conta:\r\n  model: conta\r\n  fields:\r\n    saldo:\r\n      column: saldo\r\n" +
-                    "    titular:\r\n      column: titular\r\n  filters:\r\n    transferencia:\r\n      id:\r\n" + 
+                    "    titular:\r\n      column: titular\r\n  filters:\r\n    transferencia:\r\n      id:\r\n" +
                     "        $in:\r\n          - \":origem\"\r\n          - \":destino\""
                 }
             ];

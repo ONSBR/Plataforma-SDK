@@ -334,6 +334,11 @@ const PresentationInstance = require("./presentationInstance");
         this.presentationInstance = new PresentationInstance(configuration);
     }
 
+
+    reference(date){
+        this.referenceDate = date;
+        return this;
+    }
     // ************************************************************************
     //                                SYSTEM
     // ************************************************************************
@@ -343,11 +348,11 @@ const PresentationInstance = require("./presentationInstance");
     }
 
     systemFindByName(name) {
-        return this.system.findByName(name);
+        return this.system.reference(this.referenceDate).findByName(name);
     }
 
     systemFindById(id) {
-        return this.system.findById(id);
+        return this.system.reference(this.referenceDate).findById(id);
     }
 
     systemDestroy(system) {
@@ -363,11 +368,11 @@ const PresentationInstance = require("./presentationInstance");
     }
 
     processFindById(id) {
-        return this.process.findById(id);
+        return this.process.reference(this.referenceDate).findById(id);
     }
 
     processFindBySytemId(systemId) {
-        return this.process.findBySystemId(systemId);
+        return this.process.reference(this.referenceDate).findBySystemId(systemId);
     }
 
     processDestroy(id) {
@@ -389,11 +394,11 @@ const PresentationInstance = require("./presentationInstance");
     }
 
     processInstanceFindById(id) {
-        return this.processInstance.findById(id);
+        return this.processInstance.reference(this.referenceDate).findById(id);
     }
 
     processInstanceFindByProcessId(processId) {
-        return this.processInstance.findByProcessId(processId);
+        return this.processInstance.reference(this.referenceDate).findByProcessId(processId);
     }
 
     // ************************************************************************
@@ -409,11 +414,11 @@ const PresentationInstance = require("./presentationInstance");
     }
 
     operationFindById(id) {
-        return this.operation.findById(id);
+        return this.operation.reference(this.referenceDate).findById(id);
     }
 
     operationFindByProcessId(processId) {
-        return this.operation.findByProcessId(processId);
+        return this.operation.reference(this.referenceDate).findByProcessId(processId);
     }
 
     // ************************************************************************
@@ -429,15 +434,15 @@ const PresentationInstance = require("./presentationInstance");
     }
 
     operationInstanceFindById(id) {
-        return this.operationInstance.findById(id);
+        return this.operationInstance.reference(this.referenceDate).findById(id);
     }
 
     operationInstanceFindByProcessInstanceId(processInstanceId) {
-        return this.operationInstance.findByProcessInstanceId(processInstanceId);
+        return this.operationInstance.reference(this.referenceDate).findByProcessInstanceId(processInstanceId);
     }
 
     operationInstanceFindByOperationId(operationId) {
-        return this.operationInstance.findByOperationId(operationId);
+        return this.operationInstance.reference(this.referenceDate).findByOperationId(operationId);
     }
 
 
@@ -454,19 +459,19 @@ const PresentationInstance = require("./presentationInstance");
     }
 
     eventFindById(id) {
-        return this.event.findById(id);
+        return this.event.reference(this.referenceDate).findById(id);
     }
 
     eventFindByProcessId(processId) {
-        return this.event.findByProcessId(processId);
+        return this.event.reference(this.referenceDate).findByProcessId(processId);
     }
 
     eventFindByName(name) {
-        return this.event.findByName(name);
+        return this.event.reference(this.referenceDate).findByName(name);
     }
 
     eventFindBySystemId(systemId) {
-        return this.event.findBySystemId(systemId);
+        return this.event.reference(this.referenceDate).findBySystemId(systemId);
     }
 
     // ************************************************************************
@@ -482,19 +487,19 @@ const PresentationInstance = require("./presentationInstance");
     }
 
     mapFindBySystemId(systemId) {
-        return this.map.findBySystemId(systemId);
+        return this.map.reference(this.referenceDate).findBySystemId(systemId);
     }
 
     mapFindById(id) {
-        return this.map.findById(id);
+        return this.map.reference(this.referenceDate).findById(id);
     }
 
     mapFindByProcessId(processId) {
-        return this.map.findByProcessId(processId);
+        return this.map.reference(this.referenceDate).findByProcessId(processId);
     }
 
     mapFindByName(name) {
-        return this.map.findByName(name);
+        return this.map.reference(this.referenceDate).findByName(name);
     }
 
     // ************************************************************************
@@ -510,19 +515,19 @@ const PresentationInstance = require("./presentationInstance");
     }
 
     installedAppFindBySystemId(systemId) {
-        return this.installedApp.findBySystemId(systemId);
+        return this.installedApp.reference(this.referenceDate).findBySystemId(systemId);
     }
 
     installedAppFindById(id) {
-        return this.installedApp.findById(id);
+        return this.installedApp.reference(this.referenceDate).findById(id);
     }
 
     installedAppFindBySystemIdAndType(systemId, type) {
-        return this.installedApp.findBySystemIdAndType(systemId,type);
+        return this.installedApp.reference(this.referenceDate).findBySystemIdAndType(systemId,type);
     }
 
     installedAppFindByName(name) {
-        return this.installedApp.findByName(name);
+        return this.installedApp.reference(this.referenceDate).findByName(name);
     }
 
     // ************************************************************************
@@ -538,11 +543,11 @@ const PresentationInstance = require("./presentationInstance");
     }
 
     presentationFindBySystemId(systemId) {
-        return this.presentation.findBySystemId(systemId);
+        return this.presentation.reference(this.referenceDate).findBySystemId(systemId);
     }
 
     presentationFindById(id) {
-        return this.presentation.findById(id);
+        return this.presentation.reference(this.referenceDate).findById(id);
     }
 
     // ************************************************************************
@@ -557,10 +562,10 @@ const PresentationInstance = require("./presentationInstance");
     }
 
     presentationInstanceFindByPresentationId(presentationId) {
-        return this.presentationInstance.findByPresentationId(presentationId);
+        return this.presentationInstance.reference(this.referenceDate).findByPresentationId(presentationId);
     }
 
     presentationInstanceFindById(id) {
-        return this.presentationInstance.findById(id);
+        return this.presentationInstance.reference(this.referenceDate).findById(id);
     }
 }

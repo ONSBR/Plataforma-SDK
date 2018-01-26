@@ -8,6 +8,14 @@ module.exports = class DomainClient{
         this.http = httpClient;
         this.info = this.coreFacade.installedAppFindBySystemIdAndType(this.systemId,"domain");
     }
+
+    reference(date){
+        if(date){
+            this.referenceDate = date;
+            this.info = this.coreFacade.reference(this.referenceDate).installedAppFindBySystemIdAndType(this.systemId,"domain");
+        }
+        return this;
+    }
     query(obj){
         return new Promise((resolve,reject)=>{
             var clone = Utils.clone(obj);
@@ -20,7 +28,7 @@ module.exports = class DomainClient{
                 this.http.get(url).then(body => {
                     resolve(body);
                 }).catch(reject);
-            })
+            });
         });
     }
 
