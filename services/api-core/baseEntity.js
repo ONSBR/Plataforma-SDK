@@ -114,6 +114,7 @@ module.exports = class BaseEntity {
     }
 
     assembleFindUrl(criteria) {
+        console.log(JSON.stringify(criteria,null,4));
         var url = this.conf.scheme + "://"
         + this.conf.host + ":"
         + this.conf.port + "/core/" + this.entity +

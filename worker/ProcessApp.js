@@ -17,6 +17,7 @@ class ProcessApp {
         this.bus = eventManager;
     }
     start() {
+        console.log(`process instance ${this.processInstanceId}`);
         return this.processMemory.head(this.processInstanceId).then(head => {
             var context = {};
             console.log(`get head of process memory`);
