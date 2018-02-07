@@ -27,8 +27,12 @@ function parseQuery(queryString) {
 function toQueryString(obj){
     var query = [];
     Object.keys(obj).forEach(f =>{
-        query.push(`${f}=${obj[f]}`);
-    })
+        if (Array.isArray(obj[f])){
+            query.push(`${f}=${obj[f].join(";")}`);
+        }else{
+            query.push(`${f}=${obj[f]}`);
+        }
+    });
     var q = `?${query.join("&")}`;
     if (q === "?"){
         return "";

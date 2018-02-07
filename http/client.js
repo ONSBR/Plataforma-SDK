@@ -28,7 +28,7 @@ module.exports = class HttpClient {
                         reject(res.error);
                     }
                     else {
-                        resolve(res.body)
+                        resolve(res.body);
                     }
                 });
         });

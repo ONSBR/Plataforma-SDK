@@ -19,6 +19,9 @@ module.exports = class DomainClient{
     query(obj){
         return new Promise((resolve,reject)=>{
             var clone = Utils.clone(obj);
+            if (!clone["_entity"]){
+                return resolve([]);
+            }
             delete clone["_entity"];
             delete clone["_map"];
             var query = Utils.toQueryString(clone);

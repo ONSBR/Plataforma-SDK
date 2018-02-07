@@ -35,7 +35,9 @@ class ProcessApp {
                 console.log(`Executing process for reference date ${new Date(this.referenceDate)}`);
             }
             return this.coreFacade.reference(this.referenceDate).operationFindByProcessId(this.processId).then(op => {
+                console.log(`Operation: ${JSON.stringify(op,null,4)}`);
                 if (op[0]) {
+                    console.log("Creating context");
                     context.processId = this.processId;
                     context.systemId = this.systemId;
                     context.instanceId = this.processInstanceId;
@@ -45,6 +47,7 @@ class ProcessApp {
                     } else {
                         context.commit = false;
                     }
+                    console.log(`context: ${JSON.stringify(context,null,4)}`);
                     return this.startProcess(context);
                 }
                 throw new Error(`Operation not found for process ${this.processId}`);
@@ -73,10 +76,17 @@ class ProcessApp {
 
     buildDataset(context) {
         if (context.dataset) {
+            console.log('data set already exists');
             return new Promise((resolve) => { resolve(new DataSet(context.dataset)) });
         } else {
+            console.log('loading dataset from domain');
             return this.loadDataFromDomain(context)
                 .then(data => {
+                    console.log("Data retrived from domain");
+                    console.log("building dataset");
+                    if (!data){
+                        data = [];
+                    }
                     return new Promise((resolve) => resolve(new DataSetBuilder(data).build()));
                 })
         }
@@ -134,7 +144,11 @@ class ProcessApp {
                 this.getFiltersOnMap(map).then((listFilters) => {
                     var filtersToBeQueryOnDomain = listFilters.map(filter => this.shouldBeExecuted(event, filter))
                     var promise = this.domainClient.reference(this.referenceDate).queryMany(filtersToBeQueryOnDomain);
-                    promise.then(r => resolve(r)).catch(reject);
+                    promise.then(r => {
+                        resolve(r);
+                    } ).catch(e => {
+                        reject(e);
+                    });
                 }).catch(reject);
             }).catch(reject);
         });
@@ -160,9 +174,18 @@ class ProcessApp {
             result.filter = filter.name;
             result._entity = filter._entity;
             result._map = filter._map;
-            params.forEach(p => result[p] = event.payload[p])
+            params.forEach(p => {
+                if (p[0] === "$"){
+                    var prop = p.substr(1);
+                    if (Array.isArray(event.payload[prop])){
+                        result[prop] = event.payload[prop];
+                    }
+                }else
+                    result[p] = event.payload[p]
+            });
             return result;
         }
+        return {};
     }
 
 
@@ -179,6 +202,8 @@ class ProcessApp {
     getFilterParams(filter) {
         if (typeof filter === "string" && filter[0] === ":") {
             return [filter.substr(1)];
+        }else if (typeof filter === "string"){
+            return [filter];
         }
         var keys = Object.keys(filter);
         for (const key in filter) {
@@ -194,12 +219,14 @@ class ProcessApp {
                 }
             }
         }
+
     }
 
     getFiltersMap(fullMap) {
         var map = fullMap.content;
         return new Promise((resolve, reject) => {
             Object.keys(map).forEach(entity => {
+                console.log(`looking for filters in ${entity}`);
                 if (map[entity]["filters"]) {
                     var list = [];
                     Object.keys(map[entity]["filters"]).forEach(filter => {
@@ -207,7 +234,7 @@ class ProcessApp {
                     });
                     resolve(list);
                 }
-            })
+            });
             resolve();
         });
     }
@@ -215,7 +242,9 @@ class ProcessApp {
 
     getMapByProcessId(processId) {
         return new Promise((resolve, reject) => {
+            console.log(`get maps from api core for process id: ${this.processId}`);
             this.coreFacade.reference(this.referenceDate).mapFindByProcessId(processId).then(map => {
+                console.log(JSON.stringify(map));
                 var YAML = require("yamljs");
                 var nativeObject = YAML.parse(map[0].content);
                 map[0].content = nativeObject;
