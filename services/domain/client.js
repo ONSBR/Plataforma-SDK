@@ -27,8 +27,10 @@ module.exports = class DomainClient{
             var query = Utils.toQueryString(clone);
             this.info.then(list => {
                 var o = list[0];
-                var url = `http://${o.host}:${o.port}/${obj._map}/${obj._entity}${query}`
+                var url = `http://${o.host}:${o.port}/${obj._map}/${obj._entity}${query}`;
+                console.log(`Calling url ${url}`);
                 this.http.get(url).then(body => {
+                    console.log(`response ${JSON.stringify(body,null,4)}`);
                     resolve(body);
                 }).catch(reject);
             });

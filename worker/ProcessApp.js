@@ -142,7 +142,10 @@ class ProcessApp {
             this.getMapByProcessId(this.processId).then(map => {
                 context.map = map;
                 this.getFiltersOnMap(map).then((listFilters) => {
+                    console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa");
+                    console.log(JSON.stringify(listFilters,null,4));
                     var filtersToBeQueryOnDomain = listFilters.map(filter => this.shouldBeExecuted(event, filter))
+                    console.log(JSON.stringify(filtersToBeQueryOnDomain,null,4));
                     var promise = this.domainClient.reference(this.referenceDate).queryMany(filtersToBeQueryOnDomain);
                     promise.then(r => {
                         resolve(r);
@@ -161,6 +164,7 @@ class ProcessApp {
      * @description this method returns an Object if Event payload has all parameters to execute query on domain
      */
     shouldBeExecuted(event, filter) {
+
         var shouldExecuteFilter = true;
         var params = this.getFilterParams(filter.content);
         params.forEach(param => {
@@ -224,18 +228,17 @@ class ProcessApp {
 
     getFiltersMap(fullMap) {
         var map = fullMap.content;
+
         return new Promise((resolve, reject) => {
+            var list = [];
             Object.keys(map).forEach(entity => {
-                console.log(`looking for filters in ${entity}`);
                 if (map[entity]["filters"]) {
-                    var list = [];
                     Object.keys(map[entity]["filters"]).forEach(filter => {
                         list.push({ _map: fullMap.name, _entity: entity, name: filter, content: map[entity]["filters"][filter] })
                     });
-                    resolve(list);
                 }
             });
-            resolve();
+            resolve(list);
         });
     }
 
