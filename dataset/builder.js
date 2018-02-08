@@ -15,6 +15,7 @@ module.exports = class DataSetBuilder {
         this.data = data;
     }
 
+
     index() {
         var referenceIndex = {};
         var dataset = {};
@@ -33,8 +34,17 @@ module.exports = class DataSetBuilder {
         return dataset;
     }
 
-    build() {
-        var dataset = this.index();
+    build(context) {
+        var dataset = this.index(this.buildEntityCollection(context));
         return new DataSet(dataset);
+    }
+
+    buildEntityCollection(context){
+        var dataset = {};
+        var entities = Object.keys(context.map.content);
+        entities.forEach(e => {
+            dataset[e] = [];
+        });
+        return dataset;
     }
 }

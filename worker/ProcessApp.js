@@ -87,7 +87,7 @@ class ProcessApp {
                     if (!data){
                         data = [];
                     }
-                    return new Promise((resolve) => resolve(new DataSetBuilder(data).build()));
+                    return new Promise((resolve) => resolve(new DataSetBuilder(data).build(context)));
                 })
         }
     }
@@ -103,7 +103,7 @@ class ProcessApp {
             }).then(() => {
                 if (context.commit) {
                     console.log(`commiting data to domain`);
-                    return this.domainClient.reference(this.referenceDate).persist(context.dataset.flatList(), context.map);
+                    return this.domainClient.reference(this.referenceDate).persist(context.dataset.flatList(), context.map.name);
                 }
                 return new Promise((r) => r(context));
             }).then(() => {
@@ -140,7 +140,7 @@ class ProcessApp {
         var event = context.event;
         return new Promise((resolve, reject) => {
             this.getMapByProcessId(this.processId).then(map => {
-                context.map = map.name;
+                context.map = map;
                 this.getFiltersOnMap(map).then((listFilters) => {
                     var filtersToBeQueryOnDomain = listFilters.map(filter => this.shouldBeExecuted(event, filter))
                     var promise = this.domainClient.reference(this.referenceDate).queryMany(filtersToBeQueryOnDomain);
