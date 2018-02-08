@@ -16,9 +16,8 @@ module.exports = class DataSetBuilder {
     }
 
 
-    index() {
+    index(dataset) {
         var referenceIndex = {};
-        var dataset = {};
         this.data.forEach(collection => {
             collection.forEach(item => {
                 var type = item._metadata.type;
@@ -31,18 +30,18 @@ module.exports = class DataSetBuilder {
                 dataset[type].push(referenceIndex[item.id]);
             });
         });
-        return dataset;
     }
 
     build(context) {
-        var dataset = this.index(this.buildEntityCollection(context));
+        var dataset = this.buildEntityCollection(context);
+        this.index(dataset);
         return new DataSet(dataset);
     }
 
     buildEntityCollection(context){
         var dataset = {};
-        var entities = Object.keys(context.map.content);
-        entities.forEach(e => {
+        var _entities = Object.keys(context.map.content);
+        _entities.forEach(e => {
             dataset[e] = [];
         });
         return dataset;
