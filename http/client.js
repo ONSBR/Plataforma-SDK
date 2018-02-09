@@ -17,21 +17,34 @@ module.exports = class HttpClient {
         if (!headers){
             headers = {};
         }
-        headers["Accept"] = 'application/json';
+        headers["Accept"] = 'text/pain';
         headers["Content-Type"] = 'application/json';
         return new Promise((resolve, reject) => {
             unirest[method](url)
                 .headers(headers)
                 .send(body)
                 .end((res) => {
-                    if (res.error) {
-                        reject(res.error);
+                    var resJson = JSON.parse(res, dateReviver);
+                    if (resJson.error) {
+                        reject(resJson.error);
                     }
                     else {
-                        resolve(res.body);
+                        resolve(resJson.body);
                     }
                 });
         });
     }
 
 }
+
+function dateReviver(key, value) {  
+    var a;  
+    if (typeof value === 'string') {  
+        a = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/.exec(value);  
+        if (a) {  
+            return new Date(Date.UTC(+a[1], +a[2] - 1, +a[3], +a[4],  
+                            +a[5], +a[6]));  
+        }  
+    }  
+    return value;  
+};  

@@ -47,7 +47,7 @@ class ProcessApp {
                     } else {
                         context.commit = false;
                     }
-                    console.log(`context: ${JSON.stringify(context,null,4)}`);
+                    //console.log(`context: ${JSON.stringify(context,null,4)}`);
                     return this.startProcess(context);
                 }
                 throw new Error(`Operation not found for process ${this.processId}`);
