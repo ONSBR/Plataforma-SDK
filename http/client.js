@@ -17,19 +17,19 @@ module.exports = class HttpClient {
         if (!headers){
             headers = {};
         }
-        headers["Accept"] = 'text/plain';
-        headers["Content-Type"] = 'text/plain';
+        headers["Accept"] = 'application/json';
+        headers["Content-Type"] = 'application/json';
         return new Promise((resolve, reject) => {
             unirest[method](url)
                 .headers(headers)
-                .send(JSON.stringify(body))
+                .send(body)
                 .end((res) => {
-                    var resJson = JSON.parse(res, dateReviver);
-                    if (resJson.error) {
-                        reject(resJson.error);
+                    res = JSON.parse(JSON.stringify(res), dateReviver);
+                    if (res.error) {
+                        reject(res.error);
                     }
                     else {
-                        resolve(resJson.body);
+                        resolve(res.body);
                     }
                 });
         });
