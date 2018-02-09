@@ -185,15 +185,17 @@ class ProcessApp {
             result.filter = filter.name;
             result._entity = filter._entity;
             result._map = filter._map;
-            params.forEach(p => {
-                if (p[0] === "$"){
-                    var prop = p.substr(1);
-                    if (Array.isArray(event.payload[prop])){
-                        result[prop] = event.payload[prop];
-                    }
-                }else
-                    result[p] = event.payload[p]
-            });
+            if (result.filter != 'all') {
+                params.forEach(p => {
+                    if (p[0] === "$"){
+                        var prop = p.substr(1);
+                        if (Array.isArray(event.payload[prop])){
+                            result[prop] = event.payload[prop];
+                        }
+                    }else
+                        result[p] = event.payload[p]
+                });
+            }
             return result;
         }
         return {};
