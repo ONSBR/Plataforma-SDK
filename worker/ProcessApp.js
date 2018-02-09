@@ -96,7 +96,14 @@ class ProcessApp {
         return new Promise((resolve, reject) => {
             console.log("Execute operation");
             var operationPromise = new Promise((resolve, reject) => {
-                this.entryPoint(context, resolve, reject);
+                var localContext = {};
+                localContext.context = context;
+                localContext.resolve = resolve;
+                localContext.reject = reject;
+                localContext.eventManager = this.bus;
+                var args = Utils.getFunctionArgs(this.entryPoint);
+                var injectedArgs = args.map(a => localContext[a]);
+                this.entryPoint(...injectedArgs);
             }).then(() => {
                 console.log(`commiting data on process memory`);
                 return this.processMemory.commit(context);
