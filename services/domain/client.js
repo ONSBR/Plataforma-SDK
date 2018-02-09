@@ -30,7 +30,7 @@ module.exports = class DomainClient{
                 var url = `http://${o.host}:${o.port}/${obj._map}/${obj._entity}${query}`;
                 console.log(`Calling url ${url}`);
                 this.http.get(url).then(body => {
-                    console.log(`response ${JSON.stringify(body,null,4)}`);
+                    // TODO muitos dados console.log(`response ${JSON.stringify(body,null,4)}`);
                     resolve(body);
                 }).catch(reject);
             });
