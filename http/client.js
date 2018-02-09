@@ -17,12 +17,12 @@ module.exports = class HttpClient {
         if (!headers){
             headers = {};
         }
-        headers["Accept"] = 'text/pain';
-        headers["Content-Type"] = 'application/json';
+        headers["Accept"] = 'text/plain';
+        headers["Content-Type"] = 'text/plain';
         return new Promise((resolve, reject) => {
             unirest[method](url)
                 .headers(headers)
-                .send(body)
+                .send(JSON.stringify(body))
                 .end((res) => {
                     var resJson = JSON.parse(res, dateReviver);
                     if (resJson.error) {
