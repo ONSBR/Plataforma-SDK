@@ -172,6 +172,14 @@ class ProcessApp {
      */
     shouldBeExecuted(event, filter) {
 
+        if (filter.name == 'all') {
+            var result = {};
+            result.filter = filter.name;
+            result._entity = filter._entity;
+            result._map = filter._map;
+            
+            return result;
+        }
         var shouldExecuteFilter = true;
         var params = this.getFilterParams(filter.content);
         params.forEach(param => {
@@ -185,17 +193,16 @@ class ProcessApp {
             result.filter = filter.name;
             result._entity = filter._entity;
             result._map = filter._map;
-            if (result.filter != 'all') {
-                params.forEach(p => {
-                    if (p[0] === "$"){
-                        var prop = p.substr(1);
-                        if (Array.isArray(event.payload[prop])){
-                            result[prop] = event.payload[prop];
-                        }
-                    }else
-                        result[p] = event.payload[p]
-                });
-            }
+            params.forEach(p => {
+                if (p[0] === "$"){
+                    var prop = p.substr(1);
+                    if (Array.isArray(event.payload[prop])){
+                        result[prop] = event.payload[prop];
+                    }
+                }else
+                    result[p] = event.payload[p]
+            });
+
             return result;
         }
         return {};
