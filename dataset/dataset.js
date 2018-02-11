@@ -56,9 +56,6 @@ module.exports = class DataSet {
                         || item._metadata.changeTrack == CHANGETRACK_UPDATE
                         || item._metadata.changeTrack == CHANGETRACK_DELETE)) {
 
-                    if (instanceId) {
-                        item._metadata.instance_id = instanceId;
-                    }
                     list.push(item);
                 }
             });

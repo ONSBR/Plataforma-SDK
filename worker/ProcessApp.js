@@ -111,8 +111,9 @@ class ProcessApp {
                 if (context.commit) {
                     console.log(`commiting data to domain`);
                     return this.domainClient.reference(this.referenceDate).persist(
-                        context.dataset.trackingList(context.instanceId),
-                        context.map.name
+                        context.dataset.trackingList(), 
+                        context.map.name,
+                        context.instanceId
                     );
                 }
                 return new Promise((r) => r(context));
