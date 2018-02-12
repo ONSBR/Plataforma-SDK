@@ -1,22 +1,5 @@
 var unirest = require('unirest');
-
-function dateReviver(key, value) {
-    var a;
-    if (typeof value === 'string') {
-        a = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/.exec(value);
-        if (a) {
-            return new Date(Date.UTC(+a[1], +a[2] - 1, +a[3], +a[4],
-                +a[5], +a[6]));
-        }
-    }
-    return value;
-};
-
-if (!JSON.parse.changed) {
-    var jsonParse = JSON.parse;
-    JSON.parse = function (str) { return jsonParse(str, dateReviver) };
-    JSON.parse.changed = true;
-}
+var utils = require('../utils');
 
 module.exports = class HttpClient {
     get(url, body, headers) {

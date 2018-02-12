@@ -1,3 +1,21 @@
+function dateReviver(key, value) {
+    var a;
+    if (typeof value === 'string') {
+        a = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/.exec(value);
+        if (a) {
+            return new Date(Date.UTC(+a[1], +a[2] - 1, +a[3], +a[4],
+                +a[5], +a[6]));
+        }
+    }
+    return value;
+};
+
+if (!JSON.parse.changed) {
+    var jsonParse = JSON.parse;
+    JSON.parse = function (str) { return jsonParse(str, dateReviver) };
+    JSON.parse.changed = true;
+}
+
 const prefixEventSystem = "system.event.";
 
 function isSystemEvent(eventName) {
@@ -55,7 +73,8 @@ function toQueryString(obj) {
         if (Array.isArray(obj[f])) {
             query.push(`${f}=${obj[f].join(";")}`);
         } else {
-            query.push(`${f}=${obj[f]}`);
+            var valueStr = JSON.stringify(obj[f]);
+            query.push(`${f}=${valueStr}`);
         }
     });
     var q = `?${query.join("&")}`;
