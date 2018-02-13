@@ -69,11 +69,12 @@ function getFunctionArgs(func) {
 
 function toQueryString(obj) {
     var query = [];
+    var pattern = /["]+/g;
     Object.keys(obj).forEach(f => {
         if (Array.isArray(obj[f])) {
             query.push(`${f}=${obj[f].join(";")}`);
         } else {
-            var valueStr = JSON.stringify(obj[f]);
+            var valueStr = JSON.stringify(obj[f]).replace(pattern, "");
             query.push(`${f}=${valueStr}`);
         }
     });
