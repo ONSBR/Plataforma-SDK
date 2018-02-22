@@ -31,11 +31,11 @@ class ProcessApp {
             } else {
                 throw new Error(`Process Memory instance was not found`);
             }
-            if (this.referenceDate){
+            if (this.referenceDate) {
                 console.log(`Executing process for reference date ${new Date(this.referenceDate)}`);
             }
             return this.coreFacade.reference(this.referenceDate).operationFindByProcessId(this.processId).then(op => {
-                console.log(`Operation: ${JSON.stringify(op,null,4)}`);
+                console.log(`Operation: ${JSON.stringify(op, null, 4)}`);
                 if (op[0]) {
                     console.log("Creating context");
                     context.processId = this.processId;
@@ -47,7 +47,7 @@ class ProcessApp {
                     } else {
                         context.commit = false;
                     }
-                    console.log(`context: ${JSON.stringify(context,null,4)}`);
+                    //console.log(`context: ${JSON.stringify(context,null,4)}`);
                     return this.startProcess(context);
                 }
                 throw new Error(`Operation not found for process ${this.processId}`);
@@ -84,7 +84,7 @@ class ProcessApp {
                 .then(data => {
                     console.log("Data retrived from domain");
                     console.log("building dataset");
-                    if (!data){
+                    if (!data) {
                         data = [];
                     }
                     return new Promise((resolve) => resolve(new DataSetBuilder(data).build(context)));
@@ -110,7 +110,11 @@ class ProcessApp {
             }).then(() => {
                 if (context.commit) {
                     console.log(`commiting data to domain`);
-                    return this.domainClient.reference(this.referenceDate).persist(context.dataset.flatList(), context.map.name);
+                    return this.domainClient.reference(this.referenceDate).persist(
+                        context.dataset.trackingList(), 
+                        context.map.name,
+                        context.instanceId
+                    );
                 }
                 return new Promise((r) => r(context));
             }).then(() => {
@@ -133,7 +137,7 @@ class ProcessApp {
                         instanceId: context.instanceId
                     }
                 };
-                if(this.referenceDate){
+                if (this.referenceDate) {
                     evt.referenceDate = this.referenceDate;
                 }
                 this.bus.emit(evt).then(resolve);
@@ -150,13 +154,13 @@ class ProcessApp {
                 context.map = map;
                 this.getFiltersOnMap(map).then((listFilters) => {
                     console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa");
-                    console.log(JSON.stringify(listFilters,null,4));
+                    console.log(JSON.stringify(listFilters, null, 4));
                     var filtersToBeQueryOnDomain = listFilters.map(filter => this.shouldBeExecuted(event, filter))
-                    console.log(JSON.stringify(filtersToBeQueryOnDomain,null,4));
+                    console.log(JSON.stringify(filtersToBeQueryOnDomain, null, 4));
                     var promise = this.domainClient.reference(this.referenceDate).queryMany(filtersToBeQueryOnDomain);
                     promise.then(r => {
                         resolve(r);
-                    } ).catch(e => {
+                    }).catch(e => {
                         reject(e);
                     });
                 }).catch(reject);
@@ -172,6 +176,14 @@ class ProcessApp {
      */
     shouldBeExecuted(event, filter) {
 
+        if (filter.name == 'all') {
+            var result = {};
+            result.filter = filter.name;
+            result._entity = filter._entity;
+            result._map = filter._map;
+
+            return result;
+        }
         var shouldExecuteFilter = true;
         var params = this.getFilterParams(filter.content);
         params.forEach(param => {
@@ -186,14 +198,15 @@ class ProcessApp {
             result._entity = filter._entity;
             result._map = filter._map;
             params.forEach(p => {
-                if (p[0] === "$"){
+                if (p[0] === "$") {
                     var prop = p.substr(1);
-                    if (Array.isArray(event.payload[prop])){
+                    if (Array.isArray(event.payload[prop])) {
                         result[prop] = event.payload[prop];
                     }
-                }else
+                } else
                     result[p] = event.payload[p]
             });
+
             return result;
         }
         return {};
@@ -213,7 +226,7 @@ class ProcessApp {
     getFilterParams(filter) {
         if (typeof filter === "string" && filter[0] === ":") {
             return [filter.substr(1)];
-        }else if (typeof filter === "string"){
+        } else if (typeof filter === "string") {
             return [filter];
         }
         var keys = Object.keys(filter);

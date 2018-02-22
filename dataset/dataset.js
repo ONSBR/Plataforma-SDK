@@ -7,17 +7,17 @@ const CHANGETRACK_DELETE = "destroy";
 
 module.exports = class DataSet {
     constructor(data) {
-        if (data && !data.entities){
+        if (data && !data.entities) {
             this.mountInterface(data);
             this.entities = data;
-        }else if(data && data.entities){
+        } else if (data && data.entities) {
             this.entities = data.entities;
             this.mountInterface(data.entities);
-        }else{
+        } else {
             throw new Error(`Data is required`);
         }
     }
-    mountInterface(data){
+    mountInterface(data) {
         Object.keys(data).forEach(type => {
             this[type] = {
                 insert: this.insert.bind({
@@ -41,22 +41,36 @@ module.exports = class DataSet {
             type: this.type,
             changeTrack: CHANGETRACK_CREATE
         }
-        if (entity.id){
-            entity._metadata.changeTrack = CHANGETRACK_UPDATE;
-        }
+
         var model = new Model(entity);
         this.collection[this.type].push(model);
         return model;
     }
 
-    flatList(){
+    trackingList(instanceId) {
         var list = [];
-        Object.keys(this.entities).forEach(k =>{
+        Object.keys(this.entities).forEach(k => {
+            this.entities[k].forEach(item => {
+                if (item._metadata && item._metadata.changeTrack
+                    && (item._metadata.changeTrack == CHANGETRACK_CREATE
+                        || item._metadata.changeTrack == CHANGETRACK_UPDATE
+                        || item._metadata.changeTrack == CHANGETRACK_DELETE)) {
+
+                    list.push(item);
+                }
+            });
+        });
+        return list;
+    }
+
+    flatList() {
+        var list = [];
+        Object.keys(this.entities).forEach(k => {
             this.entities[k].forEach(item => {
                 list.push(item);
             });
         });
-        return list
+        return list;
     }
 
     update(entity) {

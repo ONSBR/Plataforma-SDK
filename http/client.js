@@ -1,4 +1,5 @@
 var unirest = require('unirest');
+var utils = require('../utils');
 
 module.exports = class HttpClient {
     get(url, body, headers) {
@@ -14,7 +15,7 @@ module.exports = class HttpClient {
     }
 
     doRequest(method, url, body, headers) {
-        if (!headers){
+        if (!headers) {
             headers = {};
         }
         headers["Accept"] = 'application/json';
@@ -35,3 +36,5 @@ module.exports = class HttpClient {
     }
 
 }
+
+
