@@ -5,18 +5,18 @@ const Utils = require("../utils");
 const DomainClient = require("../services/domain/client");
 class ProcessApp {
 
-    constructor(entryPoint, info, coreFacade, domainClient, processMemoryClient, eventManager) {
+    constructor(info, coreFacade, domainClient, processMemoryClient, eventManager) {
         this.processInstanceId = info.processInstanceId;
         this.processId = info.processId;
         this.systemId = info.systemId;
         this.executeOperation = this.executeOperation.bind(this);
-        this.entryPoint = entryPoint;
         this.coreFacade = coreFacade;
         this.domainClient = domainClient;
         this.processMemory = processMemoryClient;
         this.bus = eventManager;
     }
-    start() {
+    start(entryPoint) {
+        this.entryPoint = entryPoint;
         console.log(`process instance ${this.processInstanceId}`);
         return this.processMemory.head(this.processInstanceId).then(head => {
             var context = {};
@@ -111,7 +111,7 @@ class ProcessApp {
                 if (context.commit) {
                     console.log(`commiting data to domain`);
                     return this.domainClient.reference(this.referenceDate).persist(
-                        context.dataset.trackingList(), 
+                        context.dataset.trackingList(),
                         context.map.name,
                         context.instanceId
                     );
@@ -148,15 +148,13 @@ class ProcessApp {
     }
 
     loadDataFromDomain(context) {
+        console.log("Loading data from domain by SDK");
         var event = context.event;
         return new Promise((resolve, reject) => {
             this.getMapByProcessId(this.processId).then(map => {
                 context.map = map;
                 this.getFiltersOnMap(map).then((listFilters) => {
-                    console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa");
-                    console.log(JSON.stringify(listFilters, null, 4));
                     var filtersToBeQueryOnDomain = listFilters.map(filter => this.shouldBeExecuted(event, filter))
-                    console.log(JSON.stringify(filtersToBeQueryOnDomain, null, 4));
                     var promise = this.domainClient.reference(this.referenceDate).queryMany(filtersToBeQueryOnDomain);
                     promise.then(r => {
                         resolve(r);
