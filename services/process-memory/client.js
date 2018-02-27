@@ -6,7 +6,7 @@ module.exports = class ProcessMemoryClient{
 
     commit(context){
         var d = this.env.processMemory;
-        var url = `${d.scheme}://${d.host}:${d.port}/${context.instanceId}/commit`;
+        var url = `${d.scheme}://${d.host}:${d.port}/${context.instanceId}/commit?app_origin=node_sdk`;
         console.log(`posting to process memory ${JSON.stringify(context,null,4)}`);
         return this.http.post(url,context);
     }
@@ -14,14 +14,14 @@ module.exports = class ProcessMemoryClient{
     head(instanceId){
         console.log(`get head of process memory ${instanceId}`);
         var d = this.env.processMemory;
-        var url = `${d.scheme}://${d.host}:${d.port}/${instanceId}/head`;
+        var url = `${d.scheme}://${d.host}:${d.port}/${instanceId}/head?app_origin=node_sdk`;
         return this.http.get(url);
     }
 
     first(context){
         console.log(`get first of process memory ${context.instanceId}`)
         var d = this.env.processMemory;
-        var url = `${d.scheme}://${d.host}:${d.port}/${context.instanceId}/first`;
+        var url = `${d.scheme}://${d.host}:${d.port}/${context.instanceId}/first?app_origin=node_sdk`;
         return this.http.get(url);
     }
 };
