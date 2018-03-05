@@ -244,26 +244,18 @@ class ProcessApp {
      * @description Este metodo busca quais os parametros necessarios para o filtro
      */
     getFilterParams(filter) {
-        if (typeof filter === "string" && filter[0] === ":") {
-            return [filter.substr(1)];
-        } else if (typeof filter === "string") {
-            return [filter];
-        }
-        var keys = Object.keys(filter);
-        for (const key in filter) {
-            if (filter.hasOwnProperty(key)) {
-                if (Array.isArray(filter[key])) {
-                    var list = [];
-                    filter[key].forEach(i => {
-                        list.push(this.getFilterParams(i)[0]);
-                    })
-                    return list;
-                } else {
-                    return this.getFilterParams(filter[key]);
-                }
+        const regex = /[$|:]\w+/g;
+        let m;
+        var params = [];
+        while ((m = regex.exec(filter)) !== null) {
+            if (m.index === regex.lastIndex) {
+                regex.lastIndex++;
             }
+            m.forEach((match, groupIndex) => {
+                params.push(match.substr(1));
+            });
         }
-
+        return params;
     }
 
     getFiltersMap(fullMap) {
