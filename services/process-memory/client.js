@@ -7,7 +7,7 @@ module.exports = class ProcessMemoryClient{
     commit(context){
         var d = this.env.processMemory;
         var url = `${d.scheme}://${d.host}:${d.port}/${context.instanceId}/commit?app_origin=node_sdk`;
-        console.log(`posting to process memory ${JSON.stringify(context,null,4)}`);
+        console.log(`posting to process memory`);
         return this.http.post(url,context);
     }
 

@@ -21,7 +21,6 @@ class ProcessApp {
         return this.processMemory.head(this.processInstanceId).then(head => {
             var context = {};
             console.log(`get head of process memory`);
-            console.log(`head of process memory is ${JSON.stringify(head,null,4)}`);
             if (head && !head.event) {
                 //neste caso o head guarda apenas 1 evento e nao o contexto
                 context.event = head;
@@ -54,7 +53,6 @@ class ProcessApp {
                     } else {
                         context.commit = false;
                     }
-                    //console.log(`context: ${JSON.stringify(context,null,4)}`);
                     return this.startProcess(context);
                 }
                 throw new Error(`Operation not found for process ${this.processId}`);
@@ -279,7 +277,6 @@ class ProcessApp {
         return new Promise((resolve, reject) => {
             console.log(`get maps from api core for process id: ${this.processId}`);
             this.coreFacade.reference(this.referenceDate).mapFindByProcessId(processId).then(map => {
-                console.log(JSON.stringify(map));
                 var YAML = require("yamljs");
                 var nativeObject = YAML.parse(map[0].content);
                 map[0].content = nativeObject;
