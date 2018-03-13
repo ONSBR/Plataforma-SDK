@@ -121,18 +121,22 @@ class ProcessApp {
                 return this.processMemory.commit(context);
             }).then(() => {
                 if (context.commit && !this.isReproduction(context)) {
-                    console.log(`commiting data to domain`);
-                    return this.domainClient.reference(this.referenceDate).persist(
-                        context.dataset.trackingList(),
-                        context.map.name,
-                        context.instanceId
-                    );
+                    console.log(`emit event to domain worker`);
+                    var evt = {
+                        name: this.systemId+".persist.request",
+                        instanceId: context.instanceId,
+                        payload: {
+                            instanceId: context.instanceId
+                        }
+                    };
+                    if (this.referenceDate) {
+                        evt.referenceDate = this.referenceDate;
+                    }
+                    return this.bus.emit(evt);
                 } else {
                     console.log(`Event's origin is a reproduction skip to save domain`);
                 }
                 return new Promise((r) => r(context));
-            }).then(() => {
-                return this.sendOutputEvents(context);
             }).catch(e => {
                 reject(e);
             }).then(() => {
@@ -148,24 +152,6 @@ class ProcessApp {
         return typeof rep !== "undefined" && rep.from && rep.to;
     }
 
-    sendOutputEvents(context) {
-        return new Promise((resolve) => {
-            if (context.eventOut) {
-                var evt = {
-                    name: context.eventOut,
-                    payload: {
-                        instanceId: context.instanceId
-                    }
-                };
-                if (this.referenceDate) {
-                    evt.referenceDate = this.referenceDate;
-                }
-                this.bus.emit(evt).then(resolve);
-            } else {
-                resolve(context);
-            }
-        });
-    }
 
     loadDataFromDomain(context) {
         console.log("Loading data from domain by SDK");

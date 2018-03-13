@@ -44,8 +44,24 @@ module.exports = class DomainClient{
         return new Promise((resolve,reject)=>{
             this.info.then(list => {
                 var o = list[0];
-                var url = `http://${o.host}:${o.port}/${map}/persist`
+                var url = `http://${o.host}:${o.port}/${map}/persist`;
                 this.http.post(url,data,headers).then(body => {
+                    resolve(body);
+                }).catch(reject);
+            })
+        });
+    }
+
+    persistAsync(map,instance_id){
+        var headers = {};
+        if (instance_id) {
+            headers["Instance-Id"] = instance_id;
+        }
+        return new Promise((resolve,reject)=>{
+            this.info.then(list => {
+                var o = list[0];
+                var url = `http://${o.host}:${o.port}/${map}/${instance_id}/persist_async`;
+                this.http.post(url,{},headers).then(body => {
                     resolve(body);
                 }).catch(reject);
             })
