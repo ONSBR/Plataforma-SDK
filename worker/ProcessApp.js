@@ -21,11 +21,13 @@ class ProcessApp {
         return this.processMemory.head(this.processInstanceId).then(head => {
             var context = {};
             console.log(`get head of process memory`);
+            console.log(`head of process memory is ${JSON.stringify(head,null,4)}`);
             if (head && !head.event) {
                 //neste caso o head guarda apenas 1 evento e nao o contexto
                 context.event = head;
                 this.referenceDate = head.reference_date;
             } else if (head) {
+                console.log(`set context as ${JSON.stringify(head, null, 4)}`);
                 context = head;
                 this.referenceDate = head.event.reference_date;
             } else {
@@ -34,6 +36,11 @@ class ProcessApp {
             if (this.referenceDate) {
                 console.log(`Executing process for reference date ${new Date(this.referenceDate)}`);
             }
+
+            if (this.isReproduction(context)){
+                console.log(`Processing an execution based on Reproduction`);
+            }
+
             return this.coreFacade.reference(this.referenceDate).operationFindByProcessId(this.processId).then(op => {
                 console.log(`Operation: ${JSON.stringify(op, null, 4)}`);
                 if (op[0]) {
@@ -57,10 +64,17 @@ class ProcessApp {
     }
     startProcess(context) {
         return new Promise((resolve, reject) => {
+            console.log(`start building dataset`)
             this.buildDataset(context).then(dataset => {
                 console.log(`dataset created`);
                 context.dataset = dataset;
-                return this.processMemory.commit(context);
+                if (!this.isReproduction(context)) {
+                    console.log(`Persist dataset on Process Memory`);
+                    return this.processMemory.commit(context);
+                } else {
+                    console.log(`Reproduction event will save dataset because process memory already clone from original instance`);
+                    return new Promise((resolve, reject) => { resolve(context) });
+                }
             }).then(r => {
                 console.log(`context commited`);
                 return this.executeOperation(context);
@@ -108,13 +122,15 @@ class ProcessApp {
                 console.log(`commiting data on process memory`);
                 return this.processMemory.commit(context);
             }).then(() => {
-                if (context.commit) {
+                if (context.commit && !this.isReproduction(context)) {
                     console.log(`commiting data to domain`);
                     return this.domainClient.reference(this.referenceDate).persist(
                         context.dataset.trackingList(),
                         context.map.name,
                         context.instanceId
                     );
+                } else {
+                    console.log(`Event's origin is a reproduction skip to save domain`);
                 }
                 return new Promise((r) => r(context));
             }).then(() => {
@@ -126,6 +142,12 @@ class ProcessApp {
             });
         });
 
+    }
+
+    isReproduction(context) {
+        var rep = context.event.reproduction;
+        console.log(`check is event ${JSON.stringify(context.event)} is a reproduction`);
+        return typeof rep !== "undefined" && rep.from && rep.to;
     }
 
     sendOutputEvents(context) {
