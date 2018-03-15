@@ -21,7 +21,6 @@ class ProcessApp {
         return this.processMemory.head(this.processInstanceId).then(head => {
             var context = {};
             console.log(`get head of process memory`);
-            console.log(`head of process memory is ${JSON.stringify(head,null,4)}`);
             if (head && !head.event) {
                 //neste caso o head guarda apenas 1 evento e nao o contexto
                 context.event = head;
@@ -54,7 +53,6 @@ class ProcessApp {
                     } else {
                         context.commit = false;
                     }
-                    //console.log(`context: ${JSON.stringify(context,null,4)}`);
                     return this.startProcess(context);
                 }
                 throw new Error(`Operation not found for process ${this.processId}`);
@@ -123,18 +121,22 @@ class ProcessApp {
                 return this.processMemory.commit(context);
             }).then(() => {
                 if (context.commit && !this.isReproduction(context)) {
-                    console.log(`commiting data to domain`);
-                    return this.domainClient.reference(this.referenceDate).persist(
-                        context.dataset.trackingList(),
-                        context.map.name,
-                        context.instanceId
-                    );
+                    console.log(`emit event to domain worker`);
+                    var evt = {
+                        name: this.systemId+".persist.request",
+                        instanceId: context.instanceId,
+                        payload: {
+                            instanceId: context.instanceId
+                        }
+                    };
+                    if (this.referenceDate) {
+                        evt.referenceDate = this.referenceDate;
+                    }
+                    return this.bus.emit(evt);
                 } else {
                     console.log(`Event's origin is a reproduction skip to save domain`);
                 }
                 return new Promise((r) => r(context));
-            }).then(() => {
-                return this.sendOutputEvents(context);
             }).catch(e => {
                 reject(e);
             }).then(() => {
@@ -150,24 +152,6 @@ class ProcessApp {
         return typeof rep !== "undefined" && rep.from && rep.to;
     }
 
-    sendOutputEvents(context) {
-        return new Promise((resolve) => {
-            if (context.eventOut) {
-                var evt = {
-                    name: context.eventOut,
-                    payload: {
-                        instanceId: context.instanceId
-                    }
-                };
-                if (this.referenceDate) {
-                    evt.referenceDate = this.referenceDate;
-                }
-                this.bus.emit(evt).then(resolve);
-            } else {
-                resolve(context);
-            }
-        });
-    }
 
     loadDataFromDomain(context) {
         console.log("Loading data from domain by SDK");
@@ -244,26 +228,18 @@ class ProcessApp {
      * @description Este metodo busca quais os parametros necessarios para o filtro
      */
     getFilterParams(filter) {
-        if (typeof filter === "string" && filter[0] === ":") {
-            return [filter.substr(1)];
-        } else if (typeof filter === "string") {
-            return [filter];
-        }
-        var keys = Object.keys(filter);
-        for (const key in filter) {
-            if (filter.hasOwnProperty(key)) {
-                if (Array.isArray(filter[key])) {
-                    var list = [];
-                    filter[key].forEach(i => {
-                        list.push(this.getFilterParams(i)[0]);
-                    })
-                    return list;
-                } else {
-                    return this.getFilterParams(filter[key]);
-                }
+        const regex = /[$|:]\w+/g;
+        let m;
+        var params = [];
+        while ((m = regex.exec(filter)) !== null) {
+            if (m.index === regex.lastIndex) {
+                regex.lastIndex++;
             }
+            m.forEach((match, groupIndex) => {
+                params.push(match.substr(1));
+            });
         }
-
+        return params;
     }
 
     getFiltersMap(fullMap) {
@@ -287,7 +263,6 @@ class ProcessApp {
         return new Promise((resolve, reject) => {
             console.log(`get maps from api core for process id: ${this.processId}`);
             this.coreFacade.reference(this.referenceDate).mapFindByProcessId(processId).then(map => {
-                console.log(JSON.stringify(map));
                 var YAML = require("yamljs");
                 var nativeObject = YAML.parse(map[0].content);
                 map[0].content = nativeObject;
