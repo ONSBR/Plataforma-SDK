@@ -81,6 +81,11 @@ class ProcessApp {
                 resolve();
             }).catch(e => {
                 console.log(`Erro during process execution: ${e.toString()}`);
+                if (e["toString"]){
+                    this.bus.emit({name:context.event.name+".error", payload:{message:e.toString()}});
+                }else{
+                    this.bus.emit({name:context.event.name+".error", payload:{message:"no message defined"}});
+                }
             })
         });
 
