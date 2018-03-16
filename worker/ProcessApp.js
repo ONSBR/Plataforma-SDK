@@ -81,10 +81,13 @@ class ProcessApp {
                 resolve();
             }).catch(e => {
                 console.log(`Erro during process execution: ${e.toString()}`);
+                var parts = context.event.name.split(".");
+                parts.pop();
+                var name = parts.join(".");
                 if (e["toString"]){
-                    this.bus.emit({name:context.event.name+".error", payload:{message:e.toString()}});
+                    this.bus.emit({name:name+".error", payload:{message:e.toString()}});
                 }else{
-                    this.bus.emit({name:context.event.name+".error", payload:{message:"no message defined"}});
+                    this.bus.emit({name:name+".error", payload:{message:"no message defined"}});
                 }
             })
         });
