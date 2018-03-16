@@ -67,13 +67,13 @@ class ProcessApp {
             this.buildDataset(context).then(dataset => {
                 console.log(`dataset created`);
                 context.dataset = dataset;
-                if (!this.isReproduction(context)) {
-                    console.log(`Persist dataset on Process Memory`);
+                //if (!this.isReproduction(context)) {
+                //    console.log(`Persist dataset on Process Memory`);
                     return this.processMemory.commit(context);
-                } else {
-                    console.log(`Reproduction event will save dataset because process memory already clone from original instance`);
-                    return new Promise((resolve, reject) => { resolve(context) });
-                }
+                //} else {
+                //    console.log(`Reproduction event will save dataset because process memory already clone from original instance`);
+                //    return new Promise((resolve, reject) => { resolve(context) });
+               // }
             }).then(r => {
                 console.log(`context commited`);
                 return this.executeOperation(context);
