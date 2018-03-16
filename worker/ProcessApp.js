@@ -85,9 +85,9 @@ class ProcessApp {
                 parts.pop();
                 var name = parts.join(".");
                 if (e["toString"]){
-                    this.bus.emit({name:name+".error", payload:{message:e.toString()}});
+                    this.bus.emit({name:name+".error", instanceId:context.instanceId,  payload:{message:e.toString()}});
                 }else{
-                    this.bus.emit({name:name+".error", payload:{message:"no message defined"}});
+                    this.bus.emit({name:name+".error", instanceId:context.instanceId, payload:{message:"no message defined"}});
                 }
             })
         });
