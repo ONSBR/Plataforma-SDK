@@ -25,6 +25,7 @@
     "node-command-line": "^1.0.2",
     "node-rest-client": "^3.1.0",
     "unirest": "^0.5.1",
-    "yamljs": "^0.3.0"
+    "yamljs": "^0.3.0",
+    "linq": "^3.0.9"
   }
 }
