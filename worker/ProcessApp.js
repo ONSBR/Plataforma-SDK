@@ -37,6 +37,7 @@ class ProcessApp {
             }
 
             if (this.isReproduction(context)){
+                this.bus.scope = "reproduction";
                 console.log(`Processing an execution based on Reproduction`);
             }
 

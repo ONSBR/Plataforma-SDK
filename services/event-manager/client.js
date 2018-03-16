@@ -11,6 +11,9 @@ module.exports = class EventManagerClient{
         if(!event.payload){
             throw new Error("Event payload is required");
         }
+        if (this.scope){
+            event.scope = this.scope;
+        }
         var c = this.env.eventManager;
         var url = `${c.scheme}://${c.host}:${c.port}/sendevent`;
         return this.http.put(url,event);
