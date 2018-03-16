@@ -18,7 +18,7 @@ module.exports = class HttpClient {
         if (!headers) {
             headers = {};
         }
-        headers["Accept"] = 'application/json';
+        //headers["Accept"] = 'application/json';
         headers["Content-Type"] = 'application/json';
         return new Promise((resolve, reject) => {
             unirest[method](url)
