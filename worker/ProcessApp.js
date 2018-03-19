@@ -17,6 +17,7 @@ class ProcessApp {
     }
     start(entryPoint) {
         this.entryPoint = entryPoint;
+        this.datasetBuilt = false;
         console.log(`process instance ${this.processInstanceId}`);
         return this.processMemory.head(this.processInstanceId).then(head => {
             var context = {};
@@ -28,6 +29,7 @@ class ProcessApp {
             } else if (head) {
                 console.log(`set context as ${JSON.stringify(head, null, 4)}`);
                 context = head;
+                this.datasetBuilt = true;
                 this.referenceDate = head.event.reference_date;
             } else {
                 throw new Error(`Process Memory instance was not found`);
@@ -61,19 +63,24 @@ class ProcessApp {
         });
 
     }
+
+    hasDataset(){
+        return this.datasetBuilt;
+    }
+
     startProcess(context) {
         return new Promise((resolve, reject) => {
             console.log(`start building dataset`)
             this.buildDataset(context).then(dataset => {
                 console.log(`dataset created`);
                 context.dataset = dataset;
-                //if (!this.isReproduction(context)) {
-                //    console.log(`Persist dataset on Process Memory`);
+                if (!this.isReproduction(context) && !this.hasDataset(context)) {
+                    console.log(`Persist created dataset on Process Memory`);
                     return this.processMemory.commit(context);
-                //} else {
-                //    console.log(`Reproduction event will save dataset because process memory already clone from original instance`);
-                //    return new Promise((resolve, reject) => { resolve(context) });
-               // }
+                } else {
+                    console.log(`Reproduction event will save dataset because process memory already clone from original instance`);
+                    return new Promise((resolve, reject) => { resolve(context) });
+                }
             }).then(r => {
                 console.log(`context commited`);
                 return this.executeOperation(context);
