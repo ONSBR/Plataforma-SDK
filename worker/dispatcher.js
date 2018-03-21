@@ -13,20 +13,14 @@ module.exports = class Dispatcher{
     constructor(){
         this.listeners = {};
         this.lastCount = 0;
-        app.start(entryPoint).catch(e => {
-            console.log(e);
-        });
-
     }
     register(eventName, callback){
-        if (!this.listeners[eventName]){
-            this.listeners[eventName] = [];
-        }
-        this.listeners[eventName].push(callback);
+        this.listeners[eventName] = callback;
     }
 
 
     dispatch(event, payload){
-        Promise.all(this.listeners[event]).then(results => (1));
+        this.listeners[event](payload);
+        //Promise.all().then(results => (1));
     }
 };
