@@ -10,8 +10,11 @@ lookup["eventManager"]);
 
 const Resolver = {
     serve:(entryPoint)=>{
-        if (typeof entryPoint === "function" && process.env.API_MODE == true){
-            entryPoint();
+        console.log(entryPoint);
+        console.log(process.env.API_MODE);
+        if (typeof entryPoint === "function"){
+            if (process.env.API_MODE == true)
+                entryPoint();
         }else{
             throw new Error("entrypoint should be a function");
         }
