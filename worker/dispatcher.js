@@ -20,7 +20,7 @@ module.exports = class Dispatcher{
 
 
     dispatch(event, payload){
-        this.listeners[event](payload);
+        return this.listeners[event](payload);
         //Promise.all().then(results => (1));
     }
 };
