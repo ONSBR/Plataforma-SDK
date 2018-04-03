@@ -132,7 +132,7 @@ class ProcessApp {
                     if (!data) {
                         data = [];
                     }
-                    return new DataSetBuilder(data).build(context);
+                    return new DataSetBuilder(data, this.domainClient).build(context);
                 })
         }
     }
