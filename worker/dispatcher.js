@@ -28,7 +28,7 @@ module.exports = class Dispatcher{
         };
         var executor = lookup["executor"];
         var eventManager = lookup["eventManager"];
-        executor.createInstance(exeEvent).then(instance => {
+        return executor.createInstance(exeEvent).then(instance => {
             console.log("instance created");
             exeEvent.instanceId = instance.id;
             return eventManager.save(exeEvent);
@@ -38,6 +38,6 @@ module.exports = class Dispatcher{
                 console.log("execute entrypoint");
                 this.listeners[event](scope,ok,error);
             });
-        }).catch(e => {console.log(e);});
+        });
     }
 };
