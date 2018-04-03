@@ -9,6 +9,7 @@ class ProcessApp {
         this.processInstanceId = info.processInstanceId;
         this.processId = info.processId;
         this.systemId = info.systemId;
+        this.syncDomain = info.persistDomainSync || false;
         this.executeOperation = this.executeOperation.bind(this);
         this.coreFacade = coreFacade;
         this.domainClient = domainClient;
@@ -38,7 +39,7 @@ class ProcessApp {
                 console.log(`Executing process for reference date ${new Date(this.referenceDate)}`);
             }
 
-            if (this.isReproduction(context)){
+            if (this.isReproduction(context)) {
                 this.bus.scope = "reproduction";
                 console.log(`Processing an execution based on Reproduction`);
             }
@@ -64,7 +65,7 @@ class ProcessApp {
 
     }
 
-    hasDataset(){
+    hasDataset() {
         return this.datasetBuilt;
     }
 
@@ -79,7 +80,9 @@ class ProcessApp {
                     return this.processMemory.commit(context);
                 } else {
                     console.log(`Reproduction event will save dataset because process memory already clone from original instance`);
-                    return new Promise((resolve, reject) => { resolve(context) });
+                    return new Promise((resolve, reject) => {
+                        resolve(context)
+                    });
                 }
             }).then(r => {
                 console.log(`context commited`);
@@ -92,10 +95,22 @@ class ProcessApp {
                 var parts = context.event.name.split(".");
                 parts.pop();
                 var name = parts.join(".");
-                if (e["toString"]){
-                    this.bus.emit({name:name+".error", instanceId:context.instanceId,  payload:{message:e.toString()}});
-                }else{
-                    this.bus.emit({name:name+".error", instanceId:context.instanceId, payload:{message:"no message defined"}});
+                if (e["toString"]) {
+                    this.bus.emit({
+                        name: name + ".error",
+                        instanceId: context.instanceId,
+                        payload: {
+                            message: e.toString()
+                        }
+                    });
+                } else {
+                    this.bus.emit({
+                        name: name + ".error",
+                        instanceId: context.instanceId,
+                        payload: {
+                            message: "no message defined"
+                        }
+                    });
                 }
             });
         });
@@ -105,7 +120,9 @@ class ProcessApp {
     buildDataset(context) {
         if (context.dataset) {
             console.log('data set already exists');
-            return new Promise((resolve) => { resolve(new DataSet(context.dataset)) });
+            return new Promise((resolve) => {
+                resolve(new DataSet(context.dataset))
+            });
         } else {
             console.log('loading dataset from domain');
             return this.loadDataFromDomain(context)
@@ -138,10 +155,10 @@ class ProcessApp {
                 console.log(`commiting data on process memory`);
                 return this.processMemory.commit(context);
             }).then(() => {
-                if (context.commit && !this.isReproduction(context)) {
+                if (context.commit && !this.isReproduction(context) && !this.syncDomain) {
                     console.log(`emit event to domain worker`);
                     var evt = {
-                        name: this.systemId+".persist.request",
+                        name: this.systemId + ".persist.request",
                         instanceId: context.instanceId,
                         payload: {
                             instanceId: context.instanceId
@@ -151,6 +168,9 @@ class ProcessApp {
                         evt.referenceDate = this.referenceDate;
                     }
                     return this.bus.emit(evt);
+                } else if (this.syncDomain) {
+                    console.log(`commiting data to domain synchronously`);
+                    return this.domainClient.reference(this.referenceDate).persist(context.dataset.trackingList(), context.map.name, context.instanceId);
                 } else {
                     console.log(`Event's origin is a reproduction skip to save domain`);
                 }
@@ -268,7 +288,12 @@ class ProcessApp {
             Object.keys(map).forEach(entity => {
                 if (map[entity]["filters"]) {
                     Object.keys(map[entity]["filters"]).forEach(filter => {
-                        list.push({ _map: fullMap.name, _entity: entity, name: filter, content: map[entity]["filters"][filter] })
+                        list.push({
+                            _map: fullMap.name,
+                            _entity: entity,
+                            name: filter,
+                            content: map[entity]["filters"][filter]
+                        })
                     });
                 }
             });

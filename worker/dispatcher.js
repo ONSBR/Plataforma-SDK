@@ -38,7 +38,8 @@ module.exports = class Dispatcher {
             var info = {
                 "systemId": processInstance.systemId,
                 "processInstanceId": processInstance.id,
-                "processId": processInstance.processId
+                "processId": processInstance.processId,
+                "persistDomainSync":true
             };
             const app = new ProcessApp(info,
                 lookup["coreFacade"],
