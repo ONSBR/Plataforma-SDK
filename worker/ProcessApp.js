@@ -134,7 +134,6 @@ class ProcessApp {
                 var injectedArgs = args.map(a => localContext[a]);
                 this.entryPoint(...injectedArgs);
             }).then((result) => {
-                console.log("OUT:",result);
                 out = result;
                 console.log(`commiting data on process memory`);
                 return this.processMemory.commit(context);
@@ -159,7 +158,6 @@ class ProcessApp {
             }).catch(e => {
                 reject(e);
             }).then(() => {
-                console.log("Output: ", out);
                 resolve(out);
             });
         });

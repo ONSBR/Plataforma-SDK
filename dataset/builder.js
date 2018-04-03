@@ -35,7 +35,13 @@ module.exports = class DataSetBuilder {
     build(context) {
         var dataset = this.buildEntityCollection(context);
         this.index(dataset);
+        this.bindEntities(dataset, context.event.payload);
         return new DataSet(dataset);
+    }
+
+    bindEntities(dataset, payload){
+        var keys = Object.keys(payload);
+        console.log(keys);
     }
 
     buildEntityCollection(context){
