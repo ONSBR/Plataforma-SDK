@@ -62,7 +62,7 @@ module.exports = class DataSetBuilder {
     }
 
     bindEntity(context, dataset, id, type) {
-        return new Promise((res, reject) => {
+        return new Promise((resolve, reject) => {
             var map = context.map.name;
             var filter = "byId";
             this.domainClient.findById(map, type, id).then(entity => {
