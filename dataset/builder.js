@@ -46,7 +46,7 @@ module.exports = class DataSetBuilder {
             var entities = keys.filter(k => this.isValidEntity(k,context.event.payload)).map(k => context.event.payload[k]);
             var toExclude = keys.filter(k => this.isInvalidEntity(k, context.event.payload));
             toExclude.forEach(i => delete context.event.payload[i]);
-            var promises = entities.map(entity => this.bindEntity(entity.id, entity.type));
+            var promises = entities.map(entity => this.bindEntity(entity.id, entity._metadata.type));
             Promise.all(promises).then(result => {
                 console.log(keys);
                 console.log(entities);
