@@ -123,6 +123,7 @@ class ProcessApp {
     executeOperation(context) {
         return new Promise((resolve, reject) => {
             console.log("Execute operation");
+            var out = null;
             var operationPromise = new Promise((resolve, reject) => {
                 var localContext = {};
                 localContext.context = context;
@@ -132,7 +133,9 @@ class ProcessApp {
                 var args = Utils.getFunctionArgs(this.entryPoint);
                 var injectedArgs = args.map(a => localContext[a]);
                 this.entryPoint(...injectedArgs);
-            }).then(() => {
+            }).then((result) => {
+                console.log("OUT:",result);
+                out = result;
                 console.log(`commiting data on process memory`);
                 return this.processMemory.commit(context);
             }).then(() => {
@@ -156,7 +159,8 @@ class ProcessApp {
             }).catch(e => {
                 reject(e);
             }).then(() => {
-                resolve();
+                console.log("Output: ", out);
+                resolve(out);
             });
         });
 
