@@ -20,6 +20,7 @@ module.exports = class Dispatcher{
 
 
     dispatch(event, payload){
+        console.log(event);
         var exeEvent ={
             name: event,
             appOrigin: "sdk_node",
@@ -28,15 +29,13 @@ module.exports = class Dispatcher{
         var executor = lookup["executor"];
         var eventManager = lookup["eventManager"];
         executor.createInstance(exeEvent).then(instance => {
+            console.log("instance created");
             exeEvent.instanceId = instance.id;
             return eventManager.save(exeEvent);
         }).then(()=>{
+            console.log("event saved on event store");
             return new Promise((ok,error)=>{
-                var scope = {
-                    params:payload,
-                    event:exeEvent,
-                    bind:(b)=>b
-                }
+                console.log("execute entrypoint");
                 this.listeners[event](scope,ok,error);
             });
         }).catch(e => {console.log(e);});
