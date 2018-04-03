@@ -43,8 +43,8 @@ module.exports = class DataSetBuilder {
     bindEntities(dataset, context) {
         return new Promise((resolve) => {
             var keys = Object.keys(context.event.payload);
-            var entities = keys.filter(this.isValidEntity);
-            var toExclude = keys.filter(this.isInvalidEntity);
+            var entities = keys.filter(k => this.isValidEntity(k,context.event.payload));
+            var toExclude = keys.filter(k => this.isInvalidEntity(k, context.event.payload));
             toExclude.forEach(i => delete context.event.payload[i]);
             var promises = entities.map(entity => this.bindEntity(entity.id, entity.type));
             Promise.all(promises).then(result => {
@@ -62,7 +62,8 @@ module.exports = class DataSetBuilder {
         });
     }
 
-    isValidEntity(obj) {
+    isValidEntity(k, _obj) {
+        var obj = _obj[k];
         if (obj && obj["id"] && obj["_metadata"] && obj["_metadata"]["type"]) {
             return true;
         } else {
@@ -70,7 +71,8 @@ module.exports = class DataSetBuilder {
         }
     }
 
-    isInvalidEntity(obj) {
+    isInvalidEntity(k, _obj) {
+        var obj = _obj[k];
         return obj && obj["id"] && !obj["_metadata"];
     }
 
