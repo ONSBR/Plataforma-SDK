@@ -16,6 +16,10 @@ module.exports = class Dispatcher {
 
 
     dispatch(event, payload) {
+        if (!this.listeners[event]){
+            console.log("Event has no subscribers");
+            return;
+        }
         console.log(event);
         var exeEvent = {
             name: event,

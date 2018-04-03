@@ -84,9 +84,9 @@ class ProcessApp {
             }).then(r => {
                 console.log(`context commited`);
                 return this.executeOperation(context);
-            }).then(() => {
+            }).then((result) => {
                 console.log(`Process executed with success`);
-                resolve();
+                resolve(result);
             }).catch(e => {
                 console.log(`Erro during process execution: ${e.toString()}`);
                 var parts = context.event.name.split(".");
@@ -97,7 +97,7 @@ class ProcessApp {
                 }else{
                     this.bus.emit({name:name+".error", instanceId:context.instanceId, payload:{message:"no message defined"}});
                 }
-            })
+            });
         });
 
     }
