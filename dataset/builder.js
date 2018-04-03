@@ -1,4 +1,3 @@
-
 /**
  * @class DataSetBuilder
  * @description Esta classe e responsavel por montar um dataset
@@ -33,18 +32,49 @@ module.exports = class DataSetBuilder {
     }
 
     build(context) {
-        var dataset = this.buildEntityCollection(context);
-        this.index(dataset);
-        this.bindEntities(dataset, context.event.payload);
-        return new DataSet(dataset);
+        return new Promise((resolve) => {
+            var dataset = this.buildEntityCollection(context);
+            this.index(dataset);
+            this.bindEntities(dataset, context)
+                .then((dataset) => resolve(new DataSet(dataset)));
+        });
     }
 
-    bindEntities(dataset, payload){
-        var keys = Object.keys(payload);
-        console.log(keys);
+    bindEntities(dataset, context) {
+        return new Promise((resolve) => {
+            var keys = Object.keys(context.event.payload);
+            var entities = keys.filter(this.isValidEntity);
+            var toExclude = keys.filter(this.isInvalidEntity);
+            toExclude.forEach(i => delete context.event.payload[i]);
+            var promises = entities.map(entity => this.bindEntity(entity.id, entity.type));
+            Promise.all(promises).then(result => {
+                console.log(keys);
+                console.log(entities);
+                console.log(result);
+                resolve(dataset);
+            });
+        });
     }
 
-    buildEntityCollection(context){
+    bindEntity(id, type){
+        return new Promise((res)=>{
+            res(id);
+        });
+    }
+
+    isValidEntity(obj) {
+        if (obj && obj["id"] && obj["_metadata"] && obj["_metadata"]["type"]) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    isInvalidEntity(obj) {
+        return obj && obj["id"] && !obj["_metadata"];
+    }
+
+    buildEntityCollection(context) {
         var dataset = {};
         var _entities = Object.keys(context.map.content);
         _entities.forEach(e => {

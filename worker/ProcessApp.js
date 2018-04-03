@@ -115,7 +115,7 @@ class ProcessApp {
                     if (!data) {
                         data = [];
                     }
-                    return new Promise((resolve) => resolve(new DataSetBuilder(data).build(context)));
+                    return new DataSetBuilder(data).build(context);
                 })
         }
     }
