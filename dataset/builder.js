@@ -43,28 +43,32 @@ module.exports = class DataSetBuilder {
 
     bindEntities(dataset, context) {
         return new Promise((resolve, reject) => {
-            var keys = Object.keys(context.event.payload);
-            var entities = keys.filter(k => this.isValidEntity(k,context.event.payload)).map(k => context.event.payload[k]);
-            var toExclude = keys.filter(k => this.isInvalidEntity(k, context.event.payload));
-            toExclude.forEach(i => delete context.event.payload[i]);
-            var promises = entities.map(entity => this.bindEntity(context, dataset, entity.id, entity._metadata.type));
-            Promise.all(promises).then(result => {
-                console.log(keys);
-                console.log(entities);
-                console.log(result);
-                resolve(dataset);
-            }).catch(reject);
+            try {
+                var keys = Object.keys(context.event.payload);
+                var entities = keys.filter(k => this.isValidEntity(k, context.event.payload)).map(k => context.event.payload[k]);
+                var toExclude = keys.filter(k => this.isInvalidEntity(k, context.event.payload));
+                toExclude.forEach(i => delete context.event.payload[i]);
+                var promises = entities.map(entity => this.bindEntity(context, dataset, entity.id, entity._metadata.type));
+                Promise.all(promises).then(result => {
+                    console.log(keys);
+                    console.log(entities);
+                    console.log(result);
+                    resolve(dataset);
+                }).catch(reject);
+            } catch (e) {
+                reject(e);
+            }
         });
     }
 
-    bindEntity(context, dataset, id, type){
-        return new Promise((res,reject)=>{
+    bindEntity(context, dataset, id, type) {
+        return new Promise((res, reject) => {
             var map = context.map.name;
             var filter = "byId";
-            this.domainClient.findById(map,type,id).then(entity => {
-                if (entity === null){
+            this.domainClient.findById(map, type, id).then(entity => {
+                if (entity === null) {
                     reject(new Error(`Object ${type} from map ${map} with id ${id} not found on domain`));
-                }else{
+                } else {
                     console.log(entity);
                     resolve(entity);
                 }

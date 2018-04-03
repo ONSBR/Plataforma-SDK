@@ -19,13 +19,6 @@ module.exports = class DomainClient{
 
     findById(map, type, id){
         return new Promise((resolve,reject)=>{
-            var clone = Utils.clone(obj);
-            if (!clone["_entity"]){
-                return resolve([]);
-            }
-            delete clone["_entity"];
-            delete clone["_map"];
-            var query = Utils.toQueryString(clone);
             this.info.then(list => {
                 var o = list[0];
                 var url = `http://${o.host}:${o.port}/${map}/${type}?filter=ById&id=${id}`;
