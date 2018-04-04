@@ -1,5 +1,6 @@
 const ProcessApp = require("./ProcessApp");
 const Lookup = require("../ioc/lookup");
+const Task = require("./task");
 let lookup = new Lookup();
 const app = new ProcessApp(lookup["info"],
 lookup["coreFacade"],
@@ -8,11 +9,17 @@ lookup["processMemory"],
 lookup["eventManager"]);
 
 
-const Resolver = {
-    serve:(entryPoint)=>{
+class Resolver  {
+    constructor(dispatcher){
+        this.dispatcher = dispatcher;
+    }
+
+    serve(entryPoint){
         if (typeof entryPoint === "function"){
             if (process.env.API_MODE){
                 entryPoint();
+            }else{
+                return new Task(this.dispatcher, lookup["info"].processInstanceId).start();
             }
         }else{
             throw new Error("entrypoint should be a function");
@@ -39,8 +46,7 @@ module.exports = (function() {
         },
 
         bind:(dispatcher)=>{
-            self.dispatcher = dispatcher;
-            return Resolver;
+            return new Resolver(dispatcher);
         }
     };
     return self;
