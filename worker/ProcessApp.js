@@ -121,7 +121,7 @@ class ProcessApp {
         if (context.dataset) {
             console.log('data set already exists');
             return new Promise((resolve) => {
-                resolve(new DataSet(context.dataset))
+                resolve(new DataSet(context.dataset));
             });
         } else {
             console.log('loading dataset from domain');
