@@ -106,8 +106,7 @@ module.exports = class DataSet {
     // TODO tem um problema para ser validado que é o caso de consulta após remoção,
     // o item deveria continuar existindo?
     delete(entity) {
-        console.log(this.collection);
-        var obj = this.collection.filter(o => o.id === entity.id)[0];
+        var obj = this.collection[this.type].filter(o => o.id === entity.id)[0];
         if (obj){
             obj._metadata.changeTrack = CHANGETRACK_DELETE;
         }else{
