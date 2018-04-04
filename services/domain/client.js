@@ -21,7 +21,7 @@ module.exports = class DomainClient{
         return new Promise((resolve,reject)=>{
             this.info.then(list => {
                 var o = list[0];
-                var url = `http://${o.host}:${o.port}/${map}/${type}?filter=ById&id=${id}`;
+                var url = `http://${o.host}:${o.port}/${map}/${type}?filter=byId&id=${id}`;
                 this.http.get(url).then(body => {
                     if (body[0]){
                         resolve(body[0]);
