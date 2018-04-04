@@ -22,7 +22,6 @@ module.exports = class DomainClient{
             this.info.then(list => {
                 var o = list[0];
                 var url = `http://${o.host}:${o.port}/${map}/${type}?filter=ById&id=${id}`;
-                console.log(`Calling url ${url}`);
                 this.http.get(url).then(body => {
                     if (body[0]){
                         resolve(body[0]);

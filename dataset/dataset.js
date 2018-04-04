@@ -47,6 +47,22 @@ module.exports = class DataSet {
         return model;
     }
 
+    bind(entity) {
+        if (!entity) {
+            throw new Error("Entity not defined");
+        }
+        if (!this.collection[this.type]) {
+            this.collection[this.type] = [];
+        }
+        var model = new Model(entity);
+
+        var exist = this.collection[this.type].filter(o => o.id === entity.id).length > 0;
+        if (!exist){
+            this.collection[this.type].push(model);
+        }
+        return model;
+    }
+
     trackingList(instanceId) {
         var list = [];
         Object.keys(this.entities).forEach(k => {

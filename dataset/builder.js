@@ -48,11 +48,10 @@ module.exports = class DataSetBuilder {
                 var entities = keys.filter(k => this.isValidEntity(k, context.event.payload)).map(k => context.event.payload[k]);
                 var toExclude = keys.filter(k => this.isInvalidEntity(k, context.event.payload));
                 toExclude.forEach(i => delete context.event.payload[i]);
-                var promises = entities.map(entity => this.bindEntity(context, dataset, entity.id, entity._metadata.type));
-                Promise.all(promises).then(result => {
-                    console.log(keys);
-                    console.log(entities);
-                    console.log(result);
+                var promises = entities.map(entity => this.bindEntity(context, entity.id, entity._metadata.type));
+                Promise.all(promises).then(entitiesToBind => {
+                    console.log(entitiesToBind);
+                    entitiesToBind.forEach(e => dataset[entity._metadata.type].bind(e));
                     resolve(dataset);
                 }).catch(reject);
             } catch (e) {
@@ -61,7 +60,7 @@ module.exports = class DataSetBuilder {
         });
     }
 
-    bindEntity(context, dataset, id, type) {
+    bindEntity(context, id, type) {
         return new Promise((resolve, reject) => {
             var map = context.map.name;
             var filter = "byId";
@@ -69,7 +68,6 @@ module.exports = class DataSetBuilder {
                 if (entity === null) {
                     reject(new Error(`Object ${type} from map ${map} with id ${id} not found on domain`));
                 } else {
-                    console.log(entity);
                     resolve(entity);
                 }
             });
