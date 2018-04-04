@@ -36,8 +36,9 @@ module.exports = class DataSetBuilder {
         return new Promise((resolve) => {
             var dataset = this.buildEntityCollection(context);
             this.index(dataset);
+            dataset = new DataSet(dataset)
             this.bindEntities(dataset, context)
-                .then((dataset) => resolve(new DataSet(dataset)));
+                .then((dataset) => resolve(dataset));
         });
     }
 
