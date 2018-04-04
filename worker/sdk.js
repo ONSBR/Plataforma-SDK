@@ -19,7 +19,7 @@ class Resolver  {
             if (process.env.API_MODE){
                 entryPoint();
             }else{
-                return new Task(this.dispatcher, lookup["info"].processInstanceId).start();
+                return new Task(this.dispatcher, lookup["info"].processInstanceId).start().catch(e => console.log(e));
             }
         }else{
             throw new Error("entrypoint should be a function");

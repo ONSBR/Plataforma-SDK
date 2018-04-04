@@ -14,8 +14,9 @@ module.exports = class Task {
     }
 
     start(){
-        return this.processMemory.head(this.processInstanceId).then(head => {
-            console.log(head);
+        return this.processMemory.head(this.instanceId).then(head => {
+            var entrypoint = this.dispatcher.listeners[head.event.name];
+             return app.start(entrypoint);
         });
     }
 }
