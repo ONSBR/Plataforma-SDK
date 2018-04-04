@@ -26,7 +26,8 @@ module.exports = class DataSet {
                 }),
                 collection: Enumerable.from(data[type]).where((item) => item._metadata.changeTrack != CHANGETRACK_DELETE),
                 update: this.update.bind({}),
-                delete: this.delete.bind({})
+                delete: this.delete.bind({}),
+                bind: this.bind.bind({})
             };
         });
     }
