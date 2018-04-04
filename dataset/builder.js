@@ -50,7 +50,13 @@ module.exports = class DataSetBuilder {
                 toExclude.forEach(i => delete context.event.payload[i]);
                 var promises = entities.map(entity => this.bindEntity(context, entity.id, entity._metadata.type));
                 Promise.all(promises).then(entitiesToBind => {
-                    entitiesToBind.forEach(e => dataset[e._metadata.type].bind(e));
+                    entitiesToBind.forEach(e => {
+                        console.log(e._metadata.type);
+                        console.log(dataset);
+                        console.log(dataset[e._metadata.type]);
+                        dataset[e._metadata.type].bind(e);
+
+                    });
                     resolve(dataset);
                 }).catch(reject);
             } catch (e) {
