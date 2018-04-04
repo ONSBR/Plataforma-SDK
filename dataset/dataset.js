@@ -25,8 +25,18 @@ module.exports = class DataSet {
                     type: type
                 }),
                 collection: Enumerable.from(data[type]).where((item) => item._metadata.changeTrack != CHANGETRACK_DELETE),
-                update: this.update.bind({}),
-                delete: this.delete.bind({})
+                update: this.update.bind({
+                    collection: data,
+                    type: type
+                }),
+                delete: this.delete.bind({
+                    collection: data,
+                    type: type
+                }),
+                bind: this.bind.bind({
+                    collection: data,
+                    type: type
+                })
             };
         });
     }
@@ -44,6 +54,22 @@ module.exports = class DataSet {
 
         var model = new Model(entity);
         this.collection[this.type].push(model);
+        return model;
+    }
+
+    bind(entity) {
+        if (!entity) {
+            throw new Error("Entity not defined");
+        }
+        if (!this.collection[this.type]) {
+            this.collection[this.type] = [];
+        }
+        var model = new Model(entity);
+
+        var exist = this.collection[this.type].filter(o => o.id === entity.id).length > 0;
+        if (!exist){
+            this.collection[this.type].push(model);
+        }
         return model;
     }
 
@@ -80,6 +106,11 @@ module.exports = class DataSet {
     // TODO tem um problema para ser validado que é o caso de consulta após remoção,
     // o item deveria continuar existindo?
     delete(entity) {
-        entity._metadata.changeTrack = CHANGETRACK_DELETE;
+        var obj = this.collection[this.type].filter(o => o.id === entity.id)[0];
+        if (obj){
+            obj._metadata.changeTrack = CHANGETRACK_DELETE;
+        }else{
+            throw new Error(`Object ${entity.id} not found on dataset`);
+        }
     }
 }

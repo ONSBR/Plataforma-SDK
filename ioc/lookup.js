@@ -3,6 +3,7 @@ const DomainClient = require("../services/domain/client");
 const CoreFacade = require("../services/api-core/apiCoreFacade");
 const ProcessMemory = require("../services/process-memory/client");
 const EventManager = require("../services/event-manager/client");
+const Executor = require("../services/executor/client");
 module.exports = class LookupServices{
     constructor(){
         //crias todas as dependencias stateless
@@ -13,6 +14,7 @@ module.exports = class LookupServices{
             port: process.env.COREAPI_PORT || "9110"
         });
         this.info = {};
+        this.info.persistDomainSync = false;
         this.info.processInstanceId = process.env.INSTANCE_ID;
         this.info.processId = process.env.PROCESS_ID;
         this.info.systemId = process.env.SYSTEM_ID;
@@ -27,9 +29,18 @@ module.exports = class LookupServices{
             scheme: process.env.EVENT_MANAGER_SCHEME || "http",
             port: process.env.EVENT_MANAGER_PORT || "8081"
         };
+
+        this.info.executor = {
+            host: process.env.EXECUTOR_HOST || "executor",
+            scheme: process.env.EXECUTOR_SCHEME || "http",
+            port: process.env.EXECUTOR_PORT || "8000"
+        };
+
+
         this.domainClient = new DomainClient(this.info,this.coreFacade,this.http);
         this.processMemory = new ProcessMemory(this.info,this.http);
         this.eventManager = new EventManager(this.info,this.http);
+        this.executor = new Executor(this.info, this.http);
     }
 
 

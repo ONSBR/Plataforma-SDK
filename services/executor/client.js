@@ -1,10 +1,10 @@
-module.exports = class EventManagerClient{
+module.exports = class ExecutorClient{
     constructor(environment, httpClient){
         this.http = httpClient;
         this.env = environment;
     }
 
-    validEvent(event){
+    createInstance(event){
         if(!event.name){
             throw new Error("Event name is required");
         }
@@ -14,18 +14,8 @@ module.exports = class EventManagerClient{
         if (this.scope){
             event.scope = this.scope;
         }
-    }
-    emit(event){
-        this.validEvent(event);
-        var c = this.env.eventManager;
-        var url = `${c.scheme}://${c.host}:${c.port}/sendevent`;
-        return this.http.put(url,event);
-    }
-
-    save(event){
-        this.validEvent(event);
-        var c = this.env.eventManager;
-        var url = `${c.scheme}://${c.host}:${c.port}/save`;
+        var c = this.env.executor;
+        var url = `${c.scheme}://${c.host}:${c.port}/instance/create`;
         return this.http.post(url,event);
     }
 }
