@@ -140,7 +140,6 @@ class ProcessApp {
     executeOperation(context) {
         return new Promise((resolve, reject) => {
             console.log("Execute operation");
-            var out = null;
             var operationPromise = new Promise((resolve, reject) => {
                 var localContext = {};
                 localContext.context = context;
@@ -151,7 +150,7 @@ class ProcessApp {
                 var injectedArgs = args.map(a => localContext[a]);
                 this.entryPoint(...injectedArgs);
             }).then((result) => {
-                out = result;
+                context.output = result;
                 console.log(`commiting data on process memory`);
                 return this.processMemory.commit(context);
             }).then(() => {
@@ -160,6 +159,7 @@ class ProcessApp {
                     var evt = {
                         name: this.systemId + ".persist.request",
                         instanceId: context.instanceId,
+                        output: context.output,
                         payload: {
                             instanceId: context.instanceId
                         }
@@ -178,7 +178,7 @@ class ProcessApp {
             }).catch(e => {
                 reject(e);
             }).then(() => {
-                resolve(out);
+                resolve(context.output);
             });
         });
 
