@@ -112,6 +112,7 @@ class ProcessApp {
                         }
                     });
                 }
+                reject(e);
             });
         });
 
@@ -173,6 +174,16 @@ class ProcessApp {
                     return this.domainClient.reference(this.referenceDate).persist(context.dataset.trackingList(), context.map.name, context.instanceId);
                 } else {
                     console.log(`Event's origin is a reproduction skip to save domain`);
+                    var evt = {
+                        name: context.eventOut,
+                        scope: "reproduction",
+                        instanceId: context.instanceId,
+                        payload: context.output
+                    };
+                    if (this.referenceDate) {
+                        evt.referenceDate = this.referenceDate;
+                    }
+                    return this.bus.emit(evt);
                 }
                 return new Promise((r) => r(context));
             }).catch(e => {
