@@ -112,6 +112,7 @@ class ProcessApp {
                         }
                     });
                 }
+                reject(e);
             });
         });
 
