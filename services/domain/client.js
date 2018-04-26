@@ -1,31 +1,36 @@
 const Utils = require("../../utils");
 
-module.exports = class DomainClient{
+module.exports = class DomainClient {
 
-    constructor(appInfo, coreFacade,httpClient){
+    constructor(appInfo, coreFacade, httpClient) {
         this.systemId = appInfo.systemId;
+        this.instanceId = appInfo.processInstanceId;
         this.coreFacade = coreFacade;
         this.http = httpClient;
-        this.info = this.coreFacade.installedAppFindBySystemIdAndType(this.systemId,"domain");
+        this.info = this.coreFacade.installedAppFindBySystemIdAndType(this.systemId, "domain");
     }
 
-    reference(date){
-        if(date){
+    reference(date) {
+        if (date) {
             this.referenceDate = date;
-            this.info = this.coreFacade.reference(this.referenceDate).installedAppFindBySystemIdAndType(this.systemId,"domain");
+            this.info = this.coreFacade.reference(this.referenceDate).installedAppFindBySystemIdAndType(this.systemId, "domain");
         }
         return this;
     }
 
-    findById(map, type, id){
-        return new Promise((resolve,reject)=>{
+    findById(map, type, id) {
+        headers = {};
+        if (this.instanceId) {
+            headers["Instance-Id"] = this.instanceId;
+        }
+        return new Promise((resolve, reject) => {
             this.info.then(list => {
                 var o = list[0];
                 var url = `http://${o.host}:${o.port}/${map}/${type}?filter=byId&id=${id}`;
-                this.http.get(url).then(body => {
-                    if (body[0]){
+                this.http.get(url,{},headers).then(body => {
+                    if (body[0]) {
                         resolve(body[0]);
-                    }else{
+                    } else {
                         resolve(null);
                     }
                 }).catch(reject);
@@ -33,10 +38,14 @@ module.exports = class DomainClient{
         });
     }
 
-    query(obj){
-        return new Promise((resolve,reject)=>{
+    query(obj) {
+        return new Promise((resolve, reject) => {
+            headers = {};
+            if (this.instanceId) {
+                headers["Instance-Id"] = this.instanceId;
+            }
             var clone = Utils.clone(obj);
-            if (!clone["_entity"]){
+            if (!clone["_entity"]) {
                 return resolve([]);
             }
             delete clone["_entity"];
@@ -46,46 +55,46 @@ module.exports = class DomainClient{
                 var o = list[0];
                 var url = `http://${o.host}:${o.port}/${obj._map}/${obj._entity}${query}`;
                 console.log(`Calling url ${url}`);
-                this.http.get(url).then(body => {
+                this.http.get(url, {}, headers).then(body => {
                     resolve(body);
                 }).catch(reject);
             });
         });
     }
 
-    persist(data,map,instance_id){
+    persist(data, map, instance_id) {
         var headers = {};
         if (instance_id) {
             headers["Instance-Id"] = instance_id;
         }
-        return new Promise((resolve,reject)=>{
+        return new Promise((resolve, reject) => {
             this.info.then(list => {
                 var o = list[0];
                 var url = `http://${o.host}:${o.port}/${map}/persist`;
-                this.http.post(url,data,headers).then(body => {
+                this.http.post(url, data, headers).then(body => {
                     resolve(body);
                 }).catch(reject);
             })
         });
     }
 
-    persistAsync(map,instance_id){
+    persistAsync(map, instance_id) {
         var headers = {};
         if (instance_id) {
             headers["Instance-Id"] = instance_id;
         }
-        return new Promise((resolve,reject)=>{
+        return new Promise((resolve, reject) => {
             this.info.then(list => {
                 var o = list[0];
                 var url = `http://${o.host}:${o.port}/${map}/${instance_id}/persist_async`;
-                this.http.post(url,{},headers).then(body => {
+                this.http.post(url, {}, headers).then(body => {
                     resolve(body);
                 }).catch(reject);
             })
         });
     }
 
-    queryMany(list){
+    queryMany(list) {
         var list = list.map(l => this.query(l));
         return Promise.all(list);
     }
