@@ -141,22 +141,47 @@ class ProcessApp {
         }
     }
 
+    fork(context){
+        var types = Object.keys(context.dataset.entities);
+        types.forEach(t => {
+            context.dataset.entities[t].forEach(e => {
+                if (e._metadata.changeTrack === "update") {
+                    e._metadata.changeTrack = "create";
+                }
+                e.fromId = e.id;
+                delete e.id;
+                e._metadata.branch = context.fork.name;
+            });
+        })
+    }
+
     executeOperation(context) {
         return new Promise((resolve, reject) => {
             console.log("Execute operation");
             var out = null;
             var operationPromise = new Promise((resolve, reject) => {
+
                 var localContext = {};
                 localContext.context = context;
                 localContext.resolve = resolve;
                 localContext.reject = reject;
                 localContext.eventManager = this.bus;
+
+                localContext.fork = (name, description)=>{
+                    context.fork = {
+                        name: name,
+                        description: description
+                    }
+                }
                 var args = Utils.getFunctionArgs(this.entryPoint);
                 var injectedArgs = args.map(a => localContext[a]);
                 this.entryPoint(...injectedArgs);
             }).then((result) => {
                 out = result;
                 console.log(`commiting data on process memory`);
+                if (context.fork){
+                    this.fork(context);
+                }
                 return this.processMemory.commit(context);
             }).then(() => {
                 if (context.commit && !this.isReproduction(context) && !this.syncDomain) {
@@ -172,12 +197,12 @@ class ProcessApp {
                         evt.referenceDate = this.referenceDate;
                     }
                     return this.bus.emit(evt);
-                } else if (this.syncDomain) {
+                }
+                if (this.syncDomain) {
                     console.log(`commiting data to domain synchronously`);
                     return this.domainClient.reference(this.referenceDate).persist(context.dataset.trackingList(), context.map.name, context.instanceId);
-                } else {
-                    console.log(`Event's origin is a reproduction skip to save domain`);
                 }
+                console.log(`Event's origin is a reproduction skip to save domain`);
                 return new Promise((r) => r(context));
             }).catch(e => {
                 reject(e);
