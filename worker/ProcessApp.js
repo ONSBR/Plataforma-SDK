@@ -23,6 +23,8 @@ class ProcessApp {
         console.log(`process instance ${this.processInstanceId}`);
         return this.processMemory.head(this.processInstanceId).then(head => {
             var context = {};
+            this.currentBranch = head.event.branch || "master";
+            this.domainClient.branch = this.currentBranch;
             console.log(`get head of process memory`);
             if (head && !head.dataset) {
                 context = head;
@@ -141,10 +143,15 @@ class ProcessApp {
         }
     }
 
-    fork(context){
+    fork(context) {
         var types = Object.keys(context.dataset.entities);
+        var startedAt = new Date();
         types.forEach(t => {
             context.dataset.entities[t].forEach(e => {
+                var current = new Date(e._metadata.modified_at);
+                if (current < startedAt) {
+                    startedAt = current;
+                }
                 if (e._metadata.changeTrack === "update") {
                     e._metadata.changeTrack = "create";
                 }
@@ -152,7 +159,9 @@ class ProcessApp {
                 delete e.id;
                 e._metadata.branch = context.fork.name;
             });
-        })
+        });
+        context.fork.startedAt = startedAt;
+        return this.coreFacade.branch.save(context.fork);
     }
 
     executeOperation(context) {
@@ -167,10 +176,18 @@ class ProcessApp {
                 localContext.reject = reject;
                 localContext.eventManager = this.bus;
 
-                localContext.fork = (name, description)=>{
+                localContext.fork = (name, description) => {
+                    if (context.event.branch === name) {
+                        //evita que um fork seja realizado duas vezes no domain
+                        context.commit = false;
+                    }
                     context.fork = {
                         name: name,
-                        description: description
+                        description: description,
+                        systemId: context.systemId,
+                        status: "open",
+                        //TODO deve-se colocar o nome do usuário que mandou abrir o cenario
+                        owner: "anonymous"
                     }
                 }
                 var args = Utils.getFunctionArgs(this.entryPoint);
@@ -179,9 +196,12 @@ class ProcessApp {
             }).then((result) => {
                 out = result;
                 console.log(`commiting data on process memory`);
-                if (context.fork){
-                    this.fork(context);
+                if (context.fork) {
+                    return this.fork(context);
+                } else {
+                    return new Promise((res => res()));
                 }
+            }).then(() => {
                 return this.processMemory.commit(context);
             }).then(() => {
                 if (context.commit && !this.isReproduction(context) && !this.syncDomain) {

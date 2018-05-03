@@ -18,11 +18,20 @@ module.exports = class DomainClient {
         return this;
     }
 
+
+    onBranch(branch) {
+        if (branch) {
+            this.branch = branch;
+        }
+        return this;
+    }
+
     findById(map, type, id) {
         var headers = {};
         if (this.instanceId) {
             headers["Instance-Id"] = this.instanceId;
         }
+        headers["Branch"] = this.branch;
         return new Promise((resolve, reject) => {
             this.info.then(list => {
                 var o = list[0];
@@ -40,7 +49,8 @@ module.exports = class DomainClient {
 
     query(obj) {
         return new Promise((resolve, reject) => {
-            let headers = {};
+            var headers = {};
+            headers["Branch"] = this.branch;
             if (this.instanceId) {
                 headers["Instance-Id"] = this.instanceId;
             }
