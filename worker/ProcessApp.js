@@ -23,9 +23,8 @@ class ProcessApp {
         return this.processMemory.head(this.processInstanceId).then(head => {
             var context = {};
             console.log(`get head of process memory`);
-            if (head && !head.event) {
-                //neste caso o head guarda apenas 1 evento e nao o contexto
-                context.event = head;
+            if (head && !head.dataset) {
+                this.datasetBuilt = false;
                 this.referenceDate = head.reference_date;
             } else if (head) {
                 console.log(`set context as ${JSON.stringify(head, null, 4)}`);
