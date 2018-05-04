@@ -25,6 +25,7 @@ class ProcessApp {
             var context = {};
             console.log(`get head of process memory`);
             if (head && !head.dataset) {
+                context = head;
                 this.datasetBuilt = false;
                 this.referenceDate = head.reference_date;
             } else if (head) {
