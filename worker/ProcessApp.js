@@ -47,7 +47,8 @@ class ProcessApp {
 
             return this.coreFacade.reference(this.referenceDate).operationFindByProcessId(this.processId).then(op => {
                 console.log(`Operation: ${JSON.stringify(op, null, 4)}`);
-                op = op.filter(o => o.event_in === this.eventIn);
+                var eventIn = this.eventIn;
+                op = op.filter(o => o.event_in === eventIn);
                 if (op[0]) {
                     console.log("Creating context");
                     context.processId = this.processId;
