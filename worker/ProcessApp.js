@@ -9,6 +9,7 @@ class ProcessApp {
         this.processInstanceId = info.processInstanceId;
         this.processId = info.processId;
         this.systemId = info.systemId;
+        this.eventIn = info.eventIn;
         this.syncDomain = info.persistDomainSync || false;
         this.executeOperation = this.executeOperation.bind(this);
         this.coreFacade = coreFacade;
@@ -45,6 +46,7 @@ class ProcessApp {
 
             return this.coreFacade.reference(this.referenceDate).operationFindByProcessId(this.processId).then(op => {
                 console.log(`Operation: ${JSON.stringify(op, null, 4)}`);
+                op = op.filter(o => o.event_in === this.eventIn);
                 if (op[0]) {
                     console.log("Creating context");
                     context.processId = this.processId;

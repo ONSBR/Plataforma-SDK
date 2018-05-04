@@ -14,6 +14,7 @@ module.exports = class LookupServices{
             port: process.env.COREAPI_PORT || "9110"
         });
         this.info = {};
+        this.info.eventIn = process.env.EVENT;
         this.info.persistDomainSync = false;
         this.info.processInstanceId = process.env.INSTANCE_ID;
         this.info.processId = process.env.PROCESS_ID;
