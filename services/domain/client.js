@@ -40,7 +40,7 @@ module.exports = class DomainClient {
 
     query(obj) {
         return new Promise((resolve, reject) => {
-            headers = {};
+            let headers = {};
             if (this.instanceId) {
                 headers["Instance-Id"] = this.instanceId;
             }

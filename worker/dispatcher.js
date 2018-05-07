@@ -39,6 +39,7 @@ module.exports = class Dispatcher {
                 "systemId": processInstance.systemId,
                 "processInstanceId": processInstance.id,
                 "processId": processInstance.processId,
+                "eventIn": event,
                 "persistDomainSync":true
             };
             const app = new ProcessApp(info,
