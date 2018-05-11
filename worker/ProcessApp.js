@@ -104,6 +104,8 @@ class ProcessApp {
                     this.bus.emit({
                         name: name + ".error",
                         instanceId: context.instanceId,
+                        branch: this.currentBranch,
+                        reprocessing: context.event.reprocessing,
                         payload: {
                             message: e.toString()
                         }
@@ -112,6 +114,8 @@ class ProcessApp {
                     this.bus.emit({
                         name: name + ".error",
                         instanceId: context.instanceId,
+                        branch: this.currentBranch,
+                        reprocessing: context.event.reprocessing,
                         payload: {
                             message: "no message defined"
                         }
@@ -127,7 +131,7 @@ class ProcessApp {
         if (context.dataset) {
             console.log('data set already exists');
             return new Promise((resolve) => {
-                resolve(new DataSet(context.dataset));
+                resolve(new DataSet(context.dataset, this.currentBranch));
             });
         } else {
             console.log('loading dataset from domain');
@@ -138,7 +142,7 @@ class ProcessApp {
                     if (!data) {
                         data = [];
                     }
-                    return new DataSetBuilder(data, this.domainClient).build(context);
+                    return new DataSetBuilder(data, this.domainClient, this.currentBranch).build(context);
                 })
         }
     }
@@ -152,16 +156,13 @@ class ProcessApp {
                 if (current < startedAt) {
                     startedAt = current;
                 }
-                if (e._metadata.changeTrack === "update") {
-                    e._metadata.changeTrack = "create";
-                }
-                e.fromId = e.id;
-                delete e.id;
                 e._metadata.branch = context.fork.name;
             });
         });
         context.fork.startedAt = startedAt;
-        return this.coreFacade.branch.save(context.fork);
+        return this.coreFacade.processInstance.save({"id":this.processInstanceId, "isFork":true}).then(()=>{
+            return this.coreFacade.branch.save(context.fork);
+        });
     }
 
     executeOperation(context) {
@@ -209,6 +210,8 @@ class ProcessApp {
                     var evt = {
                         name: this.systemId + ".persist.request",
                         instanceId: context.instanceId,
+                        branch: this.currentBranch,
+                        reprocessing: context.event.reprocessing,
                         payload: {
                             instanceId: context.instanceId
                         }

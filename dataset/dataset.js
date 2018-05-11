@@ -6,7 +6,8 @@ const CHANGETRACK_UPDATE = "update";
 const CHANGETRACK_DELETE = "destroy";
 
 module.exports = class DataSet {
-    constructor(data) {
+    constructor(data, current_branch) {
+        this.current_branch = current_branch;
         if (data && !data.entities) {
             this.mountInterface(data);
             this.entities = data;
