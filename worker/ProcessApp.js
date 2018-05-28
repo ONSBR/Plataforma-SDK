@@ -3,6 +3,8 @@ const DataSet = require("../dataset/dataset");
 const DataSetBuilder = require("../dataset/builder");
 const Utils = require("../utils");
 const DomainClient = require("../services/domain/client");
+const Logger = require("./logger")
+
 class ProcessApp {
 
     constructor(info, coreFacade, domainClient, processMemoryClient, eventManager) {
@@ -17,6 +19,7 @@ class ProcessApp {
         this.processMemory = processMemoryClient;
         this.bus = eventManager;
     }
+
     start(entryPoint) {
         this.entryPoint = entryPoint;
         this.datasetBuilt = false;
@@ -191,6 +194,9 @@ class ProcessApp {
                         owner: "anonymous"
                     }
                 }
+
+                localContext.log = new Logger(context);
+
                 var args = Utils.getFunctionArgs(this.entryPoint);
                 var injectedArgs = args.map(a => localContext[a]);
                 this.entryPoint(...injectedArgs);
