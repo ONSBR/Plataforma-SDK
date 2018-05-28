@@ -3,6 +3,8 @@ const DataSet = require("../dataset/dataset");
 const DataSetBuilder = require("../dataset/builder");
 const Utils = require("../utils");
 const DomainClient = require("../services/domain/client");
+const Logger = require("./logger")
+
 class ProcessApp {
 
     constructor(info, coreFacade, domainClient, processMemoryClient, eventManager) {
@@ -17,12 +19,15 @@ class ProcessApp {
         this.processMemory = processMemoryClient;
         this.bus = eventManager;
     }
+
     start(entryPoint) {
         this.entryPoint = entryPoint;
         this.datasetBuilt = false;
         console.log(`process instance ${this.processInstanceId}`);
         return this.processMemory.head(this.processInstanceId).then(head => {
             var context = {};
+            this.currentBranch = head.event.branch || "master";
+            this.domainClient.branch = this.currentBranch;
             console.log(`get head of process memory`);
             if (head && !head.dataset) {
                 context = head;
@@ -102,6 +107,8 @@ class ProcessApp {
                     this.bus.emit({
                         name: name + ".error",
                         instanceId: context.instanceId,
+                        branch: this.currentBranch,
+                        reprocessing: context.event.reprocessing,
                         payload: {
                             message: e.toString()
                         }
@@ -110,6 +117,8 @@ class ProcessApp {
                     this.bus.emit({
                         name: name + ".error",
                         instanceId: context.instanceId,
+                        branch: this.currentBranch,
+                        reprocessing: context.event.reprocessing,
                         payload: {
                             message: "no message defined"
                         }
@@ -125,7 +134,7 @@ class ProcessApp {
         if (context.dataset) {
             console.log('data set already exists');
             return new Promise((resolve) => {
-                resolve(new DataSet(context.dataset));
+                resolve(new DataSet(context.dataset, this.currentBranch));
             });
         } else {
             console.log('loading dataset from domain');
@@ -136,9 +145,27 @@ class ProcessApp {
                     if (!data) {
                         data = [];
                     }
-                    return new DataSetBuilder(data, this.domainClient).build(context);
+                    return new DataSetBuilder(data, this.domainClient, this.currentBranch).build(context);
                 })
         }
+    }
+
+    fork(context) {
+        var types = Object.keys(context.dataset.entities);
+        var startedAt = new Date();
+        types.forEach(t => {
+            context.dataset.entities[t].forEach(e => {
+                var current = new Date(e._metadata.modified_at);
+                if (current < startedAt) {
+                    startedAt = current;
+                }
+                e._metadata.branch = context.fork.name;
+            });
+        });
+        context.fork.startedAt = startedAt;
+        return this.coreFacade.processInstance.save({"id":this.processInstanceId, "isFork":true}).then(()=>{
+            return this.coreFacade.branch.save(context.fork);
+        });
     }
 
     executeOperation(context) {
@@ -146,17 +173,42 @@ class ProcessApp {
             console.log("Execute operation");
             var out = null;
             var operationPromise = new Promise((resolve, reject) => {
+
                 var localContext = {};
                 localContext.context = context;
                 localContext.resolve = resolve;
                 localContext.reject = reject;
                 localContext.eventManager = this.bus;
+
+                localContext.fork = (name, description) => {
+                    if (context.event.branch === name) {
+                        //evita que um fork seja realizado duas vezes no domain
+                        context.commit = false;
+                    }
+                    context.fork = {
+                        name: name,
+                        description: description,
+                        systemId: context.systemId,
+                        status: "open",
+                        //TODO deve-se colocar o nome do usuário que mandou abrir o cenario
+                        owner: "anonymous"
+                    }
+                }
+
+                localContext.log = new Logger(context);
+
                 var args = Utils.getFunctionArgs(this.entryPoint);
                 var injectedArgs = args.map(a => localContext[a]);
                 this.entryPoint(...injectedArgs);
             }).then((result) => {
                 out = result;
                 console.log(`commiting data on process memory`);
+                if (context.fork) {
+                    return this.fork(context);
+                } else {
+                    return new Promise((res => res()));
+                }
+            }).then(() => {
                 return this.processMemory.commit(context);
             }).then(() => {
                 if (context.commit && !this.isReproduction(context) && !this.syncDomain) {
@@ -164,6 +216,8 @@ class ProcessApp {
                     var evt = {
                         name: this.systemId + ".persist.request",
                         instanceId: context.instanceId,
+                        branch: this.currentBranch,
+                        reprocessing: context.event.reprocessing,
                         payload: {
                             instanceId: context.instanceId
                         }
@@ -172,12 +226,12 @@ class ProcessApp {
                         evt.referenceDate = this.referenceDate;
                     }
                     return this.bus.emit(evt);
-                } else if (this.syncDomain) {
+                }
+                if (this.syncDomain) {
                     console.log(`commiting data to domain synchronously`);
                     return this.domainClient.reference(this.referenceDate).persist(context.dataset.trackingList(), context.map.name, context.instanceId);
-                } else {
-                    console.log(`Event's origin is a reproduction skip to save domain`);
                 }
+                console.log(`Event's origin is a reproduction skip to save domain`);
                 return new Promise((r) => r(context));
             }).catch(e => {
                 reject(e);

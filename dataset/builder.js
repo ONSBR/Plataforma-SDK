@@ -6,13 +6,14 @@
 const DataSet = require("./dataset");
 const Model = require("../core/model");
 module.exports = class DataSetBuilder {
-    constructor(data, domainClient) {
+    constructor(data, domainClient, currentBranch) {
         if (!data) {
             throw new Error("Domain data should be defined");
         }
         this.referenceIndex = {};
         this.data = data;
         this.domainClient = domainClient;
+        this.currentBranch = currentBranch;
     }
 
 
@@ -25,7 +26,7 @@ module.exports = class DataSetBuilder {
                     dataset[type] = [];
                 }
                 if (!referenceIndex[item.id]) {
-                    referenceIndex[item.id] = new Model(item);
+                    referenceIndex[item.id] = new Model(item, this.currentBranch);
                 }
                 dataset[type].push(referenceIndex[item.id]);
             });
