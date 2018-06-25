@@ -285,7 +285,7 @@ class ProcessApp {
                 info.data = collection.map(c => c.id)
                 summary.entities.push(info)
             })
-            this.processMemory.saveDocument(summary,"query_instance")
+            this.processMemory.saveDocument(summary,("query_instance_"+this.systemId).replace("-","_"))
             .then(()=> {resolve(dataquery)}).catch(reject);
         });
     }
