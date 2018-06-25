@@ -47,7 +47,7 @@ module.exports = class DomainClient {
         });
     }
 
-    query(obj) {
+    query(obj, context) {
         return new Promise((resolve, reject) => {
             var headers = {};
             headers["Branch"] = this.branch;
@@ -64,8 +64,16 @@ module.exports = class DomainClient {
             this.info.then(list => {
                 var o = list[0];
                 var url = `http://${o.host}:${o.port}/${obj._map}/${obj._entity}${query}`;
-                console.log(`Calling url ${url}`);
                 this.http.get(url, {}, headers).then(body => {
+                    if (context) {
+                        body.forEach(item => {
+                            item._metadata.queryInfo = {}
+                            item._metadata.queryInfo.name = context.map.content[obj._entity].model
+                            item._metadata.queryInfo.query = context.map.content[obj._entity].filters[clone.filter]
+                            delete clone["filter"]
+                            item._metadata.queryInfo.filter = clone
+                        });
+                    }
                     resolve(body);
                 }).catch(reject);
             });
@@ -106,8 +114,8 @@ module.exports = class DomainClient {
         });
     }
 
-    queryMany(list) {
-        var list = list.map(l => this.query(l));
+    queryMany(list, context) {
+        var list = list.map(l => this.query(l, context));
         return Promise.all(list);
     }
 }

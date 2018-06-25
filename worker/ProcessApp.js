@@ -257,14 +257,35 @@ class ProcessApp {
                 context.map = map;
                 this.getFiltersOnMap(map).then((listFilters) => {
                     var filtersToBeQueryOnDomain = listFilters.map(filter => this.shouldBeExecuted(event, filter))
-                    var promise = this.domainClient.reference(this.referenceDate).queryMany(filtersToBeQueryOnDomain);
+                    var promise = this.domainClient.reference(this.referenceDate).queryMany(filtersToBeQueryOnDomain, context);
                     promise.then(r => {
-                        resolve(r);
+                        //Criar o summario de contulta e gravar na ProcessMemory
+                        this.buildQuerySummary(r).then(()=>resolve(r)).catch(reject)
                     }).catch(e => {
                         reject(e);
                     });
                 }).catch(reject);
             }).catch(reject);
+        });
+    }
+
+    buildQuerySummary(dataquery) {
+        return new Promise((resolve,reject)=>{
+            var summary = {
+                process: this.processInstanceId,
+                entities:[]
+            };
+            dataquery.forEach((collection)=>{
+                var info = {}
+                var q  = collection[0]._metadata.queryInfo;
+                info.name =  q.name
+                info.parameters = q.filter
+                info.query = q.query
+                info.data = collection.map(c => c.id)
+                summary.entities.push(info)
+            })
+            this.processMemory.saveDocument(summary,"query_instance")
+            .then(()=> {resolve(dataquery)}).catch(reject);
         });
     }
 

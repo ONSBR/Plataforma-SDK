@@ -24,4 +24,11 @@ module.exports = class ProcessMemoryClient{
         var url = `${d.scheme}://${d.host}:${d.port}/${context.instanceId}/first?app_origin=node_sdk`;
         return this.http.get(url);
     }
+
+
+    saveDocument(doc, collection) {
+        var d = this.env.processMemory;
+        var url = `${d.scheme}://${d.host}:${d.port}/${collection}?app_origin=node_sdk`;
+        return this.http.post(url, doc);
+    }
 };
