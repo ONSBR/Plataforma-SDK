@@ -272,6 +272,7 @@ class ProcessApp {
     buildQuerySummary(dataquery) {
         return new Promise((resolve,reject)=>{
             var summary = {
+                systemId: this.systemId,
                 process: this.processInstanceId,
                 entities:[]
             };
