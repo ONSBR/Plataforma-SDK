@@ -213,6 +213,7 @@ class ProcessApp {
             }).then(() => {
                 var evt = {
                     name: this.systemId + ".persist.request",
+                    tag: this.context.event.tag,
                     instanceId: context.instanceId,
                     branch: this.currentBranch,
                     reprocessing: context.event.reprocessing,
