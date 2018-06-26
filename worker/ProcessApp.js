@@ -211,17 +211,18 @@ class ProcessApp {
             }).then(() => {
                 return this.processMemory.commit(context);
             }).then(() => {
+                var evt = {
+                    name: this.systemId + ".persist.request",
+                    instanceId: context.instanceId,
+                    branch: this.currentBranch,
+                    reprocessing: context.event.reprocessing,
+                    payload: {
+                        instanceId: context.instanceId
+                    }
+                };
                 if (context.commit && !this.isReproduction(context) && !this.syncDomain) {
                     console.log(`emit event to domain worker`);
-                    var evt = {
-                        name: this.systemId + ".persist.request",
-                        instanceId: context.instanceId,
-                        branch: this.currentBranch,
-                        reprocessing: context.event.reprocessing,
-                        payload: {
-                            instanceId: context.instanceId
-                        }
-                    };
+
                     if (this.referenceDate) {
                         evt.referenceDate = this.referenceDate;
                     }
@@ -231,8 +232,9 @@ class ProcessApp {
                     console.log(`commiting data to domain synchronously`);
                     return this.domainClient.reference(this.referenceDate).persist(context.dataset.trackingList(), context.map.name, context.instanceId);
                 }
-                console.log(`Event's origin is a reproduction skip to save domain`);
-                return new Promise((r) => r(context));
+                evt.name = context.eventOut
+                console.log(`Event's origin is a reproduction or should not commit then skip to save domain`);
+                return this.bus.emit(evt);
             }).catch(e => {
                 reject(e);
             }).then(() => {
