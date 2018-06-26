@@ -165,7 +165,7 @@ class ProcessApp {
         context.fork.startedAt = startedAt;
         return new Promise((resolve,reject) => {
             this.coreFacade.processInstance.save({"id":this.processInstanceId, "isFork":true}).then(()=>{
-            this.coreFacade.branch.findByName(context.fork.name).then(c => {
+            this.coreFacade.branch.findBySystemIdAndName(context.systemId,context.fork.name).then(c => {
                 if (c.length == 0){
                     this.coreFacade.branch.save(context.fork).then(resolve).catch(reject);
                 }else{
