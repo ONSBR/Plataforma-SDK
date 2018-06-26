@@ -277,13 +277,15 @@ class ProcessApp {
                 entities:[]
             };
             dataquery.forEach((collection)=>{
-                var info = {}
-                var q  = collection[0]._metadata.queryInfo;
-                info.name =  q.name
-                info.parameters = q.filter
-                info.query = q.query
-                info.data = collection.map(c => c.id)
-                summary.entities.push(info)
+                if(collection.length > 0) {
+                    var info = {}
+                    var q  = collection[0]._metadata.queryInfo;
+                    info.name =  q.name
+                    info.parameters = q.filter
+                    info.query = q.query
+                    info.data = collection.map(c => c.id)
+                    summary.entities.push(info)
+                }
             })
             this.processMemory.saveDocument(summary,("query_instance_"+this.systemId).replace("-","_"))
             .then(()=> {resolve(dataquery)}).catch(reject);
