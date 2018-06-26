@@ -163,9 +163,16 @@ class ProcessApp {
             });
         });
         context.fork.startedAt = startedAt;
-        return this.coreFacade.processInstance.save({"id":this.processInstanceId, "isFork":true}).then(()=>{
-            return this.coreFacade.branch.save(context.fork);
-        });
+        return new Promise((resolve,reject) => {
+            this.coreFacade.processInstance.save({"id":this.processInstanceId, "isFork":true}).then(()=>{
+            this.coreFacade.branch.findByName(context.fork.name).then(c => {
+                if (c.length == 0){
+                    this.coreFacade.branch.save(context.fork).then(resolve).catch(reject);
+                }else{
+                    reject(new Error(`branch ${context.fork.name} already exist!`))
+                }
+            }).catch(reject)
+        })});
     }
 
     executeOperation(context) {
