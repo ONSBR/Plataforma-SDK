@@ -107,6 +107,8 @@ class ProcessApp {
                     this.bus.emit({
                         name: name + ".error",
                         instanceId: context.instanceId,
+                        scope: context.event.scope,
+                        tag: context.even.tag,
                         branch: this.currentBranch,
                         reprocessing: context.event.reprocessing,
                         payload: {
@@ -118,6 +120,8 @@ class ProcessApp {
                         name: name + ".error",
                         instanceId: context.instanceId,
                         branch: this.currentBranch,
+                        scope: context.event.scope,
+                        tag: context.even.tag,
                         reprocessing: context.event.reprocessing,
                         payload: {
                             message: "no message defined"
@@ -222,6 +226,8 @@ class ProcessApp {
                     name: this.systemId + ".persist.request",
                     tag: context.event.tag,
                     instanceId: context.instanceId,
+                    scope: context.event.scope,
+                    tag: context.even.tag,
                     branch: this.currentBranch,
                     reprocessing: context.event.reprocessing,
                     payload: {
