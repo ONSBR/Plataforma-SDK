@@ -108,7 +108,7 @@ class ProcessApp {
                         name: name + ".error",
                         instanceId: context.instanceId,
                         scope: context.event.scope,
-                        tag: context.even.tag,
+                        tag: context.event.tag,
                         branch: this.currentBranch,
                         reprocessing: context.event.reprocessing,
                         payload: {
