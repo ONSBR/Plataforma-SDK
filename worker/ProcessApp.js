@@ -303,7 +303,7 @@ class ProcessApp {
                     info.name =  q.name
                     info.parameters = q.filter
                     info.query = q.query
-                    info.data = collection.map(c => c.id)
+                    info.data = collection.map(c => {  return { id: c.id, rid:c._metadata.rid}})
                     summary.entities.push(info)
                 }
             })
