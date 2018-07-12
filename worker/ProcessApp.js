@@ -277,7 +277,7 @@ class ProcessApp {
                     promise.then(r => {
                         //Criar o summario de contulta e gravar na ProcessMemory
                         if  (context.event.scope == "execution") {
-                            this.buildQuerySummary(context.event, r).then(()=>resolve(r)).catch(reject)
+                            this.buildQuerySummary(context, r).then(()=>resolve(r)).catch(reject)
                         }else{
                             resolve(r);
                         }
@@ -289,13 +289,14 @@ class ProcessApp {
         });
     }
 
-    buildQuerySummary(event, dataquery) {
+    buildQuerySummary(context, dataquery) {
         return new Promise((resolve,reject)=>{
             var summary = {
                 systemId: this.systemId,
                 process: this.processInstanceId,
-                branch: event.branch,
-                timestamp: new Date().getTime(),
+                branch: context.event.branch,
+                processAppId: context.processId,
+                version: context.event.version,
                 entities:[]
             };
             dataquery.forEach((collection)=>{
