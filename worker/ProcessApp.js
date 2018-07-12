@@ -295,7 +295,7 @@ class ProcessApp {
                 systemId: this.systemId,
                 process: this.processInstanceId,
                 branch: event.branch,
-                timestamp: new Date().toISOString(),
+                timestamp: new Date().getTime(),
                 entities:[]
             };
             dataquery.forEach((collection)=>{
