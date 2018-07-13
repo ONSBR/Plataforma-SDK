@@ -296,18 +296,22 @@ class ProcessApp {
                 process: this.processInstanceId,
                 branch: context.event.branch,
                 processAppId: context.processId,
+                formula: btoa(context.processId + "/" + context.event.version + "/" + JSON.stringify(context.event.payload)),
                 version: context.event.version,
                 entities:[]
             };
             dataquery.forEach((collection)=>{
                 if(collection.length > 0) {
-                    var info = {}
-                    var q  = collection[0]._metadata.queryInfo;
-                    info.name =  q.name
-                    info.parameters = q.filter
-                    info.query = q.query
-                    info.data = collection.map(c => {  return { id: c.id, rid:c._metadata.rid}})
-                    summary.entities.push(info)
+                    collection.forEach(col => {
+                        var info = {}
+                        var q  = col._metadata.queryInfo;
+                        info.name =  q.name
+                        info.datasource = btoa(q.name + "/" + q.query + "/" + JSON.stringify(q.filter))
+                        info.parameters = q.filter
+                        info.query = q.query
+                        info.data = collection.map(c => {  return { id: c.id, rid:c._metadata.rid}})
+                        summary.entities.push(info)
+                    })
                 }
             })
             this.processMemory.saveDocument(summary,("query_instance_"+this.systemId).replace("-","_"))
