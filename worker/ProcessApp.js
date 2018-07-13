@@ -289,6 +289,9 @@ class ProcessApp {
         });
     }
 
+    btoa(str){
+        return Buffer.from(str).toString('base64')
+    }
     buildQuerySummary(context, dataquery) {
         return new Promise((resolve,reject)=>{
             var summary = {
@@ -296,7 +299,7 @@ class ProcessApp {
                 process: this.processInstanceId,
                 branch: context.event.branch,
                 processAppId: context.processId,
-                formula: btoa(context.processId + "/" + context.event.version + "/" + JSON.stringify(context.event.payload)),
+                formula: this.btoa(context.processId + "/" + context.event.version + "/" + JSON.stringify(context.event.payload)),
                 version: context.event.version,
                 entities:[]
             };
@@ -306,7 +309,7 @@ class ProcessApp {
                         var info = {}
                         var q  = col._metadata.queryInfo;
                         info.name =  q.name
-                        info.datasource = btoa(q.name + "/" + q.query + "/" + JSON.stringify(q.filter))
+                        info.datasource = this.btoa(q.name + "/" + q.query + "/" + JSON.stringify(q.filter))
                         info.parameters = q.filter
                         info.query = q.query
                         info.data = collection.map(c => {  return { id: c.id, rid:c._metadata.rid}})
