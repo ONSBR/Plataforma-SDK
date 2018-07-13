@@ -289,9 +289,7 @@ class ProcessApp {
         });
     }
 
-    btoa(str){
-        return hash.sha1(str);
-    }
+
     buildQuerySummary(context, dataquery) {
         return new Promise((resolve,reject)=>{
             var summary = {
@@ -299,8 +297,8 @@ class ProcessApp {
                 process: this.processInstanceId,
                 branch: context.event.branch,
                 processAppId: context.processId,
-                formula: this.btoa(context.processId + "/" + context.event.version + "/" + JSON.stringify(context.event.payload)),
                 version: context.event.version,
+                timestamp:new Date().getTime(),
                 entities:[]
             };
             dataquery.forEach((collection)=>{
@@ -309,7 +307,6 @@ class ProcessApp {
                     var info = {}
                     var q  = col._metadata.queryInfo;
                     info.name =  q.name
-                    info.datasource = this.btoa(q.name + "/" + q.query + "/" + JSON.stringify(q.filter))
                     info.parameters = q.filter
                     info.query = q.query
                     info.data = collection.map(c => {  return { id: c.id, rid:c._metadata.rid}})
