@@ -4,7 +4,7 @@ const DataSetBuilder = require("../dataset/builder");
 const Utils = require("../utils");
 const DomainClient = require("../services/domain/client");
 const Logger = require("./logger")
-
+const hash = require('object-hash');
 class ProcessApp {
 
     constructor(info, coreFacade, domainClient, processMemoryClient, eventManager) {
@@ -290,7 +290,7 @@ class ProcessApp {
     }
 
     btoa(str){
-        return Buffer.from(str).toString('base64')
+        return hash.sha1(str);
     }
     buildQuerySummary(context, dataquery) {
         return new Promise((resolve,reject)=>{
@@ -305,16 +305,15 @@ class ProcessApp {
             };
             dataquery.forEach((collection)=>{
                 if(collection.length > 0) {
-                    collection.forEach(col => {
-                        var info = {}
-                        var q  = col._metadata.queryInfo;
-                        info.name =  q.name
-                        info.datasource = this.btoa(q.name + "/" + q.query + "/" + JSON.stringify(q.filter))
-                        info.parameters = q.filter
-                        info.query = q.query
-                        info.data = collection.map(c => {  return { id: c.id, rid:c._metadata.rid}})
-                        summary.entities.push(info)
-                    })
+                    var col = collection[0]
+                    var info = {}
+                    var q  = col._metadata.queryInfo;
+                    info.name =  q.name
+                    info.datasource = this.btoa(q.name + "/" + q.query + "/" + JSON.stringify(q.filter))
+                    info.parameters = q.filter
+                    info.query = q.query
+                    info.data = collection.map(c => {  return { id: c.id, rid:c._metadata.rid}})
+                    summary.entities.push(info)
                 }
             })
             this.processMemory.saveDocument(summary,("query_instance_"+this.systemId).replace("-","_"))
