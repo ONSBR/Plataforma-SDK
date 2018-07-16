@@ -65,6 +65,8 @@ class ProcessApp {
                     } else {
                         context.commit = false;
                     }
+                    context.reprocessable = op[0].reprocessable;
+
                     return this.startProcess(context);
                 }
                 throw new Error(`Operation not found for process ${this.processId}`);
@@ -299,6 +301,7 @@ class ProcessApp {
                 processAppId: context.processId,
                 version: context.event.version,
                 timestamp:new Date().getTime(),
+                reprocessable: context.reprocessable,
                 entities:[]
             };
             dataquery.forEach((collection)=>{
