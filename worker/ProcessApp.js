@@ -291,13 +291,7 @@ class ProcessApp {
         });
     }
 
-    getEventHash(event) {
-        return hash.sha1({
-            name:event.name,
-            version: event.version,
-            payload: event.payload
-        })
-    }
+
 
     buildQuerySummary(context, dataquery) {
         return new Promise((resolve,reject)=>{
@@ -308,7 +302,7 @@ class ProcessApp {
                 processAppId: context.processId,
                 version: context.event.version,
                 reprocessable: context.reprocessable,
-                idempotencyKey: this.getEventHash(context.event),
+                idempotencyKey:context.event.idempotencyKey,
                 tag: context.event.tag,
                 entities:[]
             };
