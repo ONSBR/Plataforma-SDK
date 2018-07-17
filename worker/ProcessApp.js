@@ -300,8 +300,8 @@ class ProcessApp {
                 branch: context.event.branch,
                 processAppId: context.processId,
                 version: context.event.version,
-                timestamp:new Date().getTime(),
                 reprocessable: context.reprocessable,
+                tag: context.event.tag,
                 entities:[]
             };
             dataquery.forEach((collection)=>{
