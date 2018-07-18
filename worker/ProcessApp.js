@@ -278,7 +278,7 @@ class ProcessApp {
                     var promise = this.domainClient.reference(this.referenceDate).queryMany(filtersToBeQueryOnDomain, context);
                     promise.then(r => {
                         //Criar o summario de contulta e gravar na ProcessMemory
-                        if  (context.event.scope == "execution") {
+                        if  (context.event.scope == "execution" || context.event.scope == "reprocessing") {
                             this.buildQuerySummary(context, r).then(()=>resolve(r)).catch(reject)
                         }else{
                             resolve(r);
