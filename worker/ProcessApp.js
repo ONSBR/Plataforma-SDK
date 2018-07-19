@@ -157,6 +157,9 @@ class ProcessApp {
     }
 
     fork(context) {
+        if (context.event.scope !== "execution"){
+            return new Promise(resolve => resolve());
+        }
         var types = Object.keys(context.dataset.entities);
         var startedAt = new Date();
         types.forEach(t => {
