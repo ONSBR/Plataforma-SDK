@@ -157,11 +157,9 @@ class ProcessApp {
     }
 
     fork(context) {
-        if (context.event.scope !== "execution"){
-            return new Promise(resolve => resolve());
-        }
         var types = Object.keys(context.dataset.entities);
         var startedAt = new Date();
+        context.fork.startedAt = startedAt;
         types.forEach(t => {
             context.dataset.entities[t].forEach(e => {
                 var current = new Date(e._metadata.modified_at);
@@ -171,7 +169,9 @@ class ProcessApp {
                 e._metadata.branch = context.fork.name;
             });
         });
-        context.fork.startedAt = startedAt;
+        if (context.event.scope !== "execution"){
+            return new Promise(resolve => resolve());
+        }
         return new Promise((resolve,reject) => {
             this.coreFacade.processInstance.save({"id":this.processInstanceId, "isFork":true}).then(()=>{
             this.coreFacade.branch.findBySystemIdAndName(context.systemId,context.fork.name).then(c => {
