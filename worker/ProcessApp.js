@@ -197,7 +197,7 @@ class ProcessApp {
                 localContext.eventManager = this.bus;
 
                 localContext.fork = (name, description) => {
-                    if (context.event.branch === name) {
+                    if (context.event.branch === name && context.event.scope !== "reprocessing") {
                         //evita que um fork seja realizado duas vezes no domain
                         context.commit = false;
                     }
