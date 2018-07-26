@@ -153,7 +153,7 @@ class ProcessApp {
                         Object.keys(entities).forEach(entity => {
                             preDeletedEntities[entity] = []
                             entities[entity].forEach(obj => {
-                                if (obj._metadata.changeTrack !== "") {
+                                if (obj._metadata.changeTrack && obj._metadata.changeTrack !== "") {
                                     preDeletedEntities[entity].push(obj)
                                 }
                                 if (obj._metadata.changeTrack === "recover"){
