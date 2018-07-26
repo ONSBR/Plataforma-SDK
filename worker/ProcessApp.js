@@ -180,7 +180,7 @@ class ProcessApp {
                 })
                 return promise
             }else{
-                return new Promise((res)=>res());
+                return new Promise((res)=>res(dataset));
             }
         })
     }
