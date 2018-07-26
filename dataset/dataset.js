@@ -1,9 +1,11 @@
 var Model = require("../core/model");
 var Enumerable = require('linq');
-
+const uuidv4 = require('uuid/v4');
 const CHANGETRACK_CREATE = "create";
 const CHANGETRACK_UPDATE = "update";
 const CHANGETRACK_DELETE = "destroy";
+const CHANGETRACK_PRE_DELETE = "pre_destroy";
+const CHANGETRACK_RECOVER = "recover";
 
 module.exports = class DataSet {
     constructor(data, current_branch) {
@@ -50,9 +52,23 @@ module.exports = class DataSet {
         }
         entity._metadata = {
             type: this.type,
-            changeTrack: CHANGETRACK_CREATE
+            changeTrack: CHANGETRACK_CREATE,
+            rid:uuidv4(),
         }
 
+        var model = new Model(entity);
+        this.collection[this.type].push(model);
+        return model;
+    }
+
+    recover(entity) {
+        if (!entity) {
+            throw new Error("Entity not defined");
+        }
+        if (!this.collection[this.type]) {
+            this.collection[this.type] = [];
+        }
+        entity._metadata.changeTrack = CHANGETRACK_RECOVER
         var model = new Model(entity);
         this.collection[this.type].push(model);
         return model;

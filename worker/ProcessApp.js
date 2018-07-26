@@ -137,6 +137,55 @@ class ProcessApp {
     }
 
     buildDataset(context) {
+        /**
+         * No caso de reprocessamento
+         * é necessário que possamos excluir as antigas persistências da instancia original
+         * e para isso nós pegamos o HEAD da instância original, em seguida, todos os objetos que
+         * foram modificados pela instância
+         */
+        return this.mountDataset(context).then(dataset => {
+            if (context.event.scope === "reprocessing") {
+                console.log("get original instance head on process memory")
+                var preDeletedEntities = {}
+                var promise = new Promise((res,rej)=>{
+                    this.processMemory.head(context.event.reprocessing.instanceId).then(memory => {
+                        var entities = memory.dataset.entities
+                        console.log(entities)
+                        Object.keys(entities).forEach(entity => {
+                            preDeletedEntities[entity] = []
+                            entities[entity].forEach(obj => {
+                                if (obj._metadata.changeTrack !== "") {
+                                    preDeletedEntities[entity].push(obj)
+                                }
+                                if (obj._metadata.changeTrack === CHANGETRACK_RECOVER){
+                                    dataset.entities[entity].push(obj)
+                                }
+                            })
+                        })
+                        console.log(preDeletedEntities)
+                        Object.keys(dataset.entities).forEach(entity => {
+                            var entities = dataset[entity]
+                            entities.forEach(obj => {
+                                preDeletedEntities[entity].forEach(preDeleted => {
+                                    if(obj._metadata.rid === preDeleted._metadata.rid){
+                                        if (obj._metadata.changeTrack !== "destroy"){
+                                            obj._metadata.changeTrack = CHANGETRACK_PRE_DELETE
+                                        }
+                                    }
+                                })
+                            })
+                        })
+                        res(dataset)
+                    }).catch(rej)
+                })
+                return promise
+            }else{
+                return new Promise((res)=>res());
+            }
+        })
+    }
+
+    mountDataset(context){
         if (context.dataset) {
             console.log('data set already exists');
             return new Promise((resolve) => {
