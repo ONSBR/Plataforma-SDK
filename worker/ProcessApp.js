@@ -148,7 +148,7 @@ class ProcessApp {
                 console.log("get original instance head on process memory")
                 var preDeletedEntities = {}
                 var promise = new Promise((res,rej)=>{
-                    this.processMemory.head(context.event.reprocessing.instanceId).then(memory => {
+                    this.processMemory.head(context.event.reprocessing.instance_id).then(memory => {
                         var entities = memory.dataset.entities
                         console.log(entities)
                         Object.keys(entities).forEach(entity => {
