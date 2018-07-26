@@ -172,6 +172,28 @@ module.exports = class BaseEntity {
         return this.get(url);
     }
 
+    findByProcessIdAndVersion(id, version) {
+        var criteria = {
+            filterName : "byProcessIdAndVersion",
+            parameters:
+            [
+                {
+                    fieldName : "processId",
+                    fieldValue : id
+                },
+                {
+                    fieldName : "version",
+                    fieldValue : version
+                }
+            ]
+        }
+        var url = this.assembleFindUrl(criteria);
+        return this.get(url);
+    }
+
+
+
+
     findById(id) {
         var criteria = {
             filterName : "byId",

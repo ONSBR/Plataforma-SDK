@@ -141,6 +141,12 @@ const DomainModel = require("./domainModel");
         return this.operation.reference(this.referenceDate).findByProcessId(processId);
     }
 
+    operationFindByProcessIdAndVersion(processId,version) {
+        return this.operation.reference(this.referenceDate).findByProcessIdAndVersion(processId,version);
+    }
+
+
+
     // ************************************************************************
     //                                OPERATION INSTANCE
     // ************************************************************************
@@ -216,6 +222,10 @@ const DomainModel = require("./domainModel");
 
     mapFindByProcessId(processId) {
         return this.map.reference(this.referenceDate).findByProcessId(processId);
+    }
+
+    mapFindByProcessIdAndVersion(processId,version) {
+        return this.map.reference(this.referenceDate).findByProcessIdAndVersion(processId,version);
     }
 
     mapFindByName(name) {

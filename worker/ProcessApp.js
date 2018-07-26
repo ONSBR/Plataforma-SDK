@@ -50,7 +50,7 @@ class ProcessApp {
                 console.log(`Processing an execution based on Reproduction`);
             }
 
-            return this.coreFacade.reference(this.referenceDate).operationFindByProcessId(this.processId).then(op => {
+            return this.coreFacade.reference(this.referenceDate).operationFindByProcessIdAndVersion(this.processId,this.context.event.version).then(op => {
                 console.log(`Operation: ${JSON.stringify(op, null, 4)}`);
                 var eventIn = this.eventIn;
                 op = op.filter(o => o.event_in === eventIn);
@@ -274,7 +274,7 @@ class ProcessApp {
         console.log("Loading data from domain by SDK");
         var event = context.event;
         return new Promise((resolve, reject) => {
-            this.getMapByProcessId(this.processId).then(map => {
+            this.getMapByProcessId(this.processId,context.event.version).then(map => {
                 context.map = map;
                 this.getFiltersOnMap(map).then((listFilters) => {
                     var filtersToBeQueryOnDomain = listFilters.map(filter => this.shouldBeExecuted(event, filter))
@@ -418,10 +418,10 @@ class ProcessApp {
     }
 
 
-    getMapByProcessId(processId) {
+    getMapByProcessId(processId,version) {
         return new Promise((resolve, reject) => {
             console.log(`get maps from api core for process id: ${this.processId}`);
-            this.coreFacade.reference(this.referenceDate).mapFindByProcessId(processId).then(map => {
+            this.coreFacade.reference(this.referenceDate).mapFindByProcessIdAndVersion(processId,version).then(map => {
                 var YAML = require("yamljs");
                 var nativeObject = YAML.parse(map[0].content);
                 map[0].content = nativeObject;
