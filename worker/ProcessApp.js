@@ -50,7 +50,7 @@ class ProcessApp {
                 console.log(`Processing an execution based on Reproduction`);
             }
 
-            return this.coreFacade.reference(this.referenceDate).operationFindByProcessIdAndVersion(this.processId,this.context.event.version).then(op => {
+            return this.coreFacade.reference(this.referenceDate).operationFindByProcessIdAndVersion(this.processId,context.event.version).then(op => {
                 console.log(`Operation: ${JSON.stringify(op, null, 4)}`);
                 var eventIn = this.eventIn;
                 op = op.filter(o => o.event_in === eventIn);
