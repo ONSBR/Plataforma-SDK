@@ -166,7 +166,9 @@ class ProcessApp {
                             entities.forEach(obj => {
                                 preDeletedEntities[entity].forEach(preDeleted => {
                                     if(obj._metadata.rid === preDeleted._metadata.rid){
-                                        if (obj._metadata.changeTrack && obj._metadata.changeTrack !== "destroy"){
+                                        if (obj._metadata.changeTrack && obj._metadata.changeTrack === "destroy"){
+                                            obj._metadata.changeTrack = "recover"
+                                        }else{
                                             obj._metadata.changeTrack = "pre_destroy"
                                         }
                                     }
@@ -271,6 +273,18 @@ class ProcessApp {
                 } else {
                     return new Promise((res => res()));
                 }
+            }).then(()=>{
+                return new Promise((res)=>{
+                    Object.keys(context.dataset.entities).forEach(type => {
+                        var collection = context.dataset.entities[type]
+                        collection.forEach(c => {
+                            if (c._metadata.changeTrack === "pre_destroy") {
+                                c._metadata.changeTrack = "destroy"
+                            }
+                        })
+                    })
+                    res()
+                })
             }).then(() => {
                 return this.processMemory.commit(context);
             }).then(() => {
