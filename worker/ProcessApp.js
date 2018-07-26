@@ -166,7 +166,7 @@ class ProcessApp {
                             entities.forEach(obj => {
                                 preDeletedEntities[entity].forEach(preDeleted => {
                                     if(obj._metadata.rid === preDeleted._metadata.rid){
-                                        if (obj._metadata.changeTrack !== "destroy"){
+                                        if (obj._metadata.changeTrack && obj._metadata.changeTrack !== "destroy"){
                                             obj._metadata.changeTrack = "pre_destroy"
                                         }
                                     }
