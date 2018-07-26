@@ -157,7 +157,7 @@ class ProcessApp {
                                 if (obj._metadata.changeTrack !== "") {
                                     preDeletedEntities[entity].push(obj)
                                 }
-                                if (obj._metadata.changeTrack === CHANGETRACK_RECOVER){
+                                if (obj._metadata.changeTrack === "recover"){
                                     dataset.entities[entity].push(obj)
                                 }
                             })
@@ -169,7 +169,7 @@ class ProcessApp {
                                 preDeletedEntities[entity].forEach(preDeleted => {
                                     if(obj._metadata.rid === preDeleted._metadata.rid){
                                         if (obj._metadata.changeTrack !== "destroy"){
-                                            obj._metadata.changeTrack = CHANGETRACK_PRE_DELETE
+                                            obj._metadata.changeTrack = "pre_destroy"
                                         }
                                     }
                                 })
