@@ -358,11 +358,13 @@ class ProcessApp {
             params.forEach(p => {
                 if (p[0] === "$") {
                     var prop = p.substr(1);
-                    if (Array.isArray(event.payload[prop])) {
-                        result[prop] = event.payload[prop];
+                    var valueProp = solveXProperty(event.payload, prop);
+                    if (Array.isArray(valueProp)) {
+                        setXProperty(result, prop, valueProp);
                     }
                 } else
-                    result[p] = event.payload[p]
+                    var valueProp = solveXProperty(event.payload, p);
+                    setXProperty(result, p, valueProp);
             });
 
             return result;
@@ -370,7 +372,39 @@ class ProcessApp {
         return {};
     }
 
+    setXProperty(obj, property, value) {
 
+        if (!value) return;
+
+        var props = property.split(".");
+        var toSet = obj;
+
+        for(var i=0; i < props.length; i++) {
+            var prop = props[i];
+            if (prop){
+                if (i === (props.length-1)) {
+                    toSet[prop] = value;
+                } else {
+                    if (!toSet[prop]) {
+                        toSet[prop] = {};
+                    }
+                    toSet = toSet[prop];
+                }
+            }
+        }
+    }
+
+    solveXProperty(payload, property) {
+        var props = property.split(".");
+        var retorno;
+        for(var i=0; i < props.length; i++) {
+            var prop = props[i];
+            if (prop){
+                retorno = retorno ? retorno[prop]: payload[prop];
+            }
+        }
+        return retorno;
+    }
 
     getFiltersOnMap(map) {
         return this.getFiltersMap(map);
