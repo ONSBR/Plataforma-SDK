@@ -51,7 +51,6 @@ class ProcessApp {
             }
 
             return this.coreFacade.reference(this.referenceDate).operationFindByProcessIdAndVersion(this.processId,context.event.version).then(op => {
-                console.log(`Operation: ${JSON.stringify(op, null, 4)}`);
                 var eventIn = this.eventIn;
                 op = op.filter(o => o.event_in === eventIn);
                 if (op[0]) {
@@ -144,6 +143,7 @@ class ProcessApp {
          * foram modificados pela instância
          */
         return this.mountDataset(context).then(dataset => {
+            console.log(context.event.scope)
             if (context.event.scope === "reprocessing") {
                 console.log("get original instance head on process memory")
                 var preDeletedEntities = {}
