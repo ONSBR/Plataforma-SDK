@@ -278,6 +278,11 @@ class ProcessApp {
                     Object.keys(context.dataset.entities).forEach(type => {
                         var collection = context.dataset.entities[type]
                         collection.forEach(c => {
+                            //todo mundo que continuou com o changeTrack pre-destroy
+                            //fica como destroy pq não foi gerado pelo reprocessamento
+                            //Lembra de quando o Marty McFly fez uma cagada e que os pais dele não iriam se conhecer
+                            //por causa disso e ele iria deixar de existir no presente?
+                            //pois bem é a mesma coisa
                             if (c._metadata.changeTrack === "pre_destroy") {
                                 c._metadata.changeTrack = "destroy"
                             }
