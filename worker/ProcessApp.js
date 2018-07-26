@@ -150,7 +150,6 @@ class ProcessApp {
                 var promise = new Promise((res,rej)=>{
                     this.processMemory.head(context.event.reprocessing.instance_id).then(memory => {
                         var entities = memory.dataset.entities
-                        console.log(entities)
                         Object.keys(entities).forEach(entity => {
                             preDeletedEntities[entity] = []
                             entities[entity].forEach(obj => {
@@ -162,9 +161,8 @@ class ProcessApp {
                                 }
                             })
                         })
-                        console.log(preDeletedEntities)
                         Object.keys(dataset.entities).forEach(entity => {
-                            var entities = dataset[entity]
+                            var entities = dataset.entities[entity]
                             entities.forEach(obj => {
                                 preDeletedEntities[entity].forEach(preDeleted => {
                                     if(obj._metadata.rid === preDeleted._metadata.rid){
