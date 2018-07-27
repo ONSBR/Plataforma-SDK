@@ -358,13 +358,12 @@ class ProcessApp {
             params.forEach(p => {
                 if (p[0] === "$") {
                     var prop = p.substr(1);
-                    var valueProp = solveXProperty(event.payload, prop);
-                    if (Array.isArray(valueProp)) {
-                        setXProperty(result, prop, valueProp);
+                    if (Array.isArray(event.payload[prop])) {
+                        result[prop] = event.payload[prop];
                     }
-                } else
-                    var valueProp = solveXProperty(event.payload, p);
-                    setXProperty(result, p, valueProp);
+                } else {
+                    result[p] = event.payload[p];
+                }
             });
 
             return result;
