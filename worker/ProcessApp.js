@@ -51,7 +51,6 @@ class ProcessApp {
             }
 
             return this.coreFacade.reference(this.referenceDate).operationFindByProcessIdAndVersion(this.processId,context.event.version).then(op => {
-                console.log(`Operation: ${JSON.stringify(op, null, 4)}`);
                 var eventIn = this.eventIn;
                 op = op.filter(o => o.event_in === eventIn);
                 if (op[0]) {
@@ -137,6 +136,56 @@ class ProcessApp {
     }
 
     buildDataset(context) {
+        /**
+         * No caso de reprocessamento
+         * é necessário que possamos excluir as antigas persistências da instancia original
+         * e para isso nós pegamos o HEAD da instância original, em seguida, todos os objetos que
+         * foram modificados pela instância
+         */
+        return this.mountDataset(context).then(dataset => {
+            console.log(context.event.scope)
+            if (context.event.scope === "reprocessing") {
+                console.log("get original instance head on process memory")
+                var preDeletedEntities = {}
+                var promise = new Promise((res,rej)=>{
+                    this.processMemory.head(context.event.reprocessing.instance_id).then(memory => {
+                        var entities = memory.dataset.entities
+                        Object.keys(entities).forEach(entity => {
+                            preDeletedEntities[entity] = []
+                            entities[entity].forEach(obj => {
+                                if (obj._metadata.changeTrack && obj._metadata.changeTrack !== "") {
+                                    preDeletedEntities[entity].push(obj)
+                                }
+                                if (obj._metadata.changeTrack === "recover"){
+                                    dataset.entities[entity].push(obj)
+                                }
+                            })
+                        })
+                        Object.keys(dataset.entities).forEach(entity => {
+                            var entities = dataset.entities[entity]
+                            entities.forEach(obj => {
+                                preDeletedEntities[entity].forEach(preDeleted => {
+                                    if(obj._metadata.rid === preDeleted._metadata.rid){
+                                        if (obj._metadata.changeTrack && obj._metadata.changeTrack === "destroy"){
+                                            obj._metadata.changeTrack = "recover"
+                                        }else{
+                                            obj._metadata.changeTrack = "pre_destroy"
+                                        }
+                                    }
+                                })
+                            })
+                        })
+                        res(dataset)
+                    }).catch(rej)
+                })
+                return promise
+            }else{
+                return new Promise((res)=>res(dataset));
+            }
+        })
+    }
+
+    mountDataset(context){
         if (context.dataset) {
             console.log('data set already exists');
             return new Promise((resolve) => {
@@ -224,6 +273,23 @@ class ProcessApp {
                 } else {
                     return new Promise((res => res()));
                 }
+            }).then(()=>{
+                return new Promise((res)=>{
+                    Object.keys(context.dataset.entities).forEach(type => {
+                        var collection = context.dataset.entities[type]
+                        collection.forEach(c => {
+                            //todo mundo que continuou com o changeTrack pre-destroy
+                            //fica como destroy pq não foi gerado pelo reprocessamento
+                            //Lembra de quando o Marty McFly fez uma cagada e que os pais dele não iriam se conhecer
+                            //por causa disso e ele iria deixar de existir no presente?
+                            //pois bem é a mesma coisa
+                            if (c._metadata.changeTrack === "pre_destroy") {
+                                c._metadata.changeTrack = "destroy"
+                            }
+                        })
+                    })
+                    res()
+                })
             }).then(() => {
                 return this.processMemory.commit(context);
             }).then(() => {
