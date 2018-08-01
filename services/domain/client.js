@@ -88,14 +88,21 @@ module.exports = class DomainClient {
         return new Promise((resolve, reject) => {
             this.info.then(list => {
                 var o = list[0];
-                console.log(data);
                 var url = `http://${o.host}:${o.port}/${map}/persist`;
                 this.http.post(url, data, headers).then(body => {
-                    console.log(body);
                     resolve(body);
                 }).catch(reject);
             })
         });
+    }
+
+
+    dropBranch(branchName, currentUser) {
+        return this.info.then(list => {
+            var o = list[0];
+            var url = `http://${o.host}:${o.port}/dropBranch?branch=${branchName}&user=${currentUser}`;
+            return this.http.post(url, {})
+        })
     }
 
     persistAsync(map, instance_id) {
