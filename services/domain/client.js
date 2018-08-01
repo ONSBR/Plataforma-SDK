@@ -98,7 +98,7 @@ module.exports = class DomainClient {
 
 
     dropBranch(branchName, currentUser) {
-        this.info.then(list => {
+        return this.info.then(list => {
             var o = list[0];
             var url = `http://${o.host}:${o.port}/dropBranch?branch=${branchName}&user=${currentUser}`;
             return this.http.post(url, {})
