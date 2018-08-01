@@ -35,6 +35,12 @@ module.exports = (function() {
             });
         },
 
+        dropBranch: (branchName) => {
+            var client = lookup["domainClient"];
+            //TODO adicionar usuário logado
+            return client.dropBranch(branchName,"user");
+        },
+
         mount:(mountingPoint)=>{
             if (typeof mountingPoint !== "function"){
                 console.log("mountingPoint expected: Function");
