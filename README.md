@@ -39,3 +39,11 @@ SDK.run((context, resolve) => {
   * [Criar uma Process App](https://www.github.com/ONSBR/Plataforma-SDK/Manuais/ProcessApp.md)
   * [Criar uma Domain App](https://www.github.com/ONSBR/Plataforma-SDK/Manuais/DomainApp.md)
   * [Criar uma Presentation App](https://www.github.com/ONSBR/Plataforma-SDK/Manuais/PresentationApp.md)
+2. Metadados
+  * [Mapas](https://www.github.com/ONSBR/Plataforma-SDK/Manuais/Mapas.md)
+  * [Metadados](https://www.github.com/ONSBR/Plataforma-SDK/Manuais/Metadados.md)
+3. [Recuperar evento de entrada](https://www.github.com/ONSBR/Plataforma-SDK/Manuais/Evento.md)
+4. [Dataset](https://www.github.com/ONSBR/Plataforma-SDK/Manuais/Dataset.md)
+5. [Contexto](https://www.github.com/ONSBR/Plataforma-SDK/Manuais/Contexto.md)
+6. Presentation Apps
+  * [Dispatcher](https://www.github.com/ONSBR/Plataforma-SDK/Manuais/Dispatcher.md)
