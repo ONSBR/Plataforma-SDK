@@ -36,6 +36,6 @@ SDK.run((context, resolve) => {
 
 ### Aplicaçes de Plataforma
 
-    * [Criar uma Process App] https://github.com/ONSBR/Plataforma-SDK/Manuais/ProcessApp.md
+    * [Criar uma Process App]: https://github.com/ONSBR/Plataforma-SDK/Manuais/ProcessApp.md
     * Criar uma Domain App
     * Criar uma Presentation App
