@@ -1,70 +1,41 @@
 # Plataforma-SDK
 
 #### Introdução
-A Plataforma-SDK mantém ferramentas utilitárias para interação entre os projetos ou recursos de execução de processos, como o worker.
+A Plataforma-SDK é o componente de software utilizado por aplicações para utilizar os recursos de plataforma disponíveis tais como reprodução, versionamento e reprocessamento
 
 
-#### Estrutura do Projeto
+### Instalação do SDK Node
 
-O projeto é dividido em 3 partes:
-* [_scripts]: contém os scripts de inicialização dos servidores do projeto, sem uso do docker
-* [geraJs]: contém os javascripts para gerar classes de modelo a partir dos yamls de entidades 
-* [services]: contém os serviços de acesso a dados das entidades do core da plataforma
-* [worker]: contém o ´run.js´ para execução dos ProcessApp solicitados pelo executor
+No seu arquivo package.json deve conter a dependência do SDK confrome exemplo abaixo:
+```json
+{
+    ...
+    "dependencies": {
+        "plataforma-sdk": "git+https://github.com/ONSBR/Plataforma-SDK"
+    }
+}
 
-Na pasta de ´_scripts´ são mantidos os shells de execução de todos os servidores da plataforma.
-    - config-localdependencies.sh: configura para as dependências entre os projetos serem obtidos por link, ou seja, obtido de forma local,                                 ao invés de pelo repositório git.
-    - start-EventManager: inicializa apenas o servidor de gerenciamento de eventos.
-    - start-Executor.sh: inicializa apenas o executor de processos da plataforma.
-    - start-PresentationApp.sh: inicializa apenas o server da camada de apresentação.
-    - start-ProcessMemory.sh: inicializa apenas o servidor de controle de memória de processamento.
-    - start-Router: inicializa apenas o servidor de roteamento de urls.
-    - start-servers: inicializa todos os servidores da plataforma.
-    - stop-servers: finaliza todos os servidores da plataforma.
-
-Na pasta de ´geraJs´ ficam os scripts para gerar classes javascript a partir dos yamls de mapa.
-
-Na pasta de ´services´ ficam as classes utilitárias de consulta de dados do core (CoreRepository, CoreStorage).
-
-OBS: Nessa pasta ´_init´ também se encontra um script (_initcoreStorage) para carga de dados de inicialização e testes da plataforma.
-     Estes dados são carregados numa pasta temporária JSON.
-
-Na pasta de ´worker´ se encontra o executor dos processos (run.js) de negócio. O executor chama esse script para fazer as execuções dos processapp, após a estrturação da instância do processo realizada pelo Executor.
-
-Neste projeto também são apresentadas classes de utilitários ´utils.js´. E também o EventHelper que fornece métodos para envio de eventos para o gerenciador de eventos.
-
-
-#### Requisitos
-
-Para executar as aplicações com sucesso você precisa instalar as seguintes ferramentas:
-* [NodeJS](https://nodejs.org)
-* NPM (vem junto com o NodeJS)
-* [Docker](https://www.docker.com/)
-* Docker compose
-
-Caso você opte por usar o docker você pode subir com o seguinte comando:
-```sh
-$ docker-compose up -d
 ```
-Ao executar esse comando o docker irá subir um container com servidor da apresentação.
-
-### Para instalar ou atualizar as dependências é necessário executar o comando:
-npm install
-
-### Alternar para contêineres do Windows
-Após a instalação, o Docker para Windows passa a executar contêineres do Linux por padrão. Alterne para os contêineres do Windows usando o menu de bandeja do Docker ou executando o seguinte comando em um prompt do PowerShell 
-
-C:\Program Files\Docker\Docker> .\DockerCli.exe -SwitchDemon
-
-### Execução dos testes unitários
-
-Para a execução dos testes unitários é necessária a instalação do istanbul: 
-
-```sh
-$ npm install -g istanbul
+Após adicionar a dependência você deve executar o comando:
+```bash
+$ npm install
 ```
-Utilize o seguinte comando para executar os testes:
 
-```sh
-$ npm test 
+### Utilização do SDK
+
+Abaixo segue um exemplo de como importar o SDK da plataforma econfigurar o entrypoint da sua aplicação:
+```javascript
+const SDK = require("plataforma-sdk/worker/sdk")
+
+SDK.run((context, resolve) => {
+    var params = context.event.payload;
+    console.log(params);
+    resolve();
+});
 ```
+
+### Aplicaçes de Plataforma
+
+    * [Criar uma Process App] https://github.com/ONSBR/Plataforma-SDK/Manuais/ProcessApp.md
+    * Criar uma Domain App
+    * Criar uma Presentation App
