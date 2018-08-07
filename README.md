@@ -36,6 +36,7 @@ SDK.run((context, resolve) => {
 
 ### Conteúdo
 1. Criar aplicações de plataforma
+    * [Criar uma Solution](https://www.github.com/ONSBR/Plataforma-SDK/Manuais/Solution.md)
     * [Criar uma Process App](https://www.github.com/ONSBR/Plataforma-SDK/Manuais/ProcessApp.md)
     * [Criar uma Domain App](https://www.github.com/ONSBR/Plataforma-SDK/Manuais/DomainApp.md)
     * [Criar uma Presentation App](https://www.github.com/ONSBR/Plataforma-SDK/Manuais/PresentationApp.md)
