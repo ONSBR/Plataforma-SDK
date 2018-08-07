@@ -29,26 +29,28 @@ module.exports = class Dispatcher {
         var executor = lookup["executor"];
         var eventManager = lookup["eventManager"];
         var processInstance = {};
-        return executor.createInstance(exeEvent).then(instance => {
-            console.log("instance created");
-            processInstance = instance;
-            exeEvent.instanceId = instance.id;
-            return eventManager.save(exeEvent);
-        }).then(() => {
-            var info = {
-                "systemId": processInstance.systemId,
-                "processInstanceId": processInstance.id,
-                "processId": processInstance.processId,
-                "eventIn": event,
-                "persistDomainSync":true
-            };
-            const app = new ProcessApp(info,
-                lookup["coreFacade"],
-                lookup["domainClient"],
-                lookup["processMemory"],
-                lookup["eventManager"]);
-            console.log("event saved on event store");
-            return app.start(this.listeners[event]);
-        });
+
+        eventManager.save(exeEvent).then(eventCreated => {
+            return executor.createInstance(eventCreated).then(instance => {
+                console.log("instance created");
+                processInstance = instance;
+                exeEvent.instanceId = instance.id;
+                var info = {
+                    "systemId": processInstance.systemId,
+                    "processInstanceId": processInstance.id,
+                    "processId": processInstance.processId,
+                    "eventIn": event,
+                    "persistDomainSync":true
+                };
+                const app = new ProcessApp(info,
+                    lookup["coreFacade"],
+                    lookup["domainClient"],
+                    lookup["processMemory"],
+                    lookup["eventManager"]);
+                console.log("event saved on event store");
+                return app.start(this.listeners[event]);
+            })
+        })
+
     }
 };

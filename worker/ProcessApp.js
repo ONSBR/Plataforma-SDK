@@ -69,6 +69,8 @@ class ProcessApp {
                     return this.startProcess(context);
                 }
                 throw new Error(`Operation not found for process ${this.processId}`);
+            }).catch(e => {
+                console.log(e);
             });
         });
 
