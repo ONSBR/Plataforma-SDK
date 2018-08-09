@@ -19,6 +19,7 @@ class ProcessApp {
         this.processMemory = processMemoryClient;
         this.bus = eventManager;
         this.maestro = maestro;
+        console.log(this.maestro);
     }
 
     start(entryPoint) {

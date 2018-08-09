@@ -47,7 +47,8 @@ module.exports = class Dispatcher {
                         lookup["coreFacade"],
                         lookup["domainClient"],
                         lookup["processMemory"],
-                        lookup["eventManager"]);
+                        lookup["eventManager"],
+                        lookup["maestro"]);
                     console.log("event saved on event store");
                     return app.start(this.listeners[event]).then(resolve).catch(reject)
                 }).catch(e => {
