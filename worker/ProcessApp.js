@@ -331,8 +331,12 @@ class ProcessApp {
                 return this.bus.emit(evt);
             }).catch(e => {
                 reject(e);
-            }).then(() => {
-                resolve(out);
+            }).then((r) => {
+                var output = {
+                    out:out,
+                    meta:r
+                }
+                resolve(output);
             });
         });
 
