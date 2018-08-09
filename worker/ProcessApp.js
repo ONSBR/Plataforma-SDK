@@ -7,7 +7,7 @@ const Logger = require("./logger")
 const hash = require('object-hash');
 class ProcessApp {
 
-    constructor(info, coreFacade, domainClient, processMemoryClient, eventManager) {
+    constructor(info, coreFacade, domainClient, processMemoryClient, eventManager, maestro) {
         this.processInstanceId = info.processInstanceId;
         this.processId = info.processId;
         this.systemId = info.systemId;
@@ -18,6 +18,7 @@ class ProcessApp {
         this.domainClient = domainClient;
         this.processMemory = processMemoryClient;
         this.bus = eventManager;
+        this.maestro = maestro;
     }
 
     start(entryPoint) {
@@ -300,6 +301,8 @@ class ProcessApp {
                     tag: context.event.tag,
                     instanceId: context.instanceId,
                     scope: context.event.scope,
+                    systemId: this.systemId,
+                    version: context.event.version,
                     tag: context.event.tag,
                     branch: this.currentBranch,
                     reprocessing: context.event.reprocessing,
@@ -309,7 +312,6 @@ class ProcessApp {
                 };
                 if (context.commit && !this.isReproduction(context) && !this.syncDomain) {
                     console.log(`emit event to domain worker`);
-
                     if (this.referenceDate) {
                         evt.referenceDate = this.referenceDate;
                     }
@@ -317,7 +319,7 @@ class ProcessApp {
                 }
                 if (this.syncDomain) {
                     console.log(`commiting data to domain synchronously`);
-                    return this.domainClient.reference(this.referenceDate).persist(context.dataset.trackingList(), context.map.name, context.instanceId);
+                    return this.maestro.persist(evt)
                 }
                 evt.name = context.eventOut
                 console.log(`Event's origin is a reproduction or should not commit then skip to save domain`);

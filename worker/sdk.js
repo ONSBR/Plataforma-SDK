@@ -6,7 +6,8 @@ const app = new ProcessApp(lookup["info"],
 lookup["coreFacade"],
 lookup["domainClient"],
 lookup["processMemory"],
-lookup["eventManager"]);
+lookup["eventManager"],
+lookup["maestro"]);
 
 
 class Resolver  {

@@ -4,6 +4,7 @@ const CoreFacade = require("../services/api-core/apiCoreFacade");
 const ProcessMemory = require("../services/process-memory/client");
 const EventManager = require("../services/event-manager/client");
 const Executor = require("../services/executor/client");
+const MaestroClient = require("../services/maestro/maestro");
 module.exports = class LookupServices{
     constructor(){
         //crias todas as dependencias stateless
@@ -37,11 +38,18 @@ module.exports = class LookupServices{
             port: process.env.EXECUTOR_PORT || "8000"
         };
 
+        this.info.maestro = {
+            host: process.env.MAESTRO_HOST || "maestro",
+            scheme: process.env.MAESTRO_SCHEME || "http",
+            port: process.env.MAESTRO_PORT || "6971"
+        };
+
 
         this.domainClient = new DomainClient(this.info,this.coreFacade,this.http);
         this.processMemory = new ProcessMemory(this.info,this.http);
         this.eventManager = new EventManager(this.info,this.http);
         this.executor = new Executor(this.info, this.http);
+        this.maestro = new MaestroClient(this.info,this.http);
     }
 
 
