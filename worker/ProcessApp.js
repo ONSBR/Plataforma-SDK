@@ -72,7 +72,11 @@ class ProcessApp {
                 throw new Error(`Operation not found for process ${this.processId}`);
             }).catch(e => {
                 console.log(e);
+                throw e;
             });
+        }).catch(e => {
+            console.log(e);
+            throw e;
         });
 
     }
