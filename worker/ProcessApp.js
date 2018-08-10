@@ -119,6 +119,7 @@ class ProcessApp {
                         version: context.event.version,
                         scope: context.event.scope,
                         tag: context.event.tag,
+                        systemId: this.systemId,
                         branch: this.currentBranch,
                         reprocessing: context.event.reprocessing,
                         payload: {
@@ -133,6 +134,7 @@ class ProcessApp {
                         branch: this.currentBranch,
                         scope: context.event.scope,
                         tag: context.event.tag,
+                        systemId: this.systemId,
                         reprocessing: context.event.reprocessing,
                         payload: {
                             message: "no message defined"
