@@ -116,6 +116,7 @@ class ProcessApp {
                     this.bus.emit({
                         name: name + ".error",
                         instanceId: context.instanceId,
+                        version: context.event.version,
                         scope: context.event.scope,
                         tag: context.event.tag,
                         branch: this.currentBranch,
@@ -128,6 +129,7 @@ class ProcessApp {
                     this.bus.emit({
                         name: name + ".error",
                         instanceId: context.instanceId,
+                        version: context.event.version,
                         branch: this.currentBranch,
                         scope: context.event.scope,
                         tag: context.event.tag,
