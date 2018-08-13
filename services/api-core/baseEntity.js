@@ -24,8 +24,10 @@ module.exports = class BaseEntity {
 
     get(url){
         if(this.referenceDate){
+            console.log("A")
             return this.httpClient.get(url,null,{"Reference-Date":this.referenceDate});
         }else{
+            console.log("B")
             return this.httpClient.get(url);
         }
     }
