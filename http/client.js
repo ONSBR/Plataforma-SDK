@@ -21,13 +21,12 @@ module.exports = class HttpClient {
         //headers["Accept"] = 'application/json';
         headers["Content-Type"] = 'application/json';
         console.log(url)
-        console.log(headers)
-        console.log(body)
         return new Promise((resolve, reject) => {
             unirest[method](url)
                 .headers(headers)
                 .send(body)
                 .end((res) => {
+                    console.log(res.body)
                     if (res.error) {
                         reject(res.error);
                     }
