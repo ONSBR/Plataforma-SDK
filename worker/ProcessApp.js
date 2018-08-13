@@ -538,7 +538,6 @@ class ProcessApp {
         return new Promise((resolve, reject) => {
             console.log(`get maps from api core for process id: ${this.processId} with version ${version}`);
             this.coreFacade.reference(this.referenceDate).mapFindByProcessIdAndVersion(processId,version).then(map => {
-                console.log(map)
                 var YAML = require("yamljs");
                 var nativeObject = YAML.parse(map[0].content);
                 map[0].content = nativeObject;
